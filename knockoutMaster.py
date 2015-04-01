@@ -33,19 +33,29 @@ def translate(codons):
     return aa
     
 def findPossibleStopCodons(codons, n):
-
+    #TESTING: 2 MUTATIONS
     
     if codons[-1] in stopCodons:
         codons = codons[:-1] #remove c-terminal stop codon
     
     almostStopCodons = {}
+    #build dict of codons that can be mutated to a stop codon 
+    
     for c in stopCodons:
         for i in range(0,3):
             for nt in 'ACTG':
                 if c[:i]+nt+c[i+1:] not in stopCodons:
-                    almostStopCodons[c[:i]+nt+c[i+1:]] = c
+                    almostStopCodons[c[:i]+nt+c[i+1:]] = c #LIST!!
+                    # does this include duplicates??? NO
+    '''
+    #TESTING: 2 MUTATIONS
+    for c in almostStopCodons.keys():
+        for i in range(0,3):
+            for nt in 'ACTG':
+                if c[:i]+nt+c[i+1:] not in stopCodons:
+                    almostStopCodons[c[:i]+nt+c[i+1:]] = almostStopCodons[c]
                     # does this include duplicates???
-                
+    '''
     #almostStopCodons = [c for c in list(set(almostStopCodons)) if c[0] not in stopCodons]
     
     #matches = [(i, codons[i]) for i in range(0,len(codons)) if codons[i] in almostStopCodons]
@@ -125,10 +135,16 @@ def findRestrictionSiteChanges(seq, frame, startsBefore, numMutations):
     # print all6mers[0], all6mers[1], all6mers[-2], all6mers[-1]
     
 
-sequence = 'ATGGCCTCAGGAGGCTGGCTGCCACCAACAGGAGGGGACCCGCCACAGGACCCTCCAAAAAACCCCAGAGAAGAGATCCCGGGGTGGTTGGAAACATGGGATTTACCAAGAGAGCCTTTCGACGAATGGCTCAGGGACATGTTACAGGATCTCAATGCAGAGGCCCAGTGCCACTTCCCAAGGAATCTCCTTTTCCGGCTTTGGTGGAACATTGTAGAGGAGCCAGCTATTGACAGGGGACAACCCAGACTAGAGGGATGGTATAAATATTATATCATAGTTCAGAGAGCTCTGTTTGTGCATATGAAAGGCAGGTGCTGTAAGCCCAAGACACATCCCGCATATGGCCCAGGAAGAGGGCCTCCAGGTCTGGGAGGAGCTCCAGGAGGAGCTGCAGCGGCCCCTCCAGGCCTGTAA'
+sequence = '''ATGGAACAAGCCCCGGAAGACCAAGGGCCACAAAGAGAGCCATACAATGAATGGACACTA
+GAATTATTAGATGAACTCAAACAGGAAGCAGTAAGACATTTTCCTAGACAGTGGCTTCAT
+GATTTAGGACAGCACATTTATAACACATATGGAGACACTTGGGCGGGGGTTGAGGCTATC
+ATAAGGATCCTGCAACAATTGCTGTTTATTCATTACAGAATTGGCTGCCAACATAGCAGA
+ATAGGCATTCTGCCACAAGGAAGAAGGAGAAATGGATCCAATAGATCCTAA
+'''.replace('\n','')
 
 #print findNonHarmfulMutations(sequence, 3, True, 1)
 for f in findRestrictionSiteChanges(sequence, 3, True, 1):
     print f
     #print seqify(insertMutation(codonify(sequence),f[0]))
     print ''
+    #break
