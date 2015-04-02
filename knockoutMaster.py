@@ -45,23 +45,36 @@ def findPossibleStopCodons(codons, n):
         for i in range(0,3):
             for nt in 'ACTG':
                 if c[:i]+nt+c[i+1:] not in stopCodons:
-                    almostStopCodons[c[:i]+nt+c[i+1:]] = c #LIST!!
-                    # does this include duplicates??? NO
+                    try:
+                        almostStopCodons[c[:i]+nt+c[i+1:]].append(c)
+                    except KeyError:
+                        almostStopCodons[c[:i]+nt+c[i+1:]] = [c]
+                    # does this include duplicates??? Yes!
     '''
     #TESTING: 2 MUTATIONS
     for c in almostStopCodons.keys():
         for i in range(0,3):
             for nt in 'ACTG':
                 if c[:i]+nt+c[i+1:] not in stopCodons:
-                    almostStopCodons[c[:i]+nt+c[i+1:]] = almostStopCodons[c]
-                    # does this include duplicates???
+                    try:
+                        almostStopCodons[c[:i]+nt+c[i+1:]] += almostStopCodons[c]
+                    except KeyError:
+                         almostStopCodons[c[:i]+nt+c[i+1:]] = almostStopCodons[c]
     '''
     #almostStopCodons = [c for c in list(set(almostStopCodons)) if c[0] not in stopCodons]
     
     #matches = [(i, codons[i]) for i in range(0,len(codons)) if codons[i] in almostStopCodons]
     
-    matches = [(i, almostStopCodons[codons[i]]) for i in range(0,len(codons)) if codons[i] in almostStopCodons.keys()]
+    preMatches = [(i, almostStopCodons[codons[i]]) for i in range(0,len(codons)) if codons[i] in almostStopCodons.keys()]
+    # creates a list of tuples of the form (index, ['list', 'of', 'stop', 'codons']) to be further pre-processed
     
+    matches = []   
+    # further processing to create actual tuples (index, 'codon')
+    
+    for m in preMatches:
+        for codon in m[1]:
+            matches.append((m[0],codon))
+    #print len(matches)
     return matches
     
 def findOverprintedGene(seq, frame, startsBefore):
