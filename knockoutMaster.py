@@ -1,39 +1,33 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Mar 16 17:44:11 2015
 
-@author: louis
-"""
-
-from collections import Counter
+#from collections import Counter
 
 stopCodons = ['TAG', 'TAA', 'TGA']
 
 translation = {'CTT': 'L', 'ATG': 'M', 'AAG': 'K', 'AAA': 'K', 'ATC': 'I', 'AAC': 'N', 'ATA': 'I', 'AGG': 'R', 'CCT': 'P', 'ACT': 'T', 'AGC': 'S', 'ACA': 'T', 'AGA': 'R', 'CAT': 'H', 'AAT': 'N', 'ATT': 'I', 'CTG': 'L', 'CTA': 'L', 'CTC': 'L', 'CAC': 'H', 'ACG': 'T', 'CAA': 'Q', 'AGT': 'S', 'CAG': 'Q', 'CCG': 'P', 'CCC': 'P', 'TAT': 'Y', 'GGT': 'G', 'TGT': 'C', 'CGA': 'R', 'CCA': 'P', 'TCT': 'S', 'GAT': 'D', 'CGG': 'R', 'TTT': 'F', 'TGC': 'C', 'GGG': 'G', 'GGA': 'G', 'TGG': 'W', 'GGC': 'G', 'TAC': 'Y', 'GAG': 'E', 'TCG': 'S', 'TTA': 'L', 'GAC': 'D', 'TCC': 'S', 'GAA': 'E', 'TCA': 'S', 'GCA': 'A', 'GTA': 'V', 'GCC': 'A', 'GTC': 'V', 'GCG': 'A', 'GTG': 'V', 'TTC': 'F', 'GTT': 'V', 'GCT': 'A', 'ACC': 'T', 'TTG': 'L', 'CGT': 'R', 'CGC': 'R'}
 
-#restrictionSites = {'CCCGGG':['XmaI'], 'TCCAAC':['MmeI'], 'TCCGAC':['MmeI'], 'GTTGGA':['MmeI']}
-
-#restrictionSites = {'GCGATCGC': ['AsiSI'], 'ACATGT': ['PciI'], 'TCCGGA': ['BspEI'], 'GGCGCGCC': ['AscI'], 'AGTACT': ['ScaI'], 'ACGCGT': ['MluI'], 'GCCGAG': ['NmeAIII'], 'GGTACC': ['KpnI', 'Acc65I'], 'GGCGGA': ['EciI'], 'CAGCTG': ['PvuII'], 'AAGCTT': ['HindIII'], 'GATATC': ['EcoRV'], 'CTTGAG': ['BpuEI'], 'CTGCAG': ['PstI'], 'GCTCTTC': ['SapI', 'Nt.BspQI'], 'GTATCC': ['BciVI'], 'CCGCGG': ['SacII'], 'ATTTAAAT': ['SwaI'], 'GCATC': ['SfaNI'], 'GAGTC': ['PleI', 'Nt.BstNBI', 'MlyI'], 'CGGCCG': ['EagI'], 'CTGGAG': ['BpmI'], 'ACGGC': ['BceAI'], 'ACTGG': ['BsrI'], 'GGTCTC': ['BsaI'], 'ACTAGT': ['SpeI'], 'TCGCGA': ['NruI'], 'CTTAAG': ['AflII'], 'CCTAGG': ['AvrII'], 'ATTAAT': ['AseI'], 'CCTTC': ['HpyAV'], 'CAATTG': ['MfeI'], 'AGATCT': ['BglII'], 'ACTGGG': ['BmrI'], 'AGCGCT': ['AfeI'], 'GCTAGC': ['NheI', 'BmtI'], 'CATATG': ['NdeI'], 'TCATGA': ['BspHI'], 'ACCTGC': ['BspMI'], 'CTGAAG': ['AcuI'], 'GTGCAC': ['ApaLI'], 'GTGCAG': ['BsgI'], 'CACGAG': ['BssSI'], 'GAAGA': ['MboII'], 'ACCGGT': ['AgeI'], 'CCCGGG': ['SmaI', 'XmaI'], 'GTATAC': ['BstZ17I'], 'GTTAAC': ['HpaI'], 'GACGC': ['HgaI'], 'GAGGAG': ['BseRI'], 'GGATCC': ['BamHI'], 'GAAGAC': ['BbsI'], 'CGTCTC': ['BsmBI'], 'CTCTTC': ['EarI'], 'TACGTA': ['SnaBI'], 'CCTCAGC': ['BbvCI', 'Nb.BbvCI', 'Nt.BbvCI'], 'CTCGAG': ['XhoI'], 'TTCGAA': ['BstBI'], 'GGCGCC': ['NarI', 'KasI', 'SfoI', 'PluTI'], 'ATCGAT': ['ClaI'], 'TGATCA': ['BclI'], 'GACGTC': ['AatII', 'ZraI'], 'GCAGC': ['BbvI'], 'TTTAAA': ['DraI'], 'AACGTT': ['AclI'], 'CCCGC': ['FauI'], 'GTTTAAAC': ['PmeI'], 'CCCAGC': ['BseYI'], 'CCATGG': ['NcoI'], 'CCATC': ['BccI'], 'CCGCTC': ['BsrBI'], 'GGTGA': ['HphI'], 'GCGCGC': ['BssHII'], 'GGGAC': ['BsmFI'], 'GCATGC': ['SphI'], 'GTCGAC': ['SalI'], 'GCAGTG': ['BtsI', 'Bts-alpha-I'], 'TCTAGA': ['XbaI'], 'GAGCTC': ['Eco53kI', 'SacI'], 'CGTACG': ['BsiWI'], 'GAATGC': ['BsmI', 'Nb.BsmI'], 'CAGCAG': ['EcoP15I'], 'GGATG': ['FokI', 'BtsCI'], 'GGATC': ['AlwI', 'Nt.AlwI'], 'TGCGCA': ['FspI'], 'GCGGCCGC': ['NotI'], 'TGTACA': ['BsrGI'], 'GCCGGC': ['NaeI', 'NgoMIV'], 'TGGCCA': ['MscI'], 'TTAATTAA': ['PacI'], 'ATGCAT': ['NsiI'], 'CTCAG': ['BspCNI'], 'AATATT': ['SspI'], 'CACGTG': ['PmlI'], 'CACGTC': ['BmgBI'], 'CGATCG': ['PvuI'], 'GGGCCC': ['ApaI', 'PspOMI'], 'GGCCGGCC': ['FseI'], 'GCAATG': ['BsrDI', 'Nb.BsrDI'], 'CCTGCAGG': ['SbfI'], 'GAATTC': ['EcoRI'], 'TTATAA': ['PsiI'], 'GTCTC': ['Nt.BsmAI', 'BsmAI'], 'GCGATG': ['BtgZI'], 'AGGCCT': ['StuI']}
-
 restrictionSites = {'GCGATCGC': ['AsiSI'], 'ACATGT': ['PciI'], 'TCCGGA': ['BspEI'], 'GGCGCGCC': ['AscI'], 'AGTACT': ['ScaI'], 'ACGCGT': ['MluI'], 'CTCAAG': ['BpuEI'], 'GCCGAG': ['NmeAIII'], 'GGTACC': ['KpnI', 'Acc65I'], 'GGCGGA': ['EciI'], 'CAGCTG': ['PvuII'], 'TTCGAA': ['BstBI'], 'CCCAGT': ['BmrI'], 'GATATC': ['EcoRV'], 'CTCCTC': ['BseRI'], 'CTTGAG': ['BpuEI'], 'CTGCAG': ['PstI'], 'CTGAAG': ['AcuI'], 'CTGCAC': ['BsgI'], 'CATCGC': ['BtgZI'], 'GTATCC': ['BciVI'], 'CCGCGG': ['SacII'], 'GATCC': ['AlwI', 'Nt.AlwI'], 'ATTTAAAT': ['SwaI'], 'TCACC': ['HphI'], 'CTCGAG': ['XhoI'], 'GAGTC': ['Nt.BstNBI', 'MlyI', 'PleI'], 'CGGCCG': ['EagI'], 'CTGGAG': ['BpmI'], 'ACGGC': ['BceAI'], 'ACTGG': ['BsrI'], 'GGTCTC': ['BsaI'], 'GATGG': ['BccI'], 'GACTC': ['Nt.BstNBI', 'MlyI', 'PleI'], 'ACTAGT': ['SpeI'], 'TCGCGA': ['NruI'], 'CTTAAG': ['AflII'], 'GCGTC': ['HgaI'], 'CCTAGG': ['AvrII'], 'GCAGGT': ['BspMI'], 'ATTAAT': ['AseI'], 'CCTTC': ['HpyAV'], 'GCTGGG': ['BseYI'], 'CAATTG': ['MfeI'], 'AGATCT': ['BglII'], 'ACTGGG': ['BmrI'], 'AGCGCT': ['AfeI'], 'CTCGGC': ['NmeAIII'], 'GCTAGC': ['BmtI', 'NheI'], 'CATATG': ['NdeI'], 'TCATGA': ['BspHI'], 'ACCTGC': ['BspMI'], 'GCTCTTC': ['Nt.BspQI', 'SapI'], 'CATTGC': ['BsrDI', 'Nb.BsrDI'], 'GTGCAC': ['ApaLI'], 'GTGCAG': ['BsgI'], 'CACGAG': ['BssSI'], 'CTGAG': ['BspCNI'], 'GAAGG': ['HpyAV'], 'GAAGA': ['MboII'], 'ACCGGT': ['AgeI'], 'GGCGCC': ['KasI', 'SfoI', 'NarI', 'PluTI'], 'GTATAC': ['BstZ17I'], 'GTTAAC': ['HpaI'], 'GACGC': ['HgaI'], 'ATCGAT': ['ClaI'], 'GAAGAG': ['EarI'], 'GGATCC': ['BamHI'], 'GAAGAC': ['BbsI'], 'CGTCTC': ['BsmBI'], 'GAGACC': ['BsaI'], 'CTCTTC': ['EarI'], 'TACGTA': ['SnaBI'], 'CCTCAGC': ['Nb.BbvCI', 'Nt.BbvCI', 'BbvCI'], 'CACTGC': ['BtsI', 'Bts-alpha-I'], 'GTCCC': ['BsmFI'], 'GCATC': ['SfaNI'], 'AAGCTT': ['HindIII'], 'TCCGCC': ['EciI'], 'GCGGG': ['FauI'], 'CTCGTG': ['BssSI'], 'GCCGT': ['BceAI'], 'CCCGGG': ['SmaI', 'XmaI'], 'GAGGAG': ['BseRI'], 'TGATCA': ['BclI'], 'GACGTC': ['AatII', 'ZraI'], 'GCAGC': ['BbvI'], 'TTTAAA': ['DraI'], 'GACGTG': ['BmgBI'], 'CATCC': ['BtsCI', 'FokI'], 'CTCCAG': ['BpmI'], 'AACGTT': ['AclI'], 'CCCGC': ['FauI'], 'GTTTAAAC': ['PmeI'], 'CCCAGC': ['BseYI'], 'TCTTC': ['MboII'], 'CCATGG': ['NcoI'], 'GAGAC': ['Nt.BsmAI', 'BsmAI'], 'CCATC': ['BccI'], 'CCGCTC': ['BsrBI'], 'GAAGAGC': ['Nt.BspQI', 'SapI'], 'CTGCTG': ['EcoP15I'], 'GGTGA': ['HphI'], 'GCGCGC': ['BssHII'], 'GGGAC': ['BsmFI'], 'GGATAC': ['BciVI'], 'GCATGC': ['SphI'], 'GTCGAC': ['SalI'], 'GCAGTG': ['BtsI', 'Bts-alpha-I'], 'TCTAGA': ['XbaI'], 'GAGCTC': ['SacI', 'Eco53kI'], 'GCTGAGG': ['Nb.BbvCI', 'Nt.BbvCI', 'BbvCI'], 'CGTACG': ['BsiWI'], 'GCATTC': ['Nb.BsmI', 'BsmI'], 'GAATGC': ['Nb.BsmI', 'BsmI'], 'CAGCAG': ['EcoP15I'], 'GGATG': ['BtsCI', 'FokI'], 'GGATC': ['AlwI', 'Nt.AlwI'], 'TGCGCA': ['FspI'], 'GCGGCCGC': ['NotI'], 'TGTACA': ['BsrGI'], 'GCCGGC': ['NaeI', 'NgoMIV'], 'TGGCCA': ['MscI'], 'CTTCAG': ['AcuI'], 'GAGCGG': ['BsrBI'], 'TTAATTAA': ['PacI'], 'GCTGC': ['BbvI'], 'ATGCAT': ['NsiI'], 'GATGC': ['SfaNI'], 'CTCAG': ['BspCNI'], 'AATATT': ['SspI'], 'CACGTG': ['PmlI'], 'CACGTC': ['BmgBI'], 'GAGACG': ['BsmBI'], 'CGATCG': ['PvuI'], 'GGGCCC': ['PspOMI', 'ApaI'], 'CCAGT': ['BsrI'], 'GGCCGGCC': ['FseI'], 'GCAATG': ['BsrDI', 'Nb.BsrDI'], 'CCTGCAGG': ['SbfI'], 'GTCTTC': ['BbsI'], 'GAATTC': ['EcoRI'], 'TTATAA': ['PsiI'], 'GTCTC': ['Nt.BsmAI', 'BsmAI'], 'GCGATG': ['BtgZI'], 'AGGCCT': ['StuI'], 'GTTGGA': ['MmeI'], 'GTCGGA': ['MmeI'], 'TCCAAC': ['MmeI'], 'TCCGAC': ['MmeI']}
 
 def codonify(seq):
+    '''convert sequence to a list of codons'''
     return [seq[i:i+3] for i in range(0,len(seq),3)]
     
+#convert sequence to codons
 def seqify(cod):
     sequence = ""
     for codon in cod:
         sequence += codon
     return sequence
     
+#translate nucleotides, given codons
 def translate(codons):
     aa = ''
     for c in codons:
         aa = aa + translation[c]
     return aa
     
+#workhorse: find stop codons that can be generated given codons, mutation
 def findPossibleStopCodons(codons, n):
-    #TESTING: 2 MUTATIONS
     
     if codons[-1] in stopCodons:
         codons = codons[:-1] #remove c-terminal stop codon
@@ -52,6 +46,7 @@ def findPossibleStopCodons(codons, n):
                     # does this include duplicates??? Yes!
     '''
     #TESTING: 2 MUTATIONS
+    # Major issue--horribly large amount of possibilities, need a different approach here
     for c in almostStopCodons.keys():
         for i in range(0,3):
             for nt in 'ACTG':
@@ -61,24 +56,23 @@ def findPossibleStopCodons(codons, n):
                     except KeyError:
                          almostStopCodons[c[:i]+nt+c[i+1:]] = almostStopCodons[c]
     '''
-    #almostStopCodons = [c for c in list(set(almostStopCodons)) if c[0] not in stopCodons]
     
-    #matches = [(i, codons[i]) for i in range(0,len(codons)) if codons[i] in almostStopCodons]
-    
+    # creates a list of tuples of the form (index, ['list', 'of', 'stop', 'codons']) to be further pre-processed    
     preMatches = [(i, almostStopCodons[codons[i]]) for i in range(0,len(codons)) if codons[i] in almostStopCodons.keys()]
-    # creates a list of tuples of the form (index, ['list', 'of', 'stop', 'codons']) to be further pre-processed
     
-    matches = []   
-    # further processing to create actual tuples (index, 'codon')
+    matches = []  
     
+    # further processing to create actual tuples (index, 'codon')    
     for m in preMatches:
         for codon in m[1]:
             matches.append((m[0],codon))
+            
     #print len(matches)
     return matches
-    
-def findOverprintedGene(seq, frame, startsBefore):
-    
+
+#finds overprinted gene, given input sequence, frameshift, and bool startsBefore 
+# TODO: change startsBefore to an **index** for gene    
+def findOverprintedGene(seq, frame, startsBefore):    
     codons = codonify(seq[frame - 1:])[:-1] #remove last (incomplete) codon
     for i in range(0,len(codons)):
         if codons[i] in stopCodons:
@@ -88,7 +82,7 @@ def findOverprintedGene(seq, frame, startsBefore):
     if not startsBefore:
         x = 1
         #
-        #
+        # what
         #
         #To fill in, although I don't need this case yet
         #
