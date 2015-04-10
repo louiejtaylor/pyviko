@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 '''
-#Proof-of-concept module for pyViKO
+**Proof-of-concept module for pyViKO**
 '''
 
 #from collections import Counter
