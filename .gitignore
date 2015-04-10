@@ -1,3 +1,10 @@
+## Custom
+# PyDoc Documentation
+*.html
+# Tests
+test/
+##
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -22,9 +29,6 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
-
-# PyDoc Documentation
-*.html
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
