@@ -1,6 +1,4 @@
 ## Custom
-# PyDoc Documentation
-*.html
 # Tests
 test/
 ##
