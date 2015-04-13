@@ -7,6 +7,7 @@ Proof-of-concept module for pyViKO. [Examples and source](https://github.com/lou
 #from collections import Counter
 
 import os
+rest = ''''''
 
 stopCodons = ['TAG', 'TAA', 'TGA']
 
@@ -56,9 +57,9 @@ def findPossibleStopCodons(codons, n):
                     except KeyError:
                         almostStopCodons[c[:i]+nt+c[i+1:]] = [c]
                     # does this include duplicates??? Yes!
-    '''
+    
     #TESTING: 2 MUTATIONS
-    # Major issue--horribly large amount of possibilities, need a different approach here
+    # issue resolved, just need to take sets instead of using all possible mutants!
     for c in almostStopCodons.keys():
         for i in range(0,3):
             for nt in 'ACTG':
@@ -67,7 +68,9 @@ def findPossibleStopCodons(codons, n):
                         almostStopCodons[c[:i]+nt+c[i+1:]] += almostStopCodons[c]
                     except KeyError:
                          almostStopCodons[c[:i]+nt+c[i+1:]] = almostStopCodons[c]
-    '''
+    for i in almostStopCodons.keys():
+        almostStopCodons[i] = list(set(almostStopCodons[i]))
+    
     
     # creates a list of tuples of the form (index, ['list', 'of', 'stop', 'codons']) to be further pre-processed    
     preMatches = [(i, almostStopCodons[codons[i]]) for i in range(0,len(codons)) if codons[i] in almostStopCodons.keys()]
@@ -79,7 +82,8 @@ def findPossibleStopCodons(codons, n):
         for codon in m[1]:
             matches.append((m[0],codon))
             
-    #print len(matches)
+    print len(matches)
+    #print matches
     return matches
 
 #finds overprinted gene, given input sequence, frameshift, and bool startsBefore 
@@ -174,7 +178,7 @@ if __name__ == "__main__":
     mutFile.write(sequence+"\n")
     for f in findRestrictionSiteChanges(sequence, 3, True, 1):
         mutFile.write('> Mutant at codon ' + str(f[0][0]+1) +' '+ str(f[1])+'\n')
-        #print f
+        #print f #for debugging, prints output to screen
         mutFile.write(seqify(insertMutation(codonify(sequence),f[0]))+'\n')
         #break
     mutFile.close()
