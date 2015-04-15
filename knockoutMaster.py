@@ -9,7 +9,8 @@ Proof-of-concept module for pyViKO. [Examples and source](https://github.com/lou
 # import os
 
 try:
-    from pyviko.base import codonify, seqify, insertMutation, translate, stopCodons, translation, restrictionSites
+    from pyviko.base import codonify, seqify, insertMutation, translate, stopCodons
+    from pyviko.restriction import restrictionSites
 except ImportError as e:
     print "ImportError!",
     print e
@@ -134,6 +135,8 @@ GATTTAGGACAGCACATTTATAACACATATGGAGACACTTGGGCGGGGGTTGAGGCTATC
 ATAAGGATCCTGCAACAATTGCTGTTTATTCATTACAGAATTGGCTGCCAACATAGCAGA
 ATAGGCATTCTGCCACAAGGAAGAAGGAGAAATGGATCCAATAGATCCTAA
 '''.replace('\n','')
+
+print findOverprintedGene(sequence,3,True)
 
 if __name__ == "__main__":
     mutFile = open('test/mutations.fasta',"w")
