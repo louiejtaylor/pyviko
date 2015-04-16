@@ -143,7 +143,7 @@ if __name__ == "__main__":
     #print findNonHarmfulMutations(sequence, 3, True, 1)
     mutFile.write("> Original sequence\n")
     mutFile.write(sequence+"\n")
-    for f in findRestrictionSiteChanges(sequence, 3, True, 1):
+    for f in findRestrictionSiteChanges(sequence, 3, True, 2):
         mutFile.write('> Mutant at codon ' + str(f[0][0]+1) +' '+ str(f[1])+'\n')
         #print f #for debugging, prints output to screen
         mutFile.write(seqify(insertMutation(codonify(sequence),f[0]))+'\n')

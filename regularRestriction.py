@@ -45,7 +45,6 @@ nucleotideMatrix = {'R':['A','G'],
                     'N':['A','C','G','T']}
 
 from pyviko.restriction import restrictionSites
-from pyviko.core import findOverprintedGene
 
 def findNonRegexEnzymeSites(site):
     '''
