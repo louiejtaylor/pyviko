@@ -9,7 +9,7 @@ Proof-of-concept module for pyViKO. [Examples and source](https://github.com/lou
 # import os
 
 try:
-    from pyviko.base import codonify, seqify, insertMutation, translate, stopCodons
+    from pyviko.core import codonify, seqify, insertMutation, translate, stopCodons
     from pyviko.restriction import restrictionSites
 except ImportError as e:
     print "ImportError!",

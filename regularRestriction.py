@@ -25,7 +25,12 @@ could we possibly iterate through all windows of size N once?
 And only add a match when we ... oh wait. I already do this.
 '''
 
-import re
+
+try:
+    import regex as re
+except ImportError:
+    import re
+    print "reeee"
 
 nucleotideMatrix = {'R':['A','G'],
                     'Y':['C','T'],
@@ -40,7 +45,7 @@ nucleotideMatrix = {'R':['A','G'],
                     'N':['A','C','G','T']}
 
 from pyviko.restriction import restrictionSites
-from pyviko.base import findOverprintedGene
+from pyviko.core import findOverprintedGene
 
 def findNonRegexEnzymeSites(site):
     '''
@@ -110,24 +115,29 @@ print findOverprintedGene(sequence, -1, 3)
 # looks good!
 '''
 
+###
+# Unified site testing
+sites = ['AAAGGG','AAASSS','SSS','SSSWWW','SWSR', 'ACGTRYSWMKBDHVN']
+sequence = 'AAAGGGCCCTTTAGCTAGAGAGACAGACAACGTACGTATCGTAA'
+
 ###################################
 # Testing enzyme regex search
 # This will be important to actually implement as a function! 
 # findRestrictionSites or something
-sequence = 'AAAGGGCCCTTTAGCTAGAGAGACAGACA'
 s = []
-sites = ['AAAGGG','AAASSS','SSS','SSSWWW','SWSR']
 for si in sites:
     s.append(findEnzymeSiteRegex(si))
     
-print s
-
 for ww in s:
-    q = re.finditer(ww, sequence)
+    try:
+        q = re.finditer(ww, sequence, overlapped=True)
+    except TypeError: #no new regex module
+        q = re.finditer(ww, sequence, overlapped=True)        
+        
     for i in q:
         print (i.start(), i.string[i.start():i.end()]),
     print ''
-#looks good!
+# We 
 # LIMITATION: Does not search overlapping sequences.
 # For palindromes, this is not an issue
 ###################################
@@ -146,9 +156,7 @@ def testNcutters(seq, n, rlist):
 
 # Testing non-regex search. 
 # Ideally, should have the same results for regex and non-regex searches
-sequence = 'AAAGGGCCCTTTAGCTAGAGAGACAGACA'
 s = []
-sites = ['AAAGGG','AAASSS','SSS','SSSWWW','SWSR']
 for sis in sites:
     s.append(findNonRegexEnzymeSites(sis))
     
