@@ -1,1 +1,52 @@
-Hello World
+<!doctype html>
+<html>
+ <head>
+  <meta charset="UTF-8">
+  <style type="text/css">
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js">
+  </script>
+  <script>
+   window.onload = function () {
+    $('#chkOver').prop('checked', false);
+    document.getElementById("button").onclick = function() {
+     //alert("Hello");
+     var txt = $('#inputBox').val();
+     $("#seq").text(txt);
+     $("#seq").show();
+    };
+    $('#chkOver').change(function() {
+     if($('#chkOver').prop('checked')){
+      $('#overpr').show("fast");
+     } else {
+      $('#overpr').hide("fast");
+     }
+    });
+   };
+  </script>​
+ </head>
+ <body>
+ <div id="container" style="height:100%">
+  <h1>ViKO - Generating viral knockouts</h1>
+  <div id="inp" style="width:30%; height:100%; float:left; background-color:#FFFF00; padding:10px">
+   <h2>Input:</h2>
+   <textarea id="inputBox" name="input" rows="10" cols="50"></textarea> 
+   <br>
+   <h3>Options:</h3>
+   <input type="checkbox" id="chkOver">Input sequence contains overprinted gene</input>
+   <div id="overpr" style="display:none;">
+    <p style=" border-top: 1px dotted black; border-bottom: 1px dotted black;">
+     Start index of overprinted gene: <input type="text" size="1" ></input>
+    </p>
+   </div>
+   <br>
+   <input id="button" type="submit" name="button" value="Submit"/>
+  </div>
+  <div id="results" style="width:65%; height:100%; float:right; background-color:#0FF000; padding:10px">
+   <h2>Results:</h2>
+   <span id="seq" style="display:none;">Sequencetest</span>
+  </div>
+  <div style="clear:both"></div>
+ </div>
+ </body>
+</html>
