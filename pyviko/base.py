@@ -7,7 +7,7 @@ def codonify(sequence):
     Converts an input DNA sequence (str) to a list of codons.
     '''
     return [sequence[i:i+3] for i in range(0,len(sequence),3)]
-    
+
 def seqify(cod):
     '''
     Converts an input list of codons into a DNA sequence (str).
