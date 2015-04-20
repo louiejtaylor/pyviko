@@ -19,8 +19,13 @@ def seqify(cod):
     
 def translate(codons):
     '''
-    Translates a list of DNA codons into the corresponding amino acids (str).
+    Translates a list of DNA codons into the corresponding amino 
+    acids, stopping translation if a stop codon is encountered.
     '''
+    for i in range(0,len(codons)):
+        if codons[i] in stopCodons:
+            codons = codons[:i]
+            break
     aa = ''
     for c in codons:
         aa = aa + translation[c]

@@ -10,7 +10,7 @@ Proof-of-concept module for pyViKO. [Examples and source](https://github.com/lou
 
 try:
     from pyviko.core import codonify, seqify, insertMutation, translate, stopCodons
-    from pyviko.restriction import restrictionSites
+    from pyviko.restriction import restrictionSites, findNcutters
 except ImportError as e:
     print "ImportError!",
     print e
@@ -83,7 +83,6 @@ def findOverprintedGene(seq, frame, startsBefore):
         
     return codons
 
-
 def findNonHarmfulMutations(seq, frame, startsBefore, numMutations):
     codons = codonify(seq)
     stops = findPossibleStopCodons(codons, numMutations)
@@ -97,26 +96,16 @@ def findNonHarmfulMutations(seq, frame, startsBefore, numMutations):
             winners.append(poss)
     return winners
 
-def findRestrictionSites(seq):
-    all6mers = []
-    for i in range(0, len(seq) - 5):
-        all6mers.append((i, seq[i:i+6]))
-    actualSites = []
-    for s in all6mers:
-        if s[1] in restrictionSites.keys():
-            actualSites.append((s[0],restrictionSites[s[1]]))
-    return actualSites
-
 def findRestrictionSiteChanges(seq, frame, startsBefore, numMutations):
     safeMutations = findNonHarmfulMutations(seq, frame, startsBefore, numMutations)
-    restrictionSites = findRestrictionSites(seq)
+    rSites = findNcutters(seq,6)
     newSites = []
     for i in safeMutations:
-        newSites.append((i, findRestrictionSites(seqify(insertMutation(codonify(seq),i)))))
+        newSites.append((i, findNcutters(seqify(insertMutation(codonify(seq),i)), 6)))
     winners = []
     for j in newSites:
-        if j[1] <> restrictionSites:
-            re = [r for r in restrictionSites]
+        if j[1] <> rSites:
+            re = [r for r in rSites]
             for site in j[1]:          
                 try:
                     re.remove(site)

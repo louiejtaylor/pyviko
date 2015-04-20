@@ -54,3 +54,20 @@ def findEnzymeSiteRegex(site):
                 print "Unknown nucleotide '" + nt  + "' encountered."
             r_site += ']'
     return r_site
+
+def findNcutters(seq, n):
+    '''
+    Find restriction sites of length `n` in a sequence `seq`
+    in `O(n*m)` where n is the sequence length and m is the
+    number of restriction enzymes.
+    '''
+    n_mers = []
+    for i in range(0, len(seq) - (n-1)):
+        n_mers.append((i, seq[i:i+n]))
+    actualSites = []
+    for s in n_mers:
+        if s[1] in restrictionSites.keys():
+            actualSites.append((s[0],restrictionSites[s[1]]))
+            
+    # Limitation: assumes dict restrictionSites is in non-regex form (could be very large)
+    return actualSites

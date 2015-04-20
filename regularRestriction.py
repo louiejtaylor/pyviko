@@ -39,7 +39,7 @@ nucleotideMatrix = {'R':['A','G'],
                     'M':['A','C'],
                     'K':['G','T'],
                     'B':['C','G','T'],
-                    'D':['A','G','T'],              
+                    'D':['A','G','T'],
                     'H':['A','C','T'],
                     'V':['A','C','G'],
                     'N':['A','C','G','T']}
@@ -121,7 +121,7 @@ sequence = 'AAAGGGCCCTTTAGCTAGAGAGACAGACAACGTACGTATCGTAA'
 
 ###################################
 # Testing enzyme regex search
-# This will be important to actually implement as a function! 
+# This will be important to actually implement as a function!
 # findRestrictionSites or something
 s = []
 for si in sites:
