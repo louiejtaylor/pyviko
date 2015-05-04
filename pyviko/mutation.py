@@ -80,5 +80,5 @@ def findPossibleStopCodons(codons, n):
             matches.append((m[0],codon))
             
     return matches
-            
+
 # pyviko.mutation.Mutant('ATGGCGCGGCTAAGGGCCTAA')

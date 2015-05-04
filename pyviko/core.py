@@ -6,12 +6,16 @@ def codonify(sequence):
     '''
     Converts an input DNA sequence (str) to a list of codons.
     '''
+    if type(sequence) == type([]):
+        return sequence
     return [sequence[i:i+3] for i in range(0,len(sequence),3)]
 
 def seqify(cod):
     '''
     Converts an input list of codons into a DNA sequence (str).
     '''
+    if type(cod) == type("str"):
+        return cod
     sequence = ""
     for codon in cod:
         sequence += codon
@@ -74,3 +78,14 @@ def findOverprintedGene(seq, startIndex, frame=1):
         
     # Throw warnings? Or just print them?
     return codons
+
+def reverseComplement(seq):
+    '''
+    Given a sequence `seq`, returns the reverse complement.
+    '''
+    seq = seqify(seq)
+    rev = ""
+    pairs = {'A':'T', 'T':'A', 'C':'G', 'G':'C'}
+    for nt in seq[::-1]:
+        rev += pairs[nt]
+    return rev
