@@ -20,7 +20,7 @@ class Mutant:
     seq = ''
     nMut = 1
     isOverGene = False
-    mutants = []
+    mutants = [] #will hold tuple?!
     
     def __init__(self, sequence, numMutations = 1):
         self.seq = sequence
@@ -41,7 +41,7 @@ class Mutant:
     
 def findPossibleStopCodons(codons, n):
     
-    if codons[-1] in core.stopCodons:
+    if codons[-1] in core.stopCodons: 
         codons = codons[:-1] #remove c-terminal stop codon
     
     almostStopCodons = {}

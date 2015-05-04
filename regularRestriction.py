@@ -131,7 +131,7 @@ for ww in s:
     try:
         q = re.finditer(ww, sequence, overlapped=True)
     except TypeError: #no new regex module
-        q = re.finditer(ww, sequence, overlapped=True)        
+        q = re.finditer(ww, sequence)        
         
     for i in q:
         print (i.start(), i.string[i.start():i.end()]),
