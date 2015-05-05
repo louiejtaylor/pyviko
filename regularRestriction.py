@@ -31,7 +31,9 @@ try:
 except ImportError:
     import re
     print "reeee"
+from pyviko.restriction import restrictionSites, findNonRegexEnzymeSites, findEnzymeSiteRegex, findNcutters
 
+'''
 nucleotideMatrix = {'R':['A','G'],
                     'Y':['C','T'],
                     'W':['A','T'],
@@ -44,13 +46,9 @@ nucleotideMatrix = {'R':['A','G'],
                     'V':['A','C','G'],
                     'N':['A','C','G','T']}
 
-from pyviko.restriction import restrictionSites
 
 def findNonRegexEnzymeSites(site):
-    '''
-    Builds a list of sequences that correspond to a given 
-    restriction enzyme recognition site.
-    '''
+
     possible_seqs = ['']
     for nt in site:
         if nt in 'ACGT':
@@ -63,7 +61,7 @@ def findNonRegexEnzymeSites(site):
                     placeholder.append(seq+possibility)
             possible_seqs = [ss for ss in placeholder]
     return possible_seqs
-    
+
 def findEnzymeSiteRegex(site):
     r_site = ''
     for nt in site:
@@ -80,11 +78,7 @@ def findEnzymeSiteRegex(site):
     return r_site
 
 def findNcutters(seq, n):
-    '''
-    Find restriction sites of length `n` in a sequence `seq`
-    in `O(n*m)` where n is the sequence length and m is the
-    number of restriction enzymes.
-    '''
+
     n_mers = []
     for i in range(0, len(seq) - (n-1)):
         n_mers.append((i, seq[i:i+n]))
@@ -95,7 +89,7 @@ def findNcutters(seq, n):
             
     # Limitation: assumes dict restrictionSites is in non-regex form (could be very large)
     return actualSites
-
+'''
 '''
 # testing regex counter.
 testSites = ['AA', 'TATGCG', 'ARA', 'RRR', 'NN', 'ABC', 'SS', 'NAV']

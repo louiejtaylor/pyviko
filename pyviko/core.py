@@ -1,5 +1,4 @@
 stopCodons = ['TAG', 'TAA', 'TGA']
-
 translation = {'CTT': 'L', 'ATG': 'M', 'AAG': 'K', 'AAA': 'K', 'ATC': 'I', 'AAC': 'N', 'ATA': 'I', 'AGG': 'R', 'CCT': 'P', 'ACT': 'T', 'AGC': 'S', 'ACA': 'T', 'AGA': 'R', 'CAT': 'H', 'AAT': 'N', 'ATT': 'I', 'CTG': 'L', 'CTA': 'L', 'CTC': 'L', 'CAC': 'H', 'ACG': 'T', 'CAA': 'Q', 'AGT': 'S', 'CAG': 'Q', 'CCG': 'P', 'CCC': 'P', 'TAT': 'Y', 'GGT': 'G', 'TGT': 'C', 'CGA': 'R', 'CCA': 'P', 'TCT': 'S', 'GAT': 'D', 'CGG': 'R', 'TTT': 'F', 'TGC': 'C', 'GGG': 'G', 'GGA': 'G', 'TGG': 'W', 'GGC': 'G', 'TAC': 'Y', 'GAG': 'E', 'TCG': 'S', 'TTA': 'L', 'GAC': 'D', 'TCC': 'S', 'GAA': 'E', 'TCA': 'S', 'GCA': 'A', 'GTA': 'V', 'GCC': 'A', 'GTC': 'V', 'GCG': 'A', 'GTG': 'V', 'TTC': 'F', 'GTT': 'V', 'GCT': 'A', 'ACC': 'T', 'TTG': 'L', 'CGT': 'R', 'CGC': 'R'}
 
 def codonify(sequence):
@@ -80,12 +79,17 @@ def findOverprintedGene(seq, startIndex, frame=1):
     return codons
 
 def reverseComplement(seq):
-    '''
-    Given a sequence `seq`, returns the reverse complement.
-    '''
-    seq = seqify(seq)
-    rev = ""
-    pairs = {'A':'T', 'T':'A', 'C':'G', 'G':'C'}
-    for nt in seq[::-1]:
-        rev += pairs[nt]
-    return rev
+	'''
+	Given a sequence `seq`, returns the reverse complement.
+	'''
+	seq = seqify(seq)
+	pairs = {'A':'T', 'T':'A', 'C':'G', 'G':'C'}
+	rev = ""
+	#Here should add reverse complements for regex sites? i.e. Y -> R 
+	try:	
+		for nt in seq[::-1]:
+			rev += pairs[nt]
+	except KeyError:
+		print "Unknown nucleotide '" + nt  + "' encountered."
+	
+	return rev
