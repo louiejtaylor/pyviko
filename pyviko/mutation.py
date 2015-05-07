@@ -40,7 +40,11 @@ class Mutant:
             x = 9
     
 def findPossibleStopCodons(codons, n):
-    
+    '''
+    Need to add some documentation here.
+    Function to find codons that can be changed into a stop
+    codon in `n` mutations.
+    '''
     if codons[-1] in core.stopCodons:
         codons = codons[:-1] #remove c-terminal stop codon
     
