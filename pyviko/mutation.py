@@ -20,7 +20,6 @@ class Mutant:
 	codons = []
 	nMut = 1
 	overGene = False
-	startSites = []
 	mutants = []
 	
 	def __init__(self, sequence, numMutations = 1):
@@ -49,24 +48,49 @@ class Mutant:
 			tempRestrictionSites = {} # Reduce size of dict. searched
 			for site in rKeys:
 				tempRestrictionSites[site] = rSites[site]
+			restrictionSiteLengths = [rSiteLength]
 		else:
 			raise core.SequenceError("Invalid restriction site length.")
 			
 		stops = findPossibleStopCodons(self.codons, self.nMut)
 			
 		if self.overGene:
-			winners = []
+			safeMutations = []
 			for poss in stops:
 				nCodons = [codon for codon in self.codons]
 				newCodons = core.insertMutation(nCodons, poss)
 				newOverAAs = core.translate(core.findOverprintedGene(core.seqify(newCodons), self.overGene.startNucleotide-1, self.overGene.frame))
 				if newOverAAs == self.overGene.overAAs:
-					winners.append(poss)
+					safeMutations.append(poss)
 		else:
-			winners = stops
-
-		# next step: compare initial and final (post-mutation) restriction sites
-		# self.startSites!!
+			safeMutations = stops
+			
+		###### Two approaches: regex and non-regex.
+		### Non-regex:
+		baseSites = []
+		for length in restrictionSiteLengths:
+			baseSites += restriction.findNcutters(self.seq, length)
+			
+		# baseSites = set(baseSites) #for some reason this will not work... Collection? Should use sets though
+		newSites = [] # list of lists
+		for mut in safeMutations:
+			newSites.append([])
+			for length in restrictionSiteLengths:
+				newSites[-1] += restriction.findNcutters(core.seqify(core.insertMutation(self.codons, mut)), length)
+				
+		winners = []
+		for l in newSites:
+			if l <> baseSites: #this is why I should use sets
+				tempSites = [c for c in baseSites]
+				for site in l: #basically, removing everything in the new list from the old list to get the differences
+					try:
+						tempSites.remove(site)
+					except ValueError:
+						tempSites.append((site, '+'))
+						
+				winners.append((safeMutations[newSites.index(l)], tempSites))
+		
+		# next step: post process `winners` to make the tuples look pretty (- and +), store in Mutant object
 	
 def findPossibleStopCodons(codons, n):
 	'''

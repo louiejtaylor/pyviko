@@ -48,8 +48,9 @@ def insertMutation(codons, mut):
 	removing the codon to be mutated from the list, then adding
 	the newly mutated codon in its position. 
 	'''
-	codons.pop(mut[0])
-	newCodons = codons[:mut[0]] + [mut[1]] + codons[mut[0]:]
+	iCodons = [c for c in codons]
+	iCodons.pop(mut[0])
+	newCodons = iCodons[:mut[0]] + [mut[1]] + iCodons[mut[0]:]
 	return newCodons
 
 def findOverprintedGene(seq, startIndex, frame=1):

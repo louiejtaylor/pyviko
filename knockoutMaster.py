@@ -103,6 +103,7 @@ def findRestrictionSiteChanges(seq, frame, startsBefore, numMutations):
 	for i in safeMutations:
 		newSites.append((i, findNcutters(seqify(insertMutation(codonify(seq),i)), 6)))
 	winners = []
+	print len(newSites)
 	for j in newSites:
 		if j[1] <> rSites:
 			re = [r for r in rSites]
@@ -113,6 +114,8 @@ def findRestrictionSiteChanges(seq, frame, startsBefore, numMutations):
 					re.append((site,'+++'))
 			k = (j[0], re)
 			winners.append(k)
+	for w in winners:
+		print w
 	return winners
 		
 	# print all6mers[0], all6mers[1], all6mers[-2], all6mers[-1]
