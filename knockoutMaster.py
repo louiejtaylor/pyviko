@@ -113,7 +113,6 @@ def findRestrictionSiteChanges(seq, frame, startsBefore, numMutations):
 					re.append((site,'+++'))
 			k = (j[0], re)
 			winners.append(k)
-	
 	return winners
 		
 	# print all6mers[0], all6mers[1], all6mers[-2], all6mers[-1]

@@ -17,34 +17,56 @@ class Mutant:
 	
 	# dummy variables
 	seq = ''
+	codons = []
 	nMut = 1
-	isOverGene = False
-	mutants = [] #will hold tuple?!
+	overGene = False
+	startSites = []
+	mutants = []
 	
 	def __init__(self, sequence, numMutations = 1):
 		self.seq = sequence
 		self.nMut = numMutations
+		self.codons = core.codonify(sequence)
 		
-	def overGene(self, startNt, overFrame = 1):
-	'''
-	Adds the overprinted gene to the current sequence object.
-	'''
+	def setOverGene(self, startNt, overFrame = 1):
+		'''
+		Adds the overprinted gene to the current sequence object.
+		'''
 		self.overGene = OverGene(startNt, self.seq, overFrame)
-		self.isOverGene = True
 		
 	def findMutants(self, rSiteLength = 6, rSites = restriction.restrictionSites):
-	'''
-	Returns a list of mutants that add a premature stop codon 
-	(or mutate the start codon) without changing the overprinted 
-	gene, and which add or remove a restriction site.
-	'''
+		'''
+		Returns a list of mutants that add a premature stop codon 
+		(or mutate the start codon) without changing the overprinted 
+		gene, and which add or remove a restriction site.
+		'''
+		restrictionSiteLengths = list(set([len(k) for k in rSites.keys()]))
+		
 		if rSiteLength == 'all':
-			x = 7
-		elif 5 <= rSiteLength and rSiteLength <= 10:
-			x = 8
+			tempRestrictionSites = rSites
+		elif rSiteLength >= min(restrictionSiteLengths) and rSiteLength <= max(restrictionSiteLengths):
+			rKeys = [k for k in rSites.keys() if len(k) == rSiteLength]
+			tempRestrictionSites = {} # Reduce size of dict. searched
+			for site in rKeys:
+				tempRestrictionSites[site] = rSites[site]
 		else:
-			#throw error
-			x = 9
+			raise core.SequenceError("Invalid restriction site length.")
+			
+		stops = findPossibleStopCodons(self.codons, self.nMut)
+			
+		if self.overGene:
+			winners = []
+			for poss in stops:
+				nCodons = [codon for codon in self.codons]
+				newCodons = core.insertMutation(nCodons, poss)
+				newOverAAs = core.translate(core.findOverprintedGene(core.seqify(newCodons), self.overGene.startNucleotide-1, self.overGene.frame))
+				if newOverAAs == self.overGene.overAAs:
+					winners.append(poss)
+		else:
+			winners = stops
+
+		# next step: compare initial and final (post-mutation) restriction sites
+		# self.startSites!!
 	
 def findPossibleStopCodons(codons, n):
 	'''

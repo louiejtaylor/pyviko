@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+# take advantage of the degenerate amino acid codon coding
 '''
 Testing restriction site finder methods. KEY:
 	A
