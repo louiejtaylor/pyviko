@@ -1,6 +1,11 @@
 stopCodons = ['TAG', 'TAA', 'TGA']
 translation = {'CTT': 'L', 'ATG': 'M', 'AAG': 'K', 'AAA': 'K', 'ATC': 'I', 'AAC': 'N', 'ATA': 'I', 'AGG': 'R', 'CCT': 'P', 'ACT': 'T', 'AGC': 'S', 'ACA': 'T', 'AGA': 'R', 'CAT': 'H', 'AAT': 'N', 'ATT': 'I', 'CTG': 'L', 'CTA': 'L', 'CTC': 'L', 'CAC': 'H', 'ACG': 'T', 'CAA': 'Q', 'AGT': 'S', 'CAG': 'Q', 'CCG': 'P', 'CCC': 'P', 'TAT': 'Y', 'GGT': 'G', 'TGT': 'C', 'CGA': 'R', 'CCA': 'P', 'TCT': 'S', 'GAT': 'D', 'CGG': 'R', 'TTT': 'F', 'TGC': 'C', 'GGG': 'G', 'GGA': 'G', 'TGG': 'W', 'GGC': 'G', 'TAC': 'Y', 'GAG': 'E', 'TCG': 'S', 'TTA': 'L', 'GAC': 'D', 'TCC': 'S', 'GAA': 'E', 'TCA': 'S', 'GCA': 'A', 'GTA': 'V', 'GCC': 'A', 'GTC': 'V', 'GCG': 'A', 'GTG': 'V', 'TTC': 'F', 'GTT': 'V', 'GCT': 'A', 'ACC': 'T', 'TTG': 'L', 'CGT': 'R', 'CGC': 'R'}
 
+import warnings
+
+class SequenceError(Exception):
+	pass
+
 def codonify(sequence):
 	'''
 	Converts an input DNA sequence (str) to a list of codons.
@@ -21,7 +26,6 @@ def seqify(cod):
 	return sequence
 	
 def translate(codons):
-	#TODO: build failsafe for stop codon
 	'''
 	Translates a list of DNA codons into the corresponding amino 
 	acids, stopping translation if a stop codon is encountered.
@@ -65,7 +69,7 @@ def findOverprintedGene(seq, startIndex, frame=1):
 		codons = codonify(seq[startIndex:])[:-1]
 	else:
 		if frame == 1:
-			print "WARNING THIS IS THE SAME FRAME"
+			raise SequenceError("The overprinted sequence is in the same frame as the main coding sequence. Please provide a frame argument.")
 		codons = codonify(seq[frame - 1:])[:-1] # Remove last (incomplete) codon
 
 	for i in range(0,len(codons)):
@@ -74,9 +78,8 @@ def findOverprintedGene(seq, startIndex, frame=1):
 			break
 		
 	if codons[0] <> 'ATG' and startIndex <> -1:
-		print "WARNING: NOT START CODON"
+		warnings.warn("The first codon of your sequence is not a start codon.")
 		
-	# Throw warnings? Or just print them?
 	return codons
 
 def reverseComplement(seq):

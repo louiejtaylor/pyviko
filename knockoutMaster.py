@@ -125,7 +125,7 @@ ATAAGGATCCTGCAACAATTGCTGTTTATTCATTACAGAATTGGCTGCCAACATAGCAGA
 ATAGGCATTCTGCCACAAGGAAGAAGGAGAAATGGATCCAATAGATCCTAA
 '''.replace('\n','')
 
-print findOverprintedGene(sequence,3,True)
+# print findOverprintedGene(sequence,3,True)
 
 if __name__ == "__main__":
 	mutFile = open('test/mutations.fasta',"w")
