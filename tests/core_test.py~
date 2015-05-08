@@ -1,5 +1,5 @@
 import unittest
-from pyviko.core import codonify
+from core import codonify
 
 class codonifyTestCase(unittest.TestCase):
     """Tests for `codonify` function."""

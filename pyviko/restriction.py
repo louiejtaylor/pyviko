@@ -8,7 +8,9 @@ except ImportError:
 	warnings.warn("To support overlapping restriction sites, please update to the new regex module.")
 	import re
 
-nucleotideMatrix = {'R':['A','G'],
+
+  # A C T G
+nucleotideMatrix = {	'R':['A','G'],
 					'Y':['C','T'],
 					'W':['A','T'],
 					'S':['C','G'],
