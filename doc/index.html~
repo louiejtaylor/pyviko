@@ -1061,8 +1061,12 @@ table {
 
   <section id="section-items">
 
+   <h2> <a href="core.m.html">core</a> </h2>
+   <h2> <a href="bio.m.html">bio</a> </h2>
+   <h2> <a href="mutation.m.ml">mutation</a> </h2>
+   <h2> <a href="restriction.m.html">restriction</a> </h2>
 
-
+   
   </section>
 
     </article>
