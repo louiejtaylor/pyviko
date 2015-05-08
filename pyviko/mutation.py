@@ -1,6 +1,7 @@
 from pyviko import core, restriction
 
 class OverGene:
+	
 	# dummy variables
 	frame = 1
 	startNucleotide = 0
@@ -67,6 +68,9 @@ class Mutant:
 			
 		###### Two approaches: regex and non-regex.
 		### Non-regex:
+		
+		#TODO still: account for regex queries (in the non-regex search)		
+		
 		baseSites = []
 		for length in restrictionSiteLengths:
 			baseSites += restriction.findNcutters(self.seq, length)
@@ -140,4 +144,3 @@ def findPossibleStopCodons(codons, n):
 	return matches
 
 # pyviko.mutation.Mutant('ATGGCGCGGCTAAGGGCCTAA')
->>>>>>> 8314a748284ed32f55658c05b2b2173e64905dd1
