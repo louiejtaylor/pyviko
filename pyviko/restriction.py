@@ -20,7 +20,7 @@ nucleotideMatrix = {'R':['A','G'],
 					'V':['A','C','G'],
 					'N':['A','C','G','T']}
 
-def findNonRegexEnzymeSites(site):
+def findNonRegexEnzymeSite(site):
 	'''
 	Builds a list of sequences that correspond to a given 
 	restriction enzyme recognition site (tree walking).
@@ -73,3 +73,9 @@ def findNcutters(seq, n):
 			
 	# Limitation: assumes dict restrictionSites is in non-regex form (could be very large)
 	return actualSites
+
+def reFindEnzymes(restrictionDict, seq):
+	print 5
+	
+def strFindEnzymes(restrictionDict, seq):
+	print 6

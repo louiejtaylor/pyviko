@@ -24,26 +24,8 @@ try:
 except ImportError:
 	import re
 	print "reeee"
-from pyviko.restriction import restrictionSites, findNonRegexEnzymeSites, findEnzymeSiteRegex, findNcutters
+from pyviko.restriction import restrictionSites, findNonRegexEnzymeSite, findEnzymeSiteRegex, findNcutters
 
-
-'''
-# testing regex counter.
-testSites = ['AA', 'TATGCG', 'ARA', 'RRR', 'NN', 'ABC', 'SS', 'NAV']
-for t in testSites:
-	print findNonRegexEnzymeSites(t)
-# looks good!
-'''
-#sequence = 'ATGGAACAAGCCCCGGAAGACCAAGGGCCACAAAGAGAGCCATACAATGAATGGACACTAGAATTATTAGATGAACTCAAACAGGAAGCAGTAAGACATTTTCCTAGACAGTGGCTTCATGATTTAGGACAGCACATTTATAACACATATGGAGACACTTGGGCGGGGGTTGAGGCTATCATAAGGATCCTGCAACAATTGCTGTTTATTCATTACAGAATTGGCTGCCAACATAGCAGAATAGGCATTCTGCCACAAGGAAGAAGGAGAAATGGATCCAATAGATCCTAA'
-
-'''
-print findNcutters(sequence, 6)
-# initial test good
-'''
-'''
-print findOverprintedGene(sequence, -1, 3)
-# looks good!
-'''
 
 ###
 # Unified site testing
@@ -88,7 +70,7 @@ def testNcutters(seq, n, rlist):
 # Ideally, should have the same results for regex and non-regex searches
 s = []
 for sis in sites:
-	s.append(findNonRegexEnzymeSites(sis))
+	s.append(findNonRegexEnzymeSite(sis))
 	
 for ww in s:
 	print testNcutters(sequence, len(ww[0]), ww)
