@@ -30,6 +30,8 @@ from pyviko.restriction import restrictionSites, findNonRegexEnzymeSite, findEnz
 ###
 # Unified site testing
 sites = ['AAAGGG','AAASSS','SSS','SSSWWW','SWSR', 'ACGTRYSWMKBDHVN']
+# sites = {'AAAGGG':1,'AAASSS':2,'SSS':3,'SSSWWW':4,'SWSR':5, 'ACGTRYSWMKBDHVN':6} #for true testing
+
 sequence = 'AAAGGGCCCTTTAGCTAGAGAGACAGACAACGTACGTATCGTAA'
 
 ###################################

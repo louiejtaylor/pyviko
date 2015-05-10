@@ -34,6 +34,8 @@ def translate(codons):
 		if codons[i] in stopCodons:
 			codons = codons[:i]
 			break
+	if len(codons[-1]) <> 3:
+		codons = codons[:-1] # Remove last codon if incomplete
 	aa = ''
 	for c in codons:
 		aa = aa + translation[c]
@@ -49,10 +51,19 @@ def insertMutation(codons, mut):
 	the newly mutated codon in its position. 
 	'''
 	iCodons = [c for c in codons]
-	iCodons.pop(mut[0])
+	iCodons.pop(mut[0]) #is this popping faster? or would it be faster to just do codons[:i] + mut[1] + codons [i+1:]
 	newCodons = iCodons[:mut[0]] + [mut[1]] + iCodons[mut[0]:]
 	return newCodons
-
+	
+def pointMutant(seq, mut):
+	'''
+	Takes as input a sequence `seq` to mutate
+	and a tuple `mut` in the form (index, 'mutated nt') ex. `(3, 'A')`.
+	Returns a nucleotide sequence with a point mutation.
+	'''
+	## INDEX OR POSITION?!
+	return seq[:mut[0]] + mut[1] + seq[mut[0]+1:]
+	
 def findOverprintedGene(seq, startIndex, frame=1):
 	'''
 	Given a sequence `seq` and the `startIndex` of 
@@ -67,7 +78,7 @@ def findOverprintedGene(seq, startIndex, frame=1):
 	'''
 	if startIndex <> -1:
 		frame = 1   # In case `frame` argument provided erroneously
-		codons = codonify(seq[startIndex:])[:-1]
+		codons = codonify(seq[startIndex:])[:-1] # Remove last (incomplete) codon
 	else:
 		if frame == 1:
 			raise SequenceError("The overprinted sequence is in the same frame as the main coding sequence. Please provide a frame argument.")

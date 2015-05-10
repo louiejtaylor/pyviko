@@ -30,9 +30,25 @@ class Mutant:
 		
 	def setOverGene(self, startNt, overFrame = 1):
 		'''
-		Adds the overprinted gene to the current sequence object.
+		Adds the overprinted gene to the current `Mutant` object.
 		'''
 		self.overGene = OverGene(startNt, self.seq, overFrame)
+		
+	def vector(self, sequence):
+		'''
+		Adds the vector sequence to the current `Mutant` object 
+		(primarily for making primers of early knockouts).
+		'''
+		if self.seq in sequence:
+			self.vectorSeq = sequence
+		else:
+			raise core.SequenceError("Could not find target sequence in vector sequence.")
+			
+	def addMutant(self, mut):
+		'''
+		Add individual point mutants by hand, mut tuple
+		'''
+		#Should change all places I use `mut` to either ntMut or codMut for less ambiguity
 		
 	def findMutants(self, rSiteLength = 6, rSites = restriction.restrictionSites):
 		'''
@@ -93,7 +109,7 @@ class Mutant:
 						tempSites.append((site, '+'))
 						
 				winners.append((safeMutations[newSites.index(l)], tempSites))
-		
+		# also look for start codon KOs
 		# next step: post process `winners` to make the tuples look pretty (- and +), store in Mutant object
 	
 def findPossibleStopCodons(codons, n):
@@ -143,4 +159,9 @@ def findPossibleStopCodons(codons, n):
 			
 	return matches
 
-# pyviko.mutation.Mutant('ATGGCGCGGCTAAGGGCCTAA')
+def primers(mutant, length=30):
+	#need doc, ALSO need to figure out a way to tell the primer function *which* mutant to make
+	try:
+		primer = 5
+	except AttributeError:
+		raise AttributeError("Vector sequence not found. Please add a vector sequence to the Mutant with the .vector() method.")

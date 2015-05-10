@@ -1031,7 +1031,7 @@ table {
     
   
   <div id="sidebar">
-   <h1><a href="http://louiejtaylor.github.io/pyViKO/doc/index.html">pyViKO</a></h1>
+    <h1><a href="http://louiejtaylor.github.io/pyViKO/doc/index.html">pyViKO</a></h1>
     <ul id="index">
     <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
       
@@ -1048,6 +1048,7 @@ table {
     <li class="mono"><a href="#pyviko.core.codonify">codonify</a></li>
     <li class="mono"><a href="#pyviko.core.findOverprintedGene">findOverprintedGene</a></li>
     <li class="mono"><a href="#pyviko.core.insertMutation">insertMutation</a></li>
+    <li class="mono"><a href="#pyviko.core.pointMutant">pointMutant</a></li>
     <li class="mono"><a href="#pyviko.core.reverseComplement">reverseComplement</a></li>
     <li class="mono"><a href="#pyviko.core.seqify">seqify</a></li>
     <li class="mono"><a href="#pyviko.core.translate">translate</a></li>
@@ -1116,6 +1117,8 @@ table {
 		<span class="k">if</span> <span class="n">codons</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">stopCodons</span><span class="p">:</span>
 			<span class="n">codons</span> <span class="o">=</span> <span class="n">codons</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span>
 			<span class="k">break</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">codons</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;&gt;</span> <span class="mi">3</span><span class="p">:</span>
+		<span class="n">codons</span> <span class="o">=</span> <span class="n">codons</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c"># Remove last codon if incomplete</span>
 	<span class="n">aa</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
 	<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">codons</span><span class="p">:</span>
 		<span class="n">aa</span> <span class="o">=</span> <span class="n">aa</span> <span class="o">+</span> <span class="n">translation</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
@@ -1131,10 +1134,19 @@ table {
 <span class="sd">	the newly mutated codon in its position. </span>
 <span class="sd">	&#39;&#39;&#39;</span>
 	<span class="n">iCodons</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">codons</span><span class="p">]</span>
-	<span class="n">iCodons</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">mut</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+	<span class="n">iCodons</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">mut</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c">#is this popping faster? or would it be faster to just do codons[:i] + mut[1] + codons [i+1:]</span>
 	<span class="n">newCodons</span> <span class="o">=</span> <span class="n">iCodons</span><span class="p">[:</span><span class="n">mut</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="p">[</span><span class="n">mut</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">+</span> <span class="n">iCodons</span><span class="p">[</span><span class="n">mut</span><span class="p">[</span><span class="mi">0</span><span class="p">]:]</span>
 	<span class="k">return</span> <span class="n">newCodons</span>
-
+	
+<span class="k">def</span> <span class="nf">pointMutant</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">mut</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	Takes as input a sequence `seq` to mutate</span>
+<span class="sd">	and a tuple `mut` in the form (index, &#39;mutated nt&#39;) ex. `(3, &#39;A&#39;)`.</span>
+<span class="sd">	Returns a nucleotide sequence with a point mutation.</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="c">## INDEX OR POSITION?!</span>
+	<span class="k">return</span> <span class="n">seq</span><span class="p">[:</span><span class="n">mut</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="n">mut</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">seq</span><span class="p">[</span><span class="n">mut</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">:]</span>
+	
 <span class="k">def</span> <span class="nf">findOverprintedGene</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">startIndex</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 	<span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">	Given a sequence `seq` and the `startIndex` of </span>
@@ -1149,7 +1161,7 @@ table {
 <span class="sd">	&#39;&#39;&#39;</span>
 	<span class="k">if</span> <span class="n">startIndex</span> <span class="o">&lt;&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
 		<span class="n">frame</span> <span class="o">=</span> <span class="mi">1</span>   <span class="c"># In case `frame` argument provided erroneously</span>
-		<span class="n">codons</span> <span class="o">=</span> <span class="n">codonify</span><span class="p">(</span><span class="n">seq</span><span class="p">[</span><span class="n">startIndex</span><span class="p">:])[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+		<span class="n">codons</span> <span class="o">=</span> <span class="n">codonify</span><span class="p">(</span><span class="n">seq</span><span class="p">[</span><span class="n">startIndex</span><span class="p">:])[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c"># Remove last (incomplete) codon</span>
 	<span class="k">else</span><span class="p">:</span>
 		<span class="k">if</span> <span class="n">frame</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
 			<span class="k">raise</span> <span class="n">SequenceError</span><span class="p">(</span><span class="s">&quot;The overprinted sequence is in the same frame as the main coding sequence. Please provide a frame argument.&quot;</span><span class="p">)</span>
@@ -1268,7 +1280,7 @@ of <code>seq</code>, the <code>startIndex</code> will be 58.</p></div>
 <span class="sd">	&#39;&#39;&#39;</span>
 	<span class="k">if</span> <span class="n">startIndex</span> <span class="o">&lt;&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
 		<span class="n">frame</span> <span class="o">=</span> <span class="mi">1</span>   <span class="c"># In case `frame` argument provided erroneously</span>
-		<span class="n">codons</span> <span class="o">=</span> <span class="n">codonify</span><span class="p">(</span><span class="n">seq</span><span class="p">[</span><span class="n">startIndex</span><span class="p">:])[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+		<span class="n">codons</span> <span class="o">=</span> <span class="n">codonify</span><span class="p">(</span><span class="n">seq</span><span class="p">[</span><span class="n">startIndex</span><span class="p">:])[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c"># Remove last (incomplete) codon</span>
 	<span class="k">else</span><span class="p">:</span>
 		<span class="k">if</span> <span class="n">frame</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
 			<span class="k">raise</span> <span class="n">SequenceError</span><span class="p">(</span><span class="s">&quot;The overprinted sequence is in the same frame as the main coding sequence. Please provide a frame argument.&quot;</span><span class="p">)</span>
@@ -1318,9 +1330,39 @@ the newly mutated codon in its position.</p></div>
 <span class="sd">	the newly mutated codon in its position. </span>
 <span class="sd">	&#39;&#39;&#39;</span>
 	<span class="n">iCodons</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">codons</span><span class="p">]</span>
-	<span class="n">iCodons</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">mut</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+	<span class="n">iCodons</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">mut</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c">#is this popping faster? or would it be faster to just do codons[:i] + mut[1] + codons [i+1:]</span>
 	<span class="n">newCodons</span> <span class="o">=</span> <span class="n">iCodons</span><span class="p">[:</span><span class="n">mut</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="p">[</span><span class="n">mut</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">+</span> <span class="n">iCodons</span><span class="p">[</span><span class="n">mut</span><span class="p">[</span><span class="mi">0</span><span class="p">]:]</span>
 	<span class="k">return</span> <span class="n">newCodons</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="pyviko.core.pointMutant">
+    <p>def <span class="ident">pointMutant</span>(</p><p>seq, mut)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Takes as input a sequence <code>seq</code> to mutate
+and a tuple <code>mut</code> in the form (index, 'mutated nt') ex. <code>(3, 'A')</code>.
+Returns a nucleotide sequence with a point mutation.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pyviko.core.pointMutant', this);">Show source &equiv;</a></p>
+  <div id="source-pyviko.core.pointMutant" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">pointMutant</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">mut</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	Takes as input a sequence `seq` to mutate</span>
+<span class="sd">	and a tuple `mut` in the form (index, &#39;mutated nt&#39;) ex. `(3, &#39;A&#39;)`.</span>
+<span class="sd">	Returns a nucleotide sequence with a point mutation.</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="c">## INDEX OR POSITION?!</span>
+	<span class="k">return</span> <span class="n">seq</span><span class="p">[:</span><span class="n">mut</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="n">mut</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">seq</span><span class="p">[</span><span class="n">mut</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">:]</span>
 </pre></div>
 
   </div>
@@ -1416,6 +1458,8 @@ acids, stopping translation if a stop codon is encountered.</p></div>
 		<span class="k">if</span> <span class="n">codons</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">stopCodons</span><span class="p">:</span>
 			<span class="n">codons</span> <span class="o">=</span> <span class="n">codons</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span>
 			<span class="k">break</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">codons</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;&gt;</span> <span class="mi">3</span><span class="p">:</span>
+		<span class="n">codons</span> <span class="o">=</span> <span class="n">codons</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c"># Remove last codon if incomplete</span>
 	<span class="n">aa</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
 	<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">codons</span><span class="p">:</span>
 		<span class="n">aa</span> <span class="o">=</span> <span class="n">aa</span> <span class="o">+</span> <span class="n">translation</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>

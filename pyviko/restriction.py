@@ -59,25 +59,48 @@ def findEnzymeSiteRegex(site):
 			r_site += ']'
 	return r_site
 
-def findNcutters(seq, n):
+def findNcutters(seq, n, rSites = restrictionSites):
+	#should *input* list of restriction enzymes!
 	'''
 	Find restriction sites of length `n` in a sequence `seq`
 	in `O(n*m)` where n is the sequence length and m is the
 	number of restriction enzymes.
 	'''
-	n_mers = []
+	n_mers = [] # generator here?
 	for i in range(0, len(seq) - (n-1)):
 		n_mers.append((i, seq[i:i+n]))
 	actualSites = []
-	for s in n_mers:
-		if s[1] in restrictionSites.keys():
-			actualSites.append((s[0],restrictionSites[s[1]]))
+	for s in n_mers:                #can you get a generator for .keys()??
+		if s[1] in rSites.keys(): #would it be faster to not call this every time??
+			actualSites.append((s[0],rSites[s[1]]))
 			
 	# Limitation: assumes dict restrictionSites is in non-regex form (could be very large)
 	return actualSites
 
-def reFindEnzymes(restrictionDict, seq):
-	print 5
+def reFindEnzymes(seq, rSites=restrictionSites):
+	'''
+	Need better documentation.
+	regexSites = [] # I don't think I actually need this
+	for si in restrictionDict.keys():
+		regexSites.append((si, findEnzymeSiteRegex(si))) #tuple of ('site', 'regex')
+	for ww in regexSites:
+		try:
+			q = re.finditer(ww, seq, overlapped=True)
+		except TypeError: #no new regex module
+			q = re.finditer(ww, seq)		
 	
-def strFindEnzymes(restrictionDict, seq):
-	print 6
+	for i in q:
+		print (i.start(), i.string[i.start():i.end()]),
+	print ''
+	'''
+	actualSites = []
+	for site in rSites.keys():
+		regexSite = findEnzymeSiteRegex(site) #avoid calling this twice if no new regex module
+		try:
+			matches = re.finditer(regexSite, seq, overlapped=True)
+		except TypeError: #no new regex module
+			matches = re.finditer(regexSite, seq)	
+		for result in matches:
+			actualSites.append((result.start(),rSites[site]))
+			
+	return actualSites
