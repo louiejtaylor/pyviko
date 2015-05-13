@@ -51,8 +51,9 @@ def insertMutation(codons, mut):
 	the newly mutated codon in its position. 
 	'''
 	iCodons = [c for c in codons]
-	iCodons.pop(mut[0]) #is this popping faster? or would it be faster to just do codons[:i] + mut[1] + codons [i+1:]
-	newCodons = iCodons[:mut[0]] + [mut[1]] + iCodons[mut[0]:]
+	#iCodons.pop(mut[0]) #is this popping faster? or would it be faster to just do codons[:i] + mut[1] + codons [i+1:]
+	#newCodons = iCodons[:mut[0]] + [mut[1]] + iCodons[mut[0]:]
+	iCodons[mut[0]] = mut[1]	
 	return newCodons
 	
 def pointMutant(seq, mut):

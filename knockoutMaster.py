@@ -120,11 +120,11 @@ def findRestrictionSiteChanges(seq, frame, startsBefore, numMutations):
 		
 	# print all6mers[0], all6mers[1], all6mers[-2], all6mers[-1]
 	
-sequence = '''ATGGAACAAGCCCCGGAAGACCAAGGGCCACAAAGAGAGCCATACAATGAATGGACACTA
-GAATTATTAGATGAACTCAAACAGGAAGCAGTAAGACATTTTCCTAGACAGTGGCTTCAT
-GATTTAGGACAGCACATTTATAACACATATGGAGACACTTGGGCGGGGGTTGAGGCTATC
-ATAAGGATCCTGCAACAATTGCTGTTTATTCATTACAGAATTGGCTGCCAACATAGCAGA
-ATAGGCATTCTGCCACAAGGAAGAAGGAGAAATGGATCCAATAGATCCTAA
+sequence = '''ATGGAACAGGCACCAGAAGATCAAGGACCACAGAGGGAGCCATACAACGAATGGGCTTTA
+GAATTGTTGGAAGACCTAAAGAATGAGGCTCTGCGCCACTTTCCTCGGCCTTGGCTACAT
+GGACTAGGGCAATACTTCTATAATACATATGGAGATACCTGGGAGGGAGTAGAGGCCATC
+ATTAGGACACTACAACAACTGTTGTTTATACATTATAGGATTGGCTGTCAACATAGCAGG
+ATAGGAATCACTCCTCAAAGGAGAAGGAATGGAGCCAGTAGATCCTGA
 '''.replace('\n','')
 
 # print findOverprintedGene(sequence,3,True)
@@ -134,7 +134,7 @@ if __name__ == "__main__":
 	#print findNonHarmfulMutations(sequence, 3, True, 1)
 	mutFile.write("> Original sequence\n")
 	mutFile.write(sequence+"\n")
-	for f in findRestrictionSiteChanges(sequence, 3, True, 1):
+	for f in findRestrictionSiteChanges(sequence, 2, True, 2):
 		mutFile.write('> Mutant at codon ' + str(f[0][0]+1) +' '+ str(f[1])+'\n')
 		#print f #for debugging, prints output to screen
 		mutFile.write(seqify(insertMutation(codonify(sequence),f[0]))+'\n')
