@@ -23,10 +23,11 @@ class Mutant:
 	overGene = False
 	mutants = []
 	
-	def __init__(self, sequence, numMutations = 1):
+	def __init__(self, sequence, numMutations = 1, regEx = False):
 		self.seq = sequence
 		self.nMut = numMutations
 		self.codons = core.codonify(sequence)
+		self.regex = regEx
 		
 	def setOverGene(self, startNt, overFrame = 1):
 		'''
@@ -83,32 +84,57 @@ class Mutant:
 			safeMutations = stops
 			
 		###### Two approaches: regex and non-regex.
-		### Non-regex:
+		### Regex:
 		
-		#TODO still: account for regex queries (in the non-regex search)		
-		
-		baseSites = []
-		for length in restrictionSiteLengths:
-			baseSites += restriction.findNcutters(self.seq, length)
+		if self.regex:
+			baseSites = restriction.reFindEnzymes(self.seq)
 			
-		# baseSites = set(baseSites) #for some reason this will not work... Collection? Should use sets though
-		newSites = [] # list of lists
-		for mut in safeMutations:
-			newSites.append([])
-			for length in restrictionSiteLengths:
-				newSites[-1] += restriction.findNcutters(core.seqify(core.insertMutation(self.codons, mut)), length)
+			newSites = []
+			for mut in safeMutations:
+				newSites.append([])
+				for length in restrictionSiteLengths:
+					newSites[-1] += restriction.reFindEnzymes(core.seqify(core.insertMutation(self.codons, mut)))
 				
-		winners = []
-		for l in newSites:
-			if l <> baseSites: #this is why I should use sets
-				tempSites = [c for c in baseSites]
-				for site in l: #basically, removing everything in the new list from the old list to get the differences
-					try:
-						tempSites.remove(site)
-					except ValueError:
-						tempSites.append((site, '+'))
-						
-				winners.append((safeMutations[newSites.index(l)], tempSites))
+			winners = []
+			for l in newSites:
+				if l <> baseSites:
+					tempSites = [c for c in baseSites]
+					for site in l:
+						try:
+							tempSites.remove(site)
+						except ValueError:
+							tempSites.append((site, '+'))
+					
+					winners.append((safeMutations[newSites.index(l)], tempSites))
+		### Non-regex:
+		else:
+		#TODO still: account for regex queries (in the non-regex search)		
+			baseSites = []
+			for length in restrictionSiteLengths:
+				baseSites += restriction.findNcutters(self.seq, length)
+				
+			# baseSites = set(baseSites) #for some reason this will not work... Collection? Should use sets though
+			newSites = [] # list of lists
+			for mut in safeMutations:
+				newSites.append([])
+				for length in restrictionSiteLengths:
+					newSites[-1] += restriction.findNcutters(core.seqify(core.insertMutation(self.codons, mut)), length)
+					
+			winners = []
+			for l in newSites:
+				if l <> baseSites: #this is why I should use sets
+					tempSites = [c for c in baseSites]
+					for site in l: #basically, removing everything in the new list from the old list to get the differences
+						try:
+							tempSites.remove(site)
+						except ValueError:
+							tempSites.append((site, '+'))
+							
+					winners.append((safeMutations[newSites.index(l)], tempSites))
+		
+		return winners
+		
+
 		# also look for start codon KOs
 		# next step: post process `winners` to make the tuples look pretty (- and +), store in Mutant object
 	
@@ -159,9 +185,11 @@ def findPossibleStopCodons(codons, n):
 			
 	return matches
 
+'''
 def primers(mutant, length=30):
 	#need doc, ALSO need to figure out a way to tell the primer function *which* mutant to make
 	try:
 		primer = 5
 	except AttributeError:
 		raise AttributeError("Vector sequence not found. Please add a vector sequence to the Mutant with the .vector() method.")
+'''#to complete later

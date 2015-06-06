@@ -54,7 +54,7 @@ def insertMutation(codons, mut):
 	#iCodons.pop(mut[0]) #is this popping faster? or would it be faster to just do codons[:i] + mut[1] + codons [i+1:]
 	#newCodons = iCodons[:mut[0]] + [mut[1]] + iCodons[mut[0]:]
 	iCodons[mut[0]] = mut[1]	
-	return newCodons
+	return iCodons
 	
 def pointMutant(seq, mut):
 	'''
@@ -77,6 +77,7 @@ def findOverprintedGene(seq, startIndex, frame=1):
 	so if the overprinted gene starts from the 59th nucleotide
 	of `seq`, the `startIndex` will be 58.
 	'''
+	
 	if startIndex <> -1:
 		frame = 1   # In case `frame` argument provided erroneously
 		codons = codonify(seq[startIndex:])[:-1] # Remove last (incomplete) codon
@@ -84,7 +85,6 @@ def findOverprintedGene(seq, startIndex, frame=1):
 		if frame == 1:
 			raise SequenceError("The overprinted sequence is in the same frame as the main coding sequence. Please provide a frame argument.")
 		codons = codonify(seq[frame - 1:])[:-1] # Remove last (incomplete) codon
-
 	for i in range(0,len(codons)):
 		if codons[i] in stopCodons:
 			codons = codons[:i]

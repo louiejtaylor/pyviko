@@ -63,8 +63,9 @@ def findNcutters(seq, n, rSites = restrictionSites):
 	#should *input* list of restriction enzymes!
 	'''
 	Find restriction sites of length `n` in a sequence `seq`
-	in `O(n*m)` where n is the sequence length and m is the
-	number of restriction enzymes.
+	in `O(n*m)` where `n` is the sequence length and `m` is the
+	number of restriction enzymes. Returns a list of tuples
+	of the form `(site index, 'enzyme name')`.
 	'''
 	n_mers = [] # generator here?
 	for i in range(0, len(seq) - (n-1)):
@@ -79,19 +80,9 @@ def findNcutters(seq, n, rSites = restrictionSites):
 
 def reFindEnzymes(seq, rSites=restrictionSites):
 	'''
-	Need better documentation.
-	regexSites = [] # I don't think I actually need this
-	for si in restrictionDict.keys():
-		regexSites.append((si, findEnzymeSiteRegex(si))) #tuple of ('site', 'regex')
-	for ww in regexSites:
-		try:
-			q = re.finditer(ww, seq, overlapped=True)
-		except TypeError: #no new regex module
-			q = re.finditer(ww, seq)		
-	
-	for i in q:
-		print (i.start(), i.string[i.start():i.end()]),
-	print ''
+	Find restriction sites in a sequence `seq`
+	using regular expressions. Returns a list of tuples
+	of the form `(site index, 'enzyme name')`.
 	'''
 	actualSites = []
 	for site in rSites.keys():
