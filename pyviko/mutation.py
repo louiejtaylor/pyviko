@@ -1,5 +1,7 @@
 from pyviko import core, restriction
 
+# TODO - scrambling, excision KO?
+
 class OverGene:
 	
 	# dummy variables
@@ -83,29 +85,22 @@ class Mutant:
 		else:
 			safeMutations = stops
 			
+			
+			
+		
 		###### Two approaches: regex and non-regex.
+		newSites = [] # list of lists
+		
 		### Regex:
 		
 		if self.regex:
 			baseSites = restriction.reFindEnzymes(self.seq)
 			
-			newSites = []
 			for mut in safeMutations:
 				newSites.append([])
 				for length in restrictionSiteLengths:
 					newSites[-1] += restriction.reFindEnzymes(core.seqify(core.insertMutation(self.codons, mut)))
 				
-			winners = []
-			for l in newSites:
-				if l <> baseSites:
-					tempSites = [c for c in baseSites]
-					for site in l:
-						try:
-							tempSites.remove(site)
-						except ValueError:
-							tempSites.append((site, '+'))
-					
-					winners.append((safeMutations[newSites.index(l)], tempSites))
 		### Non-regex:
 		else:
 		#TODO still: account for regex queries (in the non-regex search)		
@@ -114,23 +109,23 @@ class Mutant:
 				baseSites += restriction.findNcutters(self.seq, length)
 				
 			# baseSites = set(baseSites) #for some reason this will not work... Collection? Should use sets though
-			newSites = [] # list of lists
 			for mut in safeMutations:
 				newSites.append([])
 				for length in restrictionSiteLengths:
 					newSites[-1] += restriction.findNcutters(core.seqify(core.insertMutation(self.codons, mut)), length)
 					
-			winners = []
-			for l in newSites:
-				if l <> baseSites: #this is why I should use sets
-					tempSites = [c for c in baseSites]
-					for site in l: #basically, removing everything in the new list from the old list to get the differences
-						try:
-							tempSites.remove(site)
-						except ValueError:
-							tempSites.append((site, '+'))
-							
-					winners.append((safeMutations[newSites.index(l)], tempSites))
+					
+		winners = []
+		for l in newSites:
+			if l <> baseSites: #this is why I should use sets
+				tempSites = [c for c in baseSites]
+				for site in l: #basically, removing everything in the new list from the old list to get the differences
+					try:
+						tempSites.remove(site)
+					except ValueError:
+						tempSites.append((site, '+'))
+						
+				winners.append((safeMutations[newSites.index(l)], tempSites))
 		
 		return winners
 		
