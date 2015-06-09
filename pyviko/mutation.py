@@ -1,6 +1,7 @@
 from pyviko import core, restriction
 
 # TODO - scrambling, excision KO?
+# TODO - allow for input of full overprinted gene (and then find greatest common overlap)
 
 class OverGene:
 	

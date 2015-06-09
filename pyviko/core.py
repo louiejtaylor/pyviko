@@ -110,3 +110,10 @@ def reverseComplement(seq):
 		print "Unknown nucleotide '" + nt  + "' encountered."
 	
 	return rev
+	
+def findOverlap(seq1, seq2):
+	'''
+	Given two sequences, returns a tuple `(i1, i2)` where `i1`
+	is the index in `seq1` where the overlap with `seq2` begins and
+	`i2` is the corresponding index in `seq2`.
+	'''

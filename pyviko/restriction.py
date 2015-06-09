@@ -78,7 +78,7 @@ def findNcutters(seq, n, rSites = restrictionSites):
 	
 	actualSites = []
 	recKeys = tempSites.keys()
-	for s in n_mers:                #can you get a generator for .keys()??
+	for s in n_mers:
 		if s[1] in recKeys: 
 			actualSites.append((s[0],tempSites[s[1]]))
 			
@@ -92,10 +92,10 @@ def reFindEnzymes(seq, rSites=restrictionSites):
 	'''
 	actualSites = []
 	for site in rSites.keys():
-		regexSite = findEnzymeSiteRegex(site) #avoid calling this twice if no new regex module
+		regexSite = findEnzymeSiteRegex(site)
 		try:
 			matches = re.finditer(regexSite, seq, overlapped=True)
-		except TypeError: #no new regex module
+		except TypeError: #if no new regex module
 			matches = re.finditer(regexSite, seq)	
 		for result in matches:
 			actualSites.append((result.start(),rSites[site]))
