@@ -67,15 +67,21 @@ def findNcutters(seq, n, rSites = restrictionSites):
 	number of restriction enzymes. Returns a list of tuples
 	of the form `(site index, 'enzyme name')`.
 	'''
+	tempSites = {}
+	for si in rSites.keys():
+		for se in findNonRegexEnzymeSite(si):
+			tempSites[se] = rSites[si]
+
 	n_mers = [] # generator here?
 	for i in range(0, len(seq) - (n-1)):
 		n_mers.append((i, seq[i:i+n]))
+	
 	actualSites = []
+	recKeys = tempSites.keys()
 	for s in n_mers:                #can you get a generator for .keys()??
-		if s[1] in rSites.keys(): #would it be faster to not call this every time??
-			actualSites.append((s[0],rSites[s[1]]))
+		if s[1] in recKeys: 
+			actualSites.append((s[0],tempSites[s[1]]))
 			
-	# Limitation: assumes dict restrictionSites is in non-regex form (could be very large)
 	return actualSites
 
 def reFindEnzymes(seq, rSites=restrictionSites):

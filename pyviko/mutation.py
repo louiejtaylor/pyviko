@@ -4,7 +4,6 @@ from pyviko import core, restriction
 
 class OverGene:
 	
-	# dummy variables
 	frame = 1
 	startNucleotide = 0
 	sequence = ''
@@ -18,7 +17,6 @@ class OverGene:
 
 class Mutant:
 	
-	# dummy variables
 	seq = ''
 	codons = []
 	nMut = 1
@@ -84,9 +82,6 @@ class Mutant:
 					safeMutations.append(poss)
 		else:
 			safeMutations = stops
-			
-			
-			
 		
 		###### Two approaches: regex and non-regex.
 		newSites = [] # list of lists
@@ -103,7 +98,8 @@ class Mutant:
 				
 		### Non-regex:
 		else:
-		#TODO still: account for regex queries (in the non-regex search)		
+		#TODO still: account for regex queries (in the non-regex search)
+		#this should actuall be done in the findNcutters function
 			baseSites = []
 			for length in restrictionSiteLengths:
 				baseSites += restriction.findNcutters(self.seq, length)
@@ -179,12 +175,3 @@ def findPossibleStopCodons(codons, n):
 			matches.append((m[0],codon))
 			
 	return matches
-
-'''
-def primers(mutant, length=30):
-	#need doc, ALSO need to figure out a way to tell the primer function *which* mutant to make
-	try:
-		primer = 5
-	except AttributeError:
-		raise AttributeError("Vector sequence not found. Please add a vector sequence to the Mutant with the .vector() method.")
-'''#to complete later
