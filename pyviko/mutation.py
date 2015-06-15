@@ -52,7 +52,7 @@ class Mutant:
 		'''
 		#Should change all places I use `mut` to either ntMut or codMut for less ambiguity
 		
-	def findMutants(self, rSiteLength = 6, rSites = restriction.restrictionSites):
+	def findMutants(self, rSiteLength = 6, rSites = restriction.defaultEnzymes):
 		'''
 		Returns a list of mutants that add a premature stop codon 
 		(or mutate the start codon) without changing the overprinted 
@@ -99,8 +99,7 @@ class Mutant:
 				
 		### Non-regex:
 		else:
-		#TODO still: account for regex queries (in the non-regex search)
-		#this should actuall be done in the findNcutters function
+			
 			baseSites = []
 			for length in restrictionSiteLengths:
 				baseSites += restriction.findNcutters(self.seq, length)
@@ -112,21 +111,29 @@ class Mutant:
 					newSites[-1] += restriction.findNcutters(core.seqify(core.insertMutation(self.codons, mut)), length)
 					
 					
-		winners = []
+		winners = {}
 		for l in newSites:
 			if l <> baseSites: #this is why I should use sets
 				tempSites = [c for c in baseSites]
+				tempAddedSites = []
 				for site in l: #basically, removing everything in the new list from the old list to get the differences
 					try:
 						tempSites.remove(site)
 					except ValueError:
-						tempSites.append((site, '+'))
-						
-				winners.append((safeMutations[newSites.index(l)], tempSites))
+						tempAddedSites.append(site)
+				
+				for i in range(0,len(tempSites)):
+					tempSites[i] = (tempSites[i][0], tempSites[i][1], '-')
+					
+				for i in range (0, len(tempAddedSites)):
+					tempAddedSites[i] = (tempAddedSites[i][0], tempAddedSites[i][1], '+')
+				
+				winners[safeMutations[newSites.index(l)]] = tempSites + tempAddedSites
 		
-		return winners
+		finalWinners = winners
 		
-
+		return finalWinners
+		
 		# also look for start codon KOs
 		# next step: post process `winners` to make the tuples look pretty (- and +), store in Mutant object
 	
@@ -176,3 +183,5 @@ def findPossibleStopCodons(codons, n):
 			matches.append((m[0],codon))
 			
 	return matches
+
+print restriction.defaultEnzymes()
