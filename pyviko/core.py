@@ -117,28 +117,28 @@ def findOverlap(seq1, seq2):
 	is the index in `seq1` where the overlap with `seq2` begins and
 	`i2` is the corresponding index in `seq2`.
 	'''
-
-	# Below works if you have difflib installed
-	#import difflib
-	#s = difflib.SequenceMatcher(None, seq1, seq2)
-	#(i1, i2) = s.find_longest_match(0, len(seq1), 0, len(seq2))[0:2]
-	#return (i1, i2)	
-
-
-	# Shamelessly stolen from: 
-	# https://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Longest_common_substring#Python
-	import numpy as np
-	s1 = len(seq1)+1
-	s2 = len(seq2)+1
-	m = np.zeros((s1, s2)) #Assumed numpy was installed... 
-	longest = 0
-	for r in range(1, s1):
-		for c in range(1, s2):
-			print r, c
-			if seq1[r-1] == seq2[c-1]:
-				m[r,c] = m[r-1,c-1] + 1
-				if m[r,c] > longest:
-					longest = m[r,c]
-					i1 = r - m[r,c]
-					i2 = c - m[r,c]
+	i1 = 0
+	i2 = 0
+	if seq1 in seq2:
+		i2 = seq2.index(seq1)
+	elif seq2 in seq1:
+		i1 = seq1.index(seq2)
+	else:
+		max12 = 0
+		max21 = 0
+		l1 = len(seq1)
+		l2 = len(seq2)
+		overall = min(l1,l2) + 1
+		for i in xrange(1, overall):
+			if seq1[:i] == seq2[l2-i:]:
+				max21 = i
+			if seq2[:i] == seq1[l1-i:]:
+				max12 = i				
+		if max12 > max21:
+			i1 = l1 - max12
+		elif max12 < max21:
+			i2 = l2 - max21
+		else: 
+			raise SequenceError("No overlap detected between input sequences")
+			
 	return (i1, i2)
