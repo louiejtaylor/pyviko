@@ -130,7 +130,7 @@ class Mutant:
 				
 				winners[safeMutations[newSites.index(l)]] = tempSites + tempAddedSites
 		
-		finalWinners = winners
+		finalWinners = [(x,winners[x]) for x in sorted(winners.keys(), key=lambda x: x[0])]		
 		
 		return finalWinners
 		
@@ -183,5 +183,3 @@ def findPossibleStopCodons(codons, n):
 			matches.append((m[0],codon))
 			
 	return matches
-
-print restriction.defaultEnzymes()
