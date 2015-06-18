@@ -1,7 +1,7 @@
 from pyviko import core, restriction
 
 # TODO - scrambling, excision KO?
-# TODO - allow for input of full overprinted gene (and then find greatest common overlap)
+# TODO - allow for input of full overprinted gene (DONE: Overlap finder, now just need to handle input)
 
 class OverGene:
 	
@@ -52,7 +52,7 @@ class Mutant:
 		'''
 		#Should change all places I use `mut` to either ntMut or codMut for less ambiguity
 		
-	def findMutants(self, rSiteLength = 6, rSites = restriction.defaultEnzymes):
+	def findMutants(self, rSiteLength = 6, rSites = restriction.defaultEnzymes()):
 		'''
 		Returns a list of mutants that add a premature stop codon 
 		(or mutate the start codon) without changing the overprinted 

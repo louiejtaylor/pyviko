@@ -59,7 +59,7 @@ def findEnzymeSiteRegex(site):
 			r_site += ']'
 	return r_site
 
-def findNcutters(seq, n, rSites = restrictionSites):
+def findNcutters(seq, n, rSites = None):
 	#should *input* list of restriction enzymes!
 	'''
 	Find restriction sites of length `n` in a sequence `seq`
@@ -67,6 +67,8 @@ def findNcutters(seq, n, rSites = restrictionSites):
 	number of restriction enzymes. Returns a list of tuples
 	of the form `(site index, 'enzyme name')`.
 	'''
+	if rSites == None:
+		rSites = defaultEnzymes()
 	tempSites = {}
 	for si in rSites.keys():
 		for se in findNonRegexEnzymeSite(si):
@@ -84,12 +86,14 @@ def findNcutters(seq, n, rSites = restrictionSites):
 			
 	return actualSites
 
-def reFindEnzymes(seq, rSites=restrictionSites):
+def reFindEnzymes(seq, rSites=None):
 	'''
 	Find restriction sites in a sequence `seq`
 	using regular expressions. Returns a list of tuples
 	of the form `(site index, 'enzyme name')`.
 	'''
+	if rSites == None:
+		rSites = defaultEnzymes()
 	actualSites = []
 	for site in rSites.keys():
 		regexSite = findEnzymeSiteRegex(site)
