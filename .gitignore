@@ -2,6 +2,7 @@
 # Tests
 *.fasta
 test/
+*~
 ##
 
 # Byte-compiled / optimized / DLL files
