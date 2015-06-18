@@ -48,7 +48,7 @@ class Mutant:
 			
 	def addMutant(self, mut):
 		'''
-		Add individual point mutants by hand, mut tuple
+		Add individual point mutants by hand, mut tuple.
 		'''
 		#Should change all places I use `mut` to either ntMut or codMut for less ambiguity
 		
