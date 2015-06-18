@@ -51,8 +51,6 @@ def insertMutation(codons, mut):
 	the newly mutated codon in its position. 
 	'''
 	iCodons = [c for c in codons]
-	#iCodons.pop(mut[0]) #is this popping faster? or would it be faster to just do codons[:i] + mut[1] + codons [i+1:]
-	#newCodons = iCodons[:mut[0]] + [mut[1]] + iCodons[mut[0]:]
 	iCodons[mut[0]] = mut[1]	
 	return iCodons
 	
@@ -62,7 +60,6 @@ def pointMutant(seq, mut):
 	and a tuple `mut` in the form (index, 'mutated nt') ex. `(3, 'A')`.
 	Returns a nucleotide sequence with a point mutation.
 	'''
-	## INDEX OR POSITION?!
 	return seq[:mut[0]] + mut[1] + seq[mut[0]+1:]
 	
 def findOverprintedGene(seq, startIndex, frame=1):
@@ -142,3 +139,35 @@ def findOverlap(seq1, seq2):
 			raise SequenceError("No overlap detected between input sequences")
 			
 	return (i1, i2)
+	
+def readFasta(loc):
+	'''
+	Reads in a FASTA file, returns tuples in the form
+	`('> identifying information, 'sequence')`.
+	'''
+	f = open(loc, 'r')
+	seqs = []
+	iden = ''
+	seq = ''
+	for line in f.readlines():
+		if iden == '':
+			try:
+				if line.lstrip()[0] <> '>':
+					raise SequenceError("Invalid file format: id line doesn't begin with '>'")
+				iden = line.strip()
+			except IndexError: #blank line
+				next
+				print 'boop'
+		else:
+			try:
+				if line.lstrip()[0] == '>':
+					seqs.append((iden, seq))
+					iden = line.strip()
+					seq = ''
+				else:
+					seq += line.strip().upper()
+			except IndexError: #blank line
+				next
+	seqs.append((iden, seq))
+	f.close()
+	return seqs
