@@ -18,3 +18,4 @@ if __name__ == '__main__':
 	toKO = core.readFasta('examples/ko.fasta')
 	overlaps = [core.findOverlap(toKO[i][1],ovr[i][1]) for i in range(len(toKO))]
 	print overlaps
+	

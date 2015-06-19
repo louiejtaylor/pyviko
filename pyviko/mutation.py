@@ -7,12 +7,18 @@ class OverGene:
 	
 	frame = 1
 	startNucleotide = 0
-	sequence = ''
+	combSequence = ''
+	geneSequence = ''
+	#TODO: overAAs if given seq rather than places, 1 extra for start codon KOs
 	overAAs = ''
 	
-	def __init__(self, startNt, seq, frameOver = 1):
+	def __init__(self, overSeq, startNt, seq, frameOver):
+		if overSeq <> '':
+			#find out where it goes
+			print 'not gonna work yet'
+		self.geneSeqence = overSeq
 		self.startNucleotide = startNt
-		self.sequence = seq
+		self.combSequence = seq
 		self.frame = frameOver
 		self.overAAs = core.translate(core.findOverprintedGene(seq, startNt-1, frameOver))
 
@@ -30,11 +36,14 @@ class Mutant:
 		self.codons = core.codonify(sequence)
 		self.regex = regEx
 		
-	def setOverGene(self, startNt, overFrame = 1):
+	def setOverGene(self, overSeq = '', startNt = 0, overFrame = 1):
 		'''
 		Adds the overprinted gene to the current `Mutant` object.
 		'''
-		self.overGene = OverGene(startNt, self.seq, overFrame)
+		if overSeq == '' and startNt == 0 and overFrame == 1:
+			raise core.SequenceError("You must provide either the sequence of an overprinted gene, or its start position/frame in the knockout sequence.")
+		else:
+			self.overGene = OverGene(overSeq, startNt, self.seq, overFrame)
 		
 	def vector(self, sequence):
 		'''
@@ -58,6 +67,15 @@ class Mutant:
 		(or mutate the start codon) without changing the overprinted 
 		gene, and which add or remove a restriction site.
 		'''
+		
+		##
+		# 1. change SafeMutations to include the first AA of the overprinted gene
+		# 2. change possibleStopCodons to include possibleStartCodonKOs
+		# 3. after that should be good because then just looking for rsites
+		# 4. then, fix overGene
+		#(5.) need to allow to not care about rsites
+		##
+		
 		restrictionSiteLengths = list(set([len(k) for k in rSites.keys()]))
 		
 		if rSiteLength == 'all':
@@ -73,7 +91,7 @@ class Mutant:
 			
 		stops = findPossibleStopCodons(self.codons, self.nMut)
 			
-		if self.overGene:
+		if self.overGene: ####
 			safeMutations = []
 			for poss in stops:
 				nCodons = [codon for codon in self.codons]
