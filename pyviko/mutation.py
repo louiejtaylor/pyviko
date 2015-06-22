@@ -6,27 +6,27 @@ from pyviko import core, restriction
 class OverGene:
 	
 	frame = 1
-	startNucleotide = 0
+	startNucleotideIndex = -1
 	preSequence = '' # includes 1-2nt removed by core.findOverGene
 	geneSequence = ''
 	postSequence = '' # includes 1-2nt removed by core.findOverGene
 	overAAs = ''
 	
-	def __init__(self, overSeq, startNt, seq, frameOver = 1):
+	def __init__(self, overSeq, startNtIndex, seq, frameOver = 1):
 		if overSeq <> '':
 			ol = core.findOverlap(seq, overSeq)
 			if ol[0] == 0:
 				#overprinted gene starts before
-				startNt = 0
+				startNtIndex = -1
 				frameOver = 4-((ol[1]%3))
 			else:
 				#overprinted gene starts after
-				startNt = ol[0] + 1
+				startNtIndex = ol[0]
 		self.geneSeqence = overSeq
-		self.startNucleotide = startNt
+		self.startNucleotideIndex = startNtIndex
 		self.combSequence = seq
 		self.frame = frameOver
-		self.overAAs = core.translate(self.preSequence + core.seqify(core.findOverprintedGene(seq, startNt-1, frameOver)) + self.postSequence)
+		self.overAAs = core.translate(self.preSequence + core.seqify(core.findOverprintedGene(seq, startNtIndex, frameOver)) + self.postSequence)
 
 class Mutant:
 	
@@ -42,14 +42,14 @@ class Mutant:
 		self.codons = core.codonify(sequence)
 		self.regex = regEx
 		
-	def setOverGene(self, overSeq = '', startNt = 0, overFrame = 1):
+	def setOverGene(self, overSeq = '', startNtIndex = -1, overFrame = 1):
 		'''
 		Adds the overprinted gene to the current `Mutant` object.
 		'''
-		if overSeq == '' and startNt == 0 and overFrame == 1:
+		if overSeq == '' and startNtIndex == -1 and overFrame == 1:
 			raise core.SequenceError("You must provide either the sequence of an overprinted gene, or its start position/frame in the knockout sequence.")
 		else:
-			self.overGene = OverGene(overSeq, startNt, self.seq, overFrame)
+			self.overGene = OverGene(overSeq, startNtIndex, self.seq, overFrame)
 		
 	def vector(self, sequence):
 		'''
@@ -102,7 +102,7 @@ class Mutant:
 			for poss in stops:
 				nCodons = [codon for codon in self.codons]
 				newCodons = core.insertMutation(nCodons, poss)
-				newOverAAs = core.translate(self.overGene.preSequence + core.seqify(core.findOverprintedGene(core.seqify(newCodons), self.overGene.startNucleotide-1, self.overGene.frame)) + self.overGene.postSequence) #TODO: INDEX
+				newOverAAs = core.translate(self.overGene.preSequence + core.seqify(core.findOverprintedGene(core.seqify(newCodons), self.overGene.startNucleotideIndex, self.overGene.frame)) + self.overGene.postSequence) #TODO: INDEX
 				if newOverAAs == self.overGene.overAAs:
 					safeMutations.append(poss)
 		else:

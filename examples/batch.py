@@ -14,7 +14,7 @@ if __name__ == '__main__':
 	#                 '''  M  Z  Z  Z  Z  Z  Z  Z  Z  Z  Z  Z  -'''
 	#           '''  ATGGATGGCCCGGGACGCGCGCTTAGTTAG'''
 	#           '''    M  Z  Z  Z  Z  Z  Z  Z  Z  -'''
-	x.setOverGene(startNt = 0, overFrame = 3)			    #'
+	#x.setOverGene(startNtIndex = -1, overFrame = 3)			    #'
 	#x.setOverGene(overSeq = 'ATGGATGGCCCGGGACGCGCGCTTAGTTAG')	
 	print x.findMutants(rSiteLength = 'all')
 	print core.findOverlap('ATGGCCCGGGACGCGCGCTTAGTTAGTTTCTCGAGATAG','ATGGATGGCCCGGGACGCGCGCTTAGTTAG')
