@@ -7,20 +7,26 @@ class OverGene:
 	
 	frame = 1
 	startNucleotide = 0
-	combSequence = ''
+	preSequence = '' # includes 1-2nt removed by core.findOverGene
 	geneSequence = ''
-	#TODO: overAAs if given seq rather than places, 1 extra for start codon KOs
+	postSequence = '' # includes 1-2nt removed by core.findOverGene
 	overAAs = ''
 	
-	def __init__(self, overSeq, startNt, seq, frameOver):
+	def __init__(self, overSeq, startNt, seq, frameOver = 1):
 		if overSeq <> '':
-			#find out where it goes
-			print 'not gonna work yet'
+			ol = core.findOverlap(seq, overSeq)
+			if ol[0] == 0:
+				#overprinted gene starts before
+				startNt = 0
+				frameOver = 4-((ol[1]%3))
+			else:
+				#overprinted gene starts after
+				startNt = ol[0] + 1
 		self.geneSeqence = overSeq
 		self.startNucleotide = startNt
 		self.combSequence = seq
 		self.frame = frameOver
-		self.overAAs = core.translate(core.findOverprintedGene(seq, startNt-1, frameOver))
+		self.overAAs = core.translate(self.preSequence + core.seqify(core.findOverprintedGene(seq, startNt-1, frameOver)) + self.postSequence)
 
 class Mutant:
 	
@@ -91,12 +97,12 @@ class Mutant:
 			
 		stops = findPossibleStopCodons(self.codons, self.nMut)
 			
-		if self.overGene: ####
+		if self.overGene: ####Here
 			safeMutations = []
 			for poss in stops:
 				nCodons = [codon for codon in self.codons]
 				newCodons = core.insertMutation(nCodons, poss)
-				newOverAAs = core.translate(core.findOverprintedGene(core.seqify(newCodons), self.overGene.startNucleotide-1, self.overGene.frame))
+				newOverAAs = core.translate(self.overGene.preSequence + core.seqify(core.findOverprintedGene(core.seqify(newCodons), self.overGene.startNucleotide-1, self.overGene.frame)) + self.overGene.postSequence) #TODO: INDEX
 				if newOverAAs == self.overGene.overAAs:
 					safeMutations.append(poss)
 		else:
