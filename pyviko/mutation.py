@@ -19,6 +19,7 @@ class OverGene:
 				#overprinted gene starts before
 				startNtIndex = -1
 				frameOver = 4-((ol[1]%3))
+				self.preSequence = overSeq[ol[1]-(-frameOver+4):ol[1]] + 'ATG'[:3-(-frameOver+4)]
 			else:
 				#overprinted gene starts after
 				startNtIndex = ol[0]
@@ -26,6 +27,7 @@ class OverGene:
 		self.startNucleotideIndex = startNtIndex
 		self.combSequence = seq
 		self.frame = frameOver
+		print self.preSequence + core.seqify(core.findOverprintedGene(seq, startNtIndex, frameOver)) + self.postSequence
 		self.overAAs = core.translate(self.preSequence + core.seqify(core.findOverprintedGene(seq, startNtIndex, frameOver)) + self.postSequence)
 
 class Mutant:
@@ -75,10 +77,10 @@ class Mutant:
 		'''
 		
 		##
-		# 1. change SafeMutations to include the first AA of the overprinted gene
-		# 2. change possibleStopCodons to include possibleStartCodonKOs
+		# 1. change SafeMutations to include the first AA of the overprinted gene DONE
+		# 2. change possibleStopCodons to include possibleStartCodonKOs 
 		# 3. after that should be good because then just looking for rsites
-		# 4. then, fix overGene
+		# 4. then, fix overGene DONE
 		#(5.) need to allow to not care about rsites
 		##
 		
