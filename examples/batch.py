@@ -10,16 +10,36 @@ if __name__ == '__main__':
 
 	##	
 	#testing
-	x = mutation.Mutant('ATGGCCCGGGACGCGCGCTTAGTTAGTTTCTCGAGATAG')
-	#                 '''  M  Z  Z  Z  Z  Z  Z  Z  Z  Z  Z  Z  -'''
-	#           '''  ATGGATGGCCCGGGACGCGCGCTTAGTTAG'''
-	#           '''    M  Z  Z  Z  Z  Z  Z  Z  Z  -'''
-	x.setOverGene(startNtIndex = -1, overFrame = 3)	
-	print x.findMutants(rSiteLength = 'all')
 
-	x.setOverGene(overSeq = 'ATGGATGGCCCGGGACGCGCGCTTAGTTAG')	
-	print x.findMutants(rSiteLength = 'all')
-	print core.findOverlap('ATGGCCCGGGACGCGCGCTTAGTTAGTTTCTCGAGATAG','ATGGATGGCCCGGGACGCGCGCTTAGTTAG')
+	y = mutation.Mutant('ATGGCCCGGGACGCGCGCTTAGTTAGTTTCTCGAGATAG')
+	y.setOverGene(overSeq = 'ATGGATGGCCCGGGACGCGCGCTTAGTTAG')
+	print y.findMutants(rSiteLength = 'all')
+	print
+
+	#x = mutation.Mutant('ATGGCCCGGGACGCGCGCTTAGTTAGTTTCTCGAGATAG')
+	#                 '''  M  A  R  D  A  R  L  V  S  F  S  R  -'''
+	#           '''  ATGGATGGCCCGGGACGCGCGCTTAGTTAG'''
+	#           '''    M  D  G  P  G  R  A  L  S  -'''
+	# MUTATION 1 0 > AGG
+	#x = mutation.Mutant('AgGGCCCGGGACGCGCGCTTAGTTAGTTTCTCGAGATAG')
+	#                 '''  M  A  R  D  A  R  L  V  S  F  S  R  -'''
+	#           '''  ATGGAGGGCCCGGGACGCGCGCTTAGTTAG'''
+	#           '''    M  E  G  P  G  R  A  L  S  -'''	
+	# MUTATION 2 0 > ACG
+	#x = mutation.Mutant('AcGGCCCGGGACGCGCGCTTAGTTAGTTTCTCGAGATAG')
+	#                 '''  M  A  R  D  A  R  L  V  S  F  S  R  -'''
+	#           '''  ATGGACGGCCCGGGACGCGCGCTTAGTTAG'''
+	#           '''    M  D  G  P  G  R  A  L  S  -'''	
+	#
+	#x.setOverGene(startNtIndex = -1, overFrame = 3)	
+	#print x.findMutants(rSiteLength = 'all')
+	#print 
+
+
+	#print core.findOverlap('ATGGCCCGGGACGCGCGCTTAGTTAGTTTCTCGAGATAG','ATGGATGGCCCGGGACGCGCGCTTAGTTAG')
+	
+	#print mutation.mutateStartCodon(['ATG','GGC'], 1)	
+	
 	##
 	
 	ovr = core.readFasta('examples/over.fasta')

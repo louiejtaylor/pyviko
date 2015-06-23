@@ -19,15 +19,15 @@ class OverGene:
 				#overprinted gene starts before
 				startNtIndex = -1
 				frameOver = 4-((ol[1]%3))
-				self.preSequence = overSeq[ol[1]-(-frameOver+4):ol[1]] + 'ATG'[:3-(-frameOver+4)]
+				self.preSequence = overSeq[ol[1]-(-frameOver+4):ol[1]] + 'ATG'[:3-(-frameOver+4)] #TODO: CHANGE ATG HERE
 			else:
 				#overprinted gene starts after
 				startNtIndex = ol[0]
-		self.geneSeqence = overSeq
+		self.geneSequence = overSeq
 		self.startNucleotideIndex = startNtIndex
 		self.combSequence = seq
 		self.frame = frameOver
-		print self.preSequence + core.seqify(core.findOverprintedGene(seq, startNtIndex, frameOver)) + self.postSequence
+		#print self.preSequence + core.seqify(core.findOverprintedGene(seq, startNtIndex, frameOver)) + self.postSequence
 		self.overAAs = core.translate(self.preSequence + core.seqify(core.findOverprintedGene(seq, startNtIndex, frameOver)) + self.postSequence)
 
 class Mutant:
@@ -98,13 +98,16 @@ class Mutant:
 			raise core.SequenceError("Invalid restriction site length.")
 			
 		stops = findPossibleStopCodons(self.codons, self.nMut)
-			
-		if self.overGene: ####Here
+
+		if self.overGene != False:
+			if len(self.overGene.geneSequence) > 0:
+				stops += mutateStartCodon(self.codons, self.nMut)
 			safeMutations = []
 			for poss in stops:
 				nCodons = [codon for codon in self.codons]
 				newCodons = core.insertMutation(nCodons, poss)
-				newOverAAs = core.translate(self.overGene.preSequence + core.seqify(core.findOverprintedGene(core.seqify(newCodons), self.overGene.startNucleotideIndex, self.overGene.frame)) + self.overGene.postSequence) #TODO: INDEX
+				newPreSequence = self.overGene.preSequence[:4-self.overGene.frame] + newCodons[0][:self.overGene.frame - 1]
+				newOverAAs = core.translate(newPreSequence + core.seqify(core.findOverprintedGene(core.seqify(newCodons), self.overGene.startNucleotideIndex, self.overGene.frame)))
 				if newOverAAs == self.overGene.overAAs:
 					safeMutations.append(poss)
 		else:
@@ -166,9 +169,10 @@ class Mutant:
 def findPossibleStopCodons(codons, n):
 
 	'''
-	Given a list of `codons`, finds individual codons that
+	Given a list `codons`, finds individual codons that
 	can be mutated to a stop codon given `n` mutations. Returns 
-	a list of tuples of the form `(index, 'codon')` where 
+	a list of tuples of the form `(index, 'codon')` where `'codon'`
+	is the mutated codon. 
 	'''
 	if codons[-1] in core.stopCodons: 
 		codons = codons[:-1] #remove c-terminal stop codon
@@ -197,7 +201,6 @@ def findPossibleStopCodons(codons, n):
 		for i in almostStopCodons.keys():
 			almostStopCodons[i] = list(set(almostStopCodons[i]))
 	
-	
 	# creates a list of tuples of the form (index, ['list', 'of', 'stop', 'codons']) to be further pre-processed	
 	preMatches = [(i, almostStopCodons[codons[i]]) for i in range(0,len(codons)) if codons[i] in almostStopCodons.keys()]
 	
@@ -209,3 +212,18 @@ def findPossibleStopCodons(codons, n):
 			matches.append((m[0],codon))
 			
 	return matches
+
+def mutateStartCodon(codons, n):
+	'''Given a list `codons`, makes `n` mutations
+	to destroy the start codon. Returns a formatted list
+	of tuples in the form `(index, 'mutated codon')`.
+	'''
+	start = codons[0]
+	muts = []
+	for i in range(0,3):
+		for nt in 'ACTG':
+			mutCodon = start[:i]+nt+start[i+1:]
+			if mutCodon <> start and mutCodon <> 'ATG':
+				muts.append(mutCodon)
+	
+	return [(0,m) for m in muts]
