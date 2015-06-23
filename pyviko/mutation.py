@@ -77,10 +77,6 @@ class Mutant:
 		'''
 		
 		##
-		# 1. change SafeMutations to include the first AA of the overprinted gene DONE
-		# 2. change possibleStopCodons to include possibleStartCodonKOs 
-		# 3. after that should be good because then just looking for rsites
-		# 4. then, fix overGene DONE
 		#(5.) need to allow to not care about rsites
 		##
 		
