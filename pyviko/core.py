@@ -30,6 +30,7 @@ def translate(codons):
 	Translates a list of DNA codons into the corresponding amino 
 	acids, stopping translation if a stop codon is encountered.
 	'''
+	#optimization from js fnTranslate(): only one loop
 	codons = codonify(codons)
 	for i in range(0,len(codons)):
 		if codons[i] in stopCodons:
@@ -89,7 +90,7 @@ def findOverprintedGene(seq, startIndex, frame=1):
 			break
 		
 	if codons[0] <> 'ATG' and startIndex <> -1:
-		##NOTE: Not all viral genes are initiated with ATG. More research needed.
+		##NOTE: Not all viral genes are initiated with ATG.
 		warnings.warn("The first codon of your sequence is not a start codon.")
 		
 	return codons

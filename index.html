@@ -4,7 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
   <meta name="google-site-verification" content="njaMN4BF73BKWGRck4K_TBFXQeS3CTB2VPLAmcDB39o" />
 
-    <title>pyviko API documentation</title>
+    <title>Viral Knockouts with pyviko</title>
     <meta name="description" content="" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
@@ -809,7 +809,7 @@ table {
     clear: both;
   }
 
-  @media all and (max-width: 950px) {
+  @media all and (max-width:950px) {
     #sidebar {
       width: 35%;
     }
@@ -817,7 +817,7 @@ table {
       width: 65%;
     }
   }
-  @media all and (max-width: 650px) {
+  @media all and (max-width:650px) {
     #top {
       display: none;
     }
@@ -925,14 +925,14 @@ table {
    Modify as content requires.
    ========================================================================== */
 
-@media only screen and (min-width: 35em) {
+@media only screen and (min-width:35em) {
     /* Style adjustments for viewports that meet the condition */
 }
 
-@media print,
+@media print, {
        (-o-min-device-pixel-ratio: 5/4),
        (-webkit-min-device-pixel-ratio: 1.25),
-       (min-resolution: 120dpi) {
+       (min-resolution: 120dpi)
     /* Style adjustments for high resolution devices */
 }
 
@@ -1015,8 +1015,8 @@ table {
     $('#overGeneBox').val('');
     $('#chkOver').prop('checked', false);
     document.getElementById("button").onclick = function() {
-     //alert("Hello");
      var geneIn = $('#inputBox').val();
+     //alert(fnSplitInput(geneIn));
      var overGeneIn = $('#overGeneBox').val();
      $("#seq").text(geneIn+' '+overGeneIn);
      $("#results").show();
@@ -1033,24 +1033,119 @@ table {
    fnSanitize = function(strToClean) {
     if (strToClean.contains('>')) {
      strToClean = strToClean.substring(strToClean.indexOf('\n'),strToClean.length);
-     while (strToClean.contains('\n')) {
+    };
+    while (strToClean.contains('\n')) {
       strToClean = strToClean.replace('\n','');
-     }
-     while (strToClean.contains(' ')) {
+    };
+    while (strToClean.contains(' ')) {
       strToClean = strToClean.replace(' ', '');
-     }
-    }
-    return strToClean;
-   }
+    };
+    return strToClean.toUpperCase();
+   };
    
-   fnSplitInput = function(strGeneIn) {
+   fnCodonify = function(strGeneIn) {
     strGeneIn = fnSanitize(strGeneIn)
     var codons = [];
     for (var i=0;i<(strGeneIn.length/3);i++) {
      codons.push(strGeneIn.substring(i*3, i*3+3));
     }
-    return codons
+    return codons;
    }
+   
+   fnSeqify = function(arrCodonsIn) {
+    var strGeneOut = '';
+    for (var i=0; i<arrCodonsIn.length; i++) {
+     strGeneOut += arrCodonsIn[i];
+    }
+    return strGeneOut;
+   }
+
+   fnFindOverlap = function(seq1, seq2) {
+    var i1 = 0;
+    var i2 = 0;
+    if (seq1.contains(seq2)) {
+     i1 = seq1.indexOf(seq2);
+    }else if (seq2.contains(seq1)){
+     i2 = seq2.indexOf(seq1);
+    }else{
+     var max12 = 0;
+     var max21 = 0;
+     var l1 = seq1.length;
+     var l2 = seq2.length;
+     if (l1 > l2) {
+      var maxL = l1;
+     }else{
+      var maxL = l2;
+     }
+     for (var i=1; i<maxL+1; i++){
+      if (seq1.substring(0,i) == seq2.substring(l2-i,l2)) {
+       max21 = i;
+      }
+      if (seq2.substring(0,i) == seq1.substring(l1-i,l1)) {
+       max12 = i;
+      }
+     }
+     if (max12 > max21) {
+      i1 = l1 - max12;
+     } else if (max21 > max12) {
+      i2 = l2 - max21;
+     } else {
+      alert("no overlap found");
+     }
+    }
+    return [i1,i2];
+   }
+   
+   fnTranslate = function(arrCodons) {
+    var translation = {'CTT': 'L', 'ATG': 'M', 'AAG': 'K', 'AAA': 'K', 'ATC': 'I', 'AAC': 'N', 'ATA': 'I', 'AGG': 'R', 'CCT': 'P', 'ACT': 'T', 'AGC': 'S', 'ACA': 'T', 'AGA': 'R', 'CAT': 'H', 'AAT': 'N', 'ATT': 'I', 'CTG': 'L', 'CTA': 'L', 'CTC': 'L', 'CAC': 'H', 'ACG': 'T', 'CAA': 'Q', 'AGT': 'S', 'CAG': 'Q', 'CCG': 'P', 'CCC': 'P', 'TAT': 'Y', 'GGT': 'G', 'TGT': 'C', 'CGA': 'R', 'CCA': 'P', 'TCT': 'S', 'GAT': 'D', 'CGG': 'R', 'TTT': 'F', 'TGC': 'C', 'GGG': 'G', 'GGA': 'G', 'TGG': 'W', 'GGC': 'G', 'TAC': 'Y', 'GAG': 'E', 'TCG': 'S', 'TTA': 'L', 'GAC': 'D', 'TCC': 'S', 'GAA': 'E', 'TCA': 'S', 'GCA': 'A', 'GTA': 'V', 'GCC': 'A', 'GTC': 'V', 'GCG': 'A', 'GTG': 'V', 'TTC': 'F', 'GTT': 'V', 'GCT': 'A', 'ACC': 'T', 'TTG': 'L', 'CGT': 'R', 'CGC': 'R'};
+    var stopCodons = ['TAG', 'TAA', 'TGA'];
+    var AAs = '';
+    
+    for (i=0; i<arrCodons.length;i++) {
+     if (stopCodons.indexOf(arrCodons[i]) > -1 || arrCodons[i].length < 3) {
+      break;
+     }
+     AAs += translation[arrCodons[i]];
+    }
+    return AAs;
+   }
+   
+   fnInsertCodonMutation = function(arrCodonsIn, arrMut){
+    var newCodons = [];
+    for (i=0;i<arrCodonsIn.length;i++){
+     if (i != arrMut[0]){
+      newCodons.push(arrCodonsIn[i]);
+     } else {
+      newCodons.push(arrMut[1]);
+     }
+    }
+    return newCodons;
+   }
+   
+   fnFindOverprintedGene = function(strSeq, intStartIndex, intFrame = 1){
+    if (intStartIndex > -1) {
+     intFrame = 1;
+     var aCodons = fnCodonify(strSeq.substring(intStartIndex,strSeq.length));
+     var codons = aCodons.slice(0,aCodons.length-1);
+    } else {
+     if (intFrame == 1) {
+      alert("The overprinted sequence is in the same frame as the main coding sequence.");
+      return null;
+     }
+     var aCodons = fnCodonify(strSeq.substring(intFrame-1,strSeq.length));
+     var codons = aCodons.slice(0,aCodons.length-1);
+    }
+    return codons;
+   }
+  
+   fnFindNcutters = function(seq, n) {
+    console.log("not done yet");    
+   }
+   
+   fnFindMutants = function() {
+    console.log("not done yet");
+   }
+   
   </script>
   
   

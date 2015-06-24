@@ -59,8 +59,9 @@ def findEnzymeSiteRegex(site):
 			r_site += ']'
 	return r_site
 
+#TODO: function to find reverse complement of sequences to create restriction dict
+
 def findNcutters(seq, n, rSites = None):
-	#should *input* list of restriction enzymes!
 	'''
 	Find restriction sites of length `n` in a sequence `seq`
 	in `O(n*m)` where `n` is the sequence length and `m` is the
