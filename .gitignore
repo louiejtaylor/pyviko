@@ -1,6 +1,7 @@
 ## Custom
 # Tests
 *.fasta
+*.kate-swp
 test/
 *~
 ##
