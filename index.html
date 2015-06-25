@@ -1128,7 +1128,7 @@ table {
     return newCodons;
    }
    
-   fnFindOverprintedGene = function(strSeq, intStartIndex, intFrame = 1){
+   fnFindOverprintedGene = function(strSeq, intStartIndex, intFrame){
     if (intStartIndex > -1) {
      intFrame = 1;
      var aCodons = fnCodonify(strSeq.substring(intStartIndex,strSeq.length));
