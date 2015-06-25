@@ -68,6 +68,8 @@ def findNcutters(seq, n, rSites = None):
 	number of restriction enzymes. Returns a list of tuples
 	of the form `(site index, 'enzyme name')`.
 	'''
+	#TODO: can optinize as in js--only traverse once, don't even need nmers
+	
 	if rSites == None:
 		rSites = defaultEnzymes()
 	tempSites = {}

@@ -170,6 +170,7 @@ def findPossibleStopCodons(codons, n):
 	a list of tuples of the form `(index, 'codon')` where `'codon'`
 	is the mutated codon. 
 	'''
+	#TODO: can optimize this as in js
 	if codons[-1] in core.stopCodons: 
 		codons = codons[:-1] #remove c-terminal stop codon
 	
