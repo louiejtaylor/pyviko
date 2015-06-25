@@ -1031,7 +1031,7 @@ table {
    fnPrettyPrint = function(arrMutants) {
     var prettyString = '';
     for (i=0; i<arrMutants.length; i++) {
-     prettyString += arrMutants[i].toSource() + '\n';
+     prettyString += arrMutants[i].toString() + '\n';
     }
     return prettyString;
    }
