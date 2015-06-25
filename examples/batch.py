@@ -8,29 +8,29 @@ if __name__ == '__main__':
 	
 	from pyviko import core, mutation, restriction, bio
 
-#	##	
-#	#testing
-#	
-#	y = mutation.Mutant('ATGGCCCGGGACGCGCGCTTAGTTAGTTTCTCGAGATAG')
-#	y.setOverGene(overSeq = 'ATGGATGGCCCGGGACGCGCGCTTAGTTAG')
-#	print y.findMutants(rSiteLength = 'all')
-#	print
-#
-#	x = mutation.Mutant('ATGGCCCGGGACGCGCGCTTAGTTAGTTTCTCGAGATAG')
-#	#                 '''  M  A  R  D  A  R  L  V  S  F  S  R  -'''
-#	#           '''  ATGGATGGCCCGGGACGCGCGCTTAGTTAG'''
-#	#           '''    M  D  G  P  G  R  A  L  S  -'''
-#
-#	x.setOverGene(startNtIndex = -1, overFrame = 3)	
-#	print x.findMutants(rSiteLength = 'all')
-#	print 
-#
-#
-#	#print core.findOverlap('ATGGCCCGGGACGCGCGCTTAGTTAGTTTCTCGAGATAG','ATGGATGGCCCGGGACGCGCGCTTAGTTAG')
-#	
-#	#print mutation.mutateStartCodon(['ATG','GGC'], 1)	
-#	
-#	##
+	##	
+	#testing
+	
+	y = mutation.Mutant('ATGGCCCGGGACGCGCGCTTAGTTAGTTTCTCGAGATAG')
+	y.setOverGene(overSeq = 'ATGGATGGCCCGGGACGCGCGCTTAGTTAG')
+	print y.findMutants(rSiteLength = 'all')
+	print
+
+	x = mutation.Mutant('ATGGCCCGGGACGCGCGCTTAGTTAGTTTCTCGAGATAG')
+	#                 '''  M  A  R  D  A  R  L  V  S  F  S  R  -'''
+	#           '''  ATGGATGGCCCGGGACGCGCGCTTAGTTAG'''
+	#           '''    M  D  G  P  G  R  A  L  S  -'''
+
+	x.setOverGene(startNtIndex = -1, overFrame = 3)	
+	print x.findMutants(rSiteLength = 'all')
+	print 
+
+
+	#print core.findOverlap('ATGGCCCGGGACGCGCGCTTAGTTAGTTTCTCGAGATAG','ATGGATGGCCCGGGACGCGCGCTTAGTTAG')
+	
+	#print mutation.mutateStartCodon(['ATG','GGC'], 1)	
+	
+	##
 	
 	ovr = core.readFasta('examples/over.fasta')
 	toKO = core.readFasta('examples/ko.fasta')

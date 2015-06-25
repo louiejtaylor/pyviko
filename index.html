@@ -1012,13 +1012,11 @@ table {
 
   <script type="text/javascript">
    window.onload = function() {
-    $('#overGeneBox').val('');
     $('#chkOver').prop('checked', false);
+    $('#chkSites').prop('checked', false);
     document.getElementById("button").onclick = function() {
-     var geneIn = $('#inputBox').val();
-     //alert(fnSplitInput(geneIn));
-     var overGeneIn = $('#overGeneBox').val();
-     $("#seq").text(geneIn+' '+overGeneIn);
+     var geneIn = $('#inputBox').val();   
+     $("#seq").text(fnPrettyPrint(fnFindMutants(fnSanitize(geneIn), 1, $('#chkSites').prop('checked'), $('#chkOver').prop('checked'))));
      $("#results").show();
     };
     $('#chkOver').change(function() {
@@ -1029,6 +1027,14 @@ table {
      }
     });
    };
+   
+   fnPrettyPrint = function(arrMutants) {
+    var prettyString = '';
+    for (i=0; i<arrMutants.length; i++) {
+     prettyString += arrMutants[i].toSource() + '\n';
+    }
+    return prettyString;
+   }
    
    fnSanitize = function(strToClean) {
     if (strToClean.contains('>')) {
@@ -1179,20 +1185,82 @@ table {
     return result;
    }
    
+   fnMutateStartCodon = function(strStartCodon, intNumMutations) {
+    var mutants = [];
+    var nt = 'ACGT';
+    for (var i=0; i<3; i++) {
+     for (var j=0; j<4; j++) {
+      var mutCodon = strStartCodon.substring(0,i) + nt.substring(j,j+1) + strStartCodon.substring(i+1,3);
+      if (mutCodon != strStartCodon && mutCodon != 'ATG') {
+       mutants.push([0,mutCodon]);
+      }
+     }
+    }
+    return mutants;
+   }
+   
+   fnFindOverGeneInfo = function(strSeq, strOverSeq) {
+    var geneInfo = {};
+    geneInfo['overlap'] = fnFindOverlap(strSeq, strOverSeq);
+    if (geneInfo.overlap[0] == 0) {
+     geneInfo['startIndex'] = -1;
+     geneInfo['frameOver'] = 4-(geneInfo.overlap[1]%3);
+     geneInfo['prefix'] = strOverSeq.substring(geneInfo.overlap[1]-(-geneInfo.frameOver+4),geneInfo.overlap[1]) + strSeq.substring(0,3-(-geneInfo.frameOver+4))
+    } else {
+     geneInfo['startIndex'] = geneInfo.overlap[0];
+     geneInfo['frameOver'] = 1;
+     geneInfo['prefix'] = ''
+    }
+    return geneInfo
+   }
+   
    fnFindMutants = function(strSeq, intNumMutations, boolIgnoreRxSites, boolIsOverGene) {
     console.log("not done yet");
     //Object.keys(dict) //will help immensely
-    
-    if (boolIsOverGene) {
-     strOverSeq = $('#overGeneBox').val();
+    var codons = fnCodonify(strSeq);
+    var possStops = fnFindPossibleStopCodons(codons, intNumMutations);
+    var startMuts = fnMutateStartCodon(codons[0], intNumMutations)
+    var mutations = startMuts;
+    for (var i=0; i<possStops.length; i++){
+     mutations.push(possStops[i]);
     }
     
+    if (boolIsOverGene) {
+     var strOverSeq = $('#overGeneBox').val();
+     var overGeneInfo = fnFindOverGeneInfo(strSeq,strOverSeq);   
+     var safeMutations = [];
+     var overAAs = fnTranslate(fnCodonify(overGeneInfo.prefix + fnSeqify(fnFindOverprintedGene(strSeq, overGeneInfo.startIndex, overGeneInfo.frameOver))))
+     for (var i=0; i<mutations.length; i++) {
+      var newCodons = fnInsertCodonMutation(codons, mutations[i]);
+      var newFirst = newCodons[0];
+      var newPrefix = overGeneInfo.prefix.substring(0,4-overGeneInfo.frameOver) + newFirst.substring(0,overGeneInfo.frameOver-1);
+      var newOverAAs = fnTranslate(fnCodonify(newPrefix + fnSeqify(fnFindOverprintedGene(fnSeqify(newCodons), overGeneInfo.startIndex, overGeneInfo.frameOver))));
+      if (newOverAAs == overAAs) {
+       safeMutations.push(mutations[i]);
+      }
+     }
+     mutations = safeMutations;
+    }
+    
+    if (boolIgnoreRxSites == false) {
+     var baseSites = [];
+     for (l=5; l<9; l++){
+      var newSites = fnFindNcutters(strSeq,l);
+      for (j=0;j<newSites.length;j++){
+       baseSites.push(newSites[j]);
+      }
+     }
+     for (i=0; i<mutations.length; i++) {
+      //find rsites of each mutation, compare them against baseSites
+     }
+    }
+    return mutations;    
    }
    
   </script>
   
   
-  <!--Don't actually include the jquery in github, this is just for working offline-->
+  <!--Don't actually include the jquery, this is just for working offline-->
   <script type="text/javascript" src="jquery.min.js">
   </script>
   
@@ -1216,11 +1284,13 @@ table {
    <h3>Options:</h3>
    <input type="checkbox" id="chkOver"> Input sequence contains overprinted gene</input>
    <div id="overpr" style="display:none;">
-    <p style=" border-top: 1px dotted black;">
-     Sequence of overprinted gene: <br>
+    <p style=" border-top: 1px dotted black; margin:0px; padding:0px;">
+     Sequence of overprinted gene: </br>
      <textarea id="overGeneBox" name="input" rows="7" cols="30"></textarea> 
     </p>
    </div>
+   </br>
+   <input type="checkbox" id="chkSites"> Ignore restriction site changes</input>
    </br>
    <input id="button" type="submit" name="button" value="Submit"/>
 

@@ -11,6 +11,7 @@ class OverGene:
 	geneSequence = ''
 	postSequence = '' # includes 1-2nt removed by core.findOverGene
 	overAAs = ''
+	#find rsites using a comb sequence?	
 	
 	def __init__(self, overSeq, startNtIndex, seq, frameOver = 1):
 		if overSeq <> '':
@@ -18,8 +19,8 @@ class OverGene:
 			if ol[0] == 0:
 				#overprinted gene starts before
 				startNtIndex = -1
-				frameOver = 4-((ol[1]%3))
-				self.preSequence = overSeq[ol[1]-(-frameOver+4):ol[1]] + 'ATG'[:3-(-frameOver+4)] #TODO: CHANGE ATG HERE
+				frameOver = 4-(ol[1]%3)
+				self.preSequence = overSeq[ol[1]-(-frameOver+4):ol[1]] + seq[:3-(-frameOver+4)] #TODO: CHANGE ATG HERE
 			else:
 				#overprinted gene starts after
 				startNtIndex = ol[0]
@@ -27,7 +28,6 @@ class OverGene:
 		self.startNucleotideIndex = startNtIndex
 		self.combSequence = seq
 		self.frame = frameOver
-		#print self.preSequence + core.seqify(core.findOverprintedGene(seq, startNtIndex, frameOver)) + self.postSequence
 		self.overAAs = core.translate(self.preSequence + core.seqify(core.findOverprintedGene(seq, startNtIndex, frameOver)) + self.postSequence)
 
 class Mutant:
@@ -99,10 +99,12 @@ class Mutant:
 			if len(self.overGene.geneSequence) > 0:
 				stops += mutateStartCodon(self.codons, self.nMut)
 			safeMutations = []
+			newPreSequence = '';
 			for poss in stops:
 				nCodons = [codon for codon in self.codons]
 				newCodons = core.insertMutation(nCodons, poss)
-				newPreSequence = self.overGene.preSequence[:4-self.overGene.frame] + newCodons[0][:self.overGene.frame - 1]
+				if self.overGene.geneSequence <> '':
+					newPreSequence = self.overGene.preSequence[:4-self.overGene.frame] + newCodons[0][:self.overGene.frame - 1]
 				newOverAAs = core.translate(newPreSequence + core.seqify(core.findOverprintedGene(core.seqify(newCodons), self.overGene.startNucleotideIndex, self.overGene.frame)))
 				if newOverAAs == self.overGene.overAAs:
 					safeMutations.append(poss)
@@ -215,6 +217,7 @@ def mutateStartCodon(codons, n):
 	to destroy the start codon. Returns a formatted list
 	of tuples in the form `(index, 'mutated codon')`.
 	'''
+	#TODO: optimize this as in js
 	start = codons[0]
 	muts = []
 	for i in range(0,3):
