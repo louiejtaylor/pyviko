@@ -1037,13 +1037,13 @@ table {
    }
    
    fnSanitize = function(strToClean) {
-    if (strToClean.contains('>')) {
+    if (strToClean.indexOf('>') > -1) {
      strToClean = strToClean.substring(strToClean.indexOf('\n'),strToClean.length);
     };
-    while (strToClean.contains('\n')) {
+    while (strToClean.indexOf('\n') > -1) {
       strToClean = strToClean.replace('\n','');
     };
-    while (strToClean.contains(' ')) {
+    while (strToClean.indexOf(' ') > -1) {
       strToClean = strToClean.replace(' ', '');
     };
     return strToClean.toUpperCase();
@@ -1069,9 +1069,9 @@ table {
    fnFindOverlap = function(seq1, seq2) {
     var i1 = 0;
     var i2 = 0;
-    if (seq1.contains(seq2)) {
+    if (seq1.indexOf(seq2) > -1) {
      i1 = seq1.indexOf(seq2);
-    }else if (seq2.contains(seq1)){
+    }else if (seq2.indexOf(seq1) > -1){
      i2 = seq2.indexOf(seq1);
     }else{
      var max12 = 0;
