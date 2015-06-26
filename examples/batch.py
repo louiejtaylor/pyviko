@@ -31,7 +31,7 @@ if __name__ == '__main__':
 	#print mutation.mutateStartCodon(['ATG','GGC'], 1)	
 	
 	##
-	
+	'''
 	ovr = core.readFasta('examples/over.fasta')
 	toKO = core.readFasta('examples/ko.fasta')
 	for i in range(len(toKO)):
@@ -39,7 +39,7 @@ if __name__ == '__main__':
 		m.setOverGene(overSeq = toKO[i][1])
 		print m.findMutants(rSiteLength='all')[:3]
 		print
-		
+	'''	
 	#overlaps = [core.findOverlap(toKO[i][1],ovr[i][1]) for i in range(len(toKO))]
 	#print overlaps
 	
