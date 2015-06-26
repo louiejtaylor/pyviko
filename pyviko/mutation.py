@@ -139,9 +139,7 @@ class Mutant:
 					
 					
 		winners = {}
-		print baseSites
 		for l in newSites:
-			print l
 			if l <> baseSites: #this is why I should use sets
 				tempSites = [c for c in baseSites]
 				tempAddedSites = []
