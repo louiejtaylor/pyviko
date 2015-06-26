@@ -1031,7 +1031,7 @@ table {
    fnPrettyPrint = function(arrMutants) {
     var prettyString = '';
     for (i=0; i<arrMutants.length; i++) {
-     prettyString += arrMutants[i].toString() + '</br>';
+     prettyString += arrMutants[i].toSource() + '</br>';
     }
     return prettyString;
    }
@@ -1150,6 +1150,7 @@ table {
    
    fnFindNcutters = function(strSeq, n) {
     var foundSites = [];
+    console.log('wtf' + n.toString() + strSeq);
     for (var i=0; i<(strSeq.length - (n-1)); i++) {
      var frag = strSeq.substring(i,i+n);
      if (arrSites.indexOf(frag) > -1){
@@ -1256,8 +1257,6 @@ table {
    }
    
    fnFindMutants = function(strSeq, intNumMutations, boolIgnoreRxSites, boolIsOverGene) {
-    console.log("not done yet");
-    //Object.keys(dict) //will help immensely
     var codons = fnCodonify(strSeq);
     var possStops = fnFindPossibleStopCodons(codons, intNumMutations);
     var startMuts = fnMutateStartCodon(codons[0], intNumMutations)
@@ -1267,7 +1266,7 @@ table {
     }
     
     if (boolIsOverGene) {
-     var strOverSeq = $('#overGeneBox').val();
+     var strOverSeq = fnSanitize($('#overGeneBox').val());
      var overGeneInfo = fnFindOverGeneInfo(strSeq,strOverSeq);   
      var safeMutations = [];
      var overAAs = fnTranslate(fnCodonify(overGeneInfo.prefix + fnSeqify(fnFindOverprintedGene(strSeq, overGeneInfo.startIndex, overGeneInfo.frameOver))))
@@ -1284,6 +1283,7 @@ table {
     }
     
     if (boolIgnoreRxSites == false) {
+     /*
      var baseSites = [];
      for (l=5; l<9; l++){
       var newSites = fnFindNcutters(strSeq,l);
@@ -1291,12 +1291,20 @@ table {
        baseSites.push(newSites[j]);
       }
      }
+     */
      var dSiteMutations = [];
      for (i=0; i<mutations.length; i++) {
       var mutSites = [];
+      var baseSites = [];
       for (l=5; l<9; l++){
        var newSeq = fnSeqify(fnInsertCodonMutation(codons, mutations[i]))
-       var newSites = fnFindNcutters(newSeq,l);
+       var s = mutations[i][0]*3;
+       console.log(s);
+       console.log(newSeq.substring(s-10,s+10,l) + l.toString());
+       var newSites = fnFindNcutters(newSeq.substring(s-10,s+10),l);
+       var baseSites = fnFindNcutters(strSeq.substring(s-10,s+10),l);
+       console.log(newSites);
+       console.log(baseSites);
        for (j=0;j<newSites.length;j++){
         mutSites.push(newSites[j]);
        }
