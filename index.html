@@ -1016,7 +1016,7 @@ table {
     $('#chkSites').prop('checked', false);
     document.getElementById("button").onclick = function() {
      var geneIn = $('#inputBox').val();   
-     $("#seq").text(fnPrettyPrint(fnFindMutants(fnSanitize(geneIn), 1, $('#chkSites').prop('checked'), $('#chkOver').prop('checked'))));
+     $("#seq").html(fnPrettyPrint(fnFindMutants(fnSanitize(geneIn), 1, $('#chkSites').prop('checked'), $('#chkOver').prop('checked'))));
      $("#results").show();
     };
     $('#chkOver').change(function() {
@@ -1031,7 +1031,7 @@ table {
    fnPrettyPrint = function(arrMutants) {
     var prettyString = '';
     for (i=0; i<arrMutants.length; i++) {
-     prettyString += arrMutants[i].toSource() + '\n';
+     prettyString += arrMutants[i].toString() + '</br>';
     }
     return prettyString;
    }
@@ -1303,14 +1303,17 @@ table {
       }
       var resultArr = fnArrayDiff(baseSites,mutSites);
       if (resultArr) {
+       dSiteMutations.push([mutations[i]])
        for (var i=0; i<resultArr.length; i++){
-        dSiteMutations.push(resultArr[i]);
+        var x = dSiteMutations.length - 1
+        if (resultArr[i][0][1]){
+         dSiteMutations[x].push(resultArr[i]);
+        }
        }
       }
      }
      mutations = dSiteMutations;
     }
-    console.log(mutations);
     return mutations;    
    }
    
