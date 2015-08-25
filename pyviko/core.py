@@ -84,7 +84,7 @@ def findOverprintedGene(seq, startIndex, frame=1):
 		if frame == 1:
 			raise SequenceError("The overprinted sequence is in the same frame as the main coding sequence. Please provide a frame argument.")
 		codons = codonify(seq[frame - 1:])[:-1] # Remove last (incomplete) codon
-	for i in range(0,len(codons)):
+	for i in range(1,len(codons)):
 		if codons[i] in stopCodons:
 			codons = codons[:i]
 			break
