@@ -1138,6 +1138,7 @@ table {
         pluralization = "site";
        } else {
         pluralization = "sites";
+       }
        strHTML += "<b>removes ";
        for (var l=0; l<removed.length; l++) {
         strHTML += removed[l];
@@ -1145,11 +1146,11 @@ table {
          strHTML += ', ';
         }
        }
-       strHTML += " restriction " + pluralization + "</b>";
+       var toAdd = " restriction " + pluralization + "</b>";
+       strHTML += toAdd;
       } else {
-       strHTML = "<b>no restriction site changes</b>"
+       strHTML = "<b>no restriction site changes</b>";
       }
-      
       $(divToEdit).html(strHTML);
      } else {
       $(divToEdit).html("<b>no restriction site changes</b>");
