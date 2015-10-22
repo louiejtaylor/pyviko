@@ -1026,7 +1026,7 @@ table {
 
   <script type="text/javascript">
    window.onload = function() {
-    $('#chkOver').prop('checked', false);
+    $('#chkOver').prop('checked', true);
     $('#chkSites').prop('checked', false);
     document.getElementById("button").onclick = function() {
      var geneIn = $('#inputBox').val();
@@ -1133,6 +1133,30 @@ table {
       var pluralization = "";
       if (added.length > 0) {
        //TODO: add equivalents for only added, and added + subtracted
+       if (added.length == 1) {
+        pluralization = "site";
+       } else {
+        pluralization = "sites";
+       }
+       strHTML +=  "<b>adds ";
+       for (var l=0; l<added.length; l++) {
+        strHTML += added[l];
+        if (l < added.length - 1) {
+         strHTML += ', ';
+        }
+       }
+       if (removed.length > 0) {
+        pluralization = "sites";
+        strHTML += "; removes ";
+        for (var l=0; l<removed.length; l++) {
+         strHTML += removed[l];
+         if (l < removed.length - 1) {
+          strHTML += ', ';
+         }
+        }
+       }
+       var toAdd = " restriction " + pluralization + "</b>";
+       strHTML += toAdd;
       } else if (removed.length > 0) {
        if (removed.length == 1 ) {
         pluralization = "site";
@@ -1428,26 +1452,27 @@ table {
     
   
   <div id="sidebar">
-    <h1>Index</h1>
-    <ul id="index">
+   <h1>pyViKO</h1>
+   <ul id="index">
 
    <h2>Input:</h2>
+   <p style="line-height:120%; margin-bottom:5px;">Enter the DNA sequence of the gene you wish to knock out in either plain text or FASTA format.</p>
    <textarea id="inputBox" name="input" rows="7" cols="30"></textarea> 
    <br>
    <h3>Options:</h3>
+   <input type="checkbox" id="chkSites"> Ignore restriction site changes</input>
+   </br>
    <input type="checkbox" id="chkOver"> Input sequence contains overprinted gene</input>
-   <div id="overpr" style="display:none;">
+   <div id="overpr">
     <p style=" border-top: 1px dotted black; margin:0px; padding:0px;">
-     Sequence of overprinted gene: </br>
-     <textarea id="overGeneBox" name="input" rows="7" cols="30"></textarea> 
+     Enter the DNA sequence of the overprinted gene: </br>
+     <textarea id="overGeneBox" name="input" rows="5" cols="30"></textarea> 
     </p>
    </div>
    </br>
-   <input type="checkbox" id="chkSites"> Ignore restriction site changes</input>
-   </br>
    <input id="button" type="submit" name="button" value="Submit"/>
 
-    </ul>
+   </ul>
   </div>
 
     <article id="content">
@@ -1457,7 +1482,7 @@ table {
   </header>
    <h2>Results:</h2>
    <div id="results" style="display:none;">
-    <div class="keyBox">
+    <div class="keyBox" style="line-height:120%;">
      Your input sequence is below.
      <b>Overlapping nucleotides are shown in bold.</b>
      <a href="#">Green nucleotides</a> indicate codons that can be mutated to a stop (or non-start) codon, and are links to full mutant sequences.
