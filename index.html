@@ -1033,9 +1033,10 @@ table {
    window.onload = function() {
     $('#chkOver').prop('checked', true);
     $('#chkSites').prop('checked', false);
+    $('#chkFirst').prop('checked', false);
     document.getElementById("button").onclick = function() {
      var geneIn = $('#inputBox').val();
-     $("#results").hide("fast");
+     $("#results").hide();
      $('#error').hide("fast");
      var error = fnConfirmInput();
      if (error) {
@@ -1068,17 +1069,21 @@ table {
     for (i=0; i < geneIn.length; i++){
      var nt = geneIn[i];
      if (nt != 'A' && nt != 'C' && nt != 'T' && nt != 'G') {
-      return "Unknown nucleotide '" + nt + "' encountered in gene sequence."
+      return "Unknown nucleotide '" + nt + "' encountered in gene sequence.";
      }
     }
     if (bOverGene == true) {
      for (i=0; i < overGeneIn.length; i++){
       var nt = overGeneIn[i];
       if (nt != 'A' && nt != 'C' && nt != 'T' && nt != 'G') {
-       return "Unknown nucleotide '" + nt + "' encountered in overprinted gene sequence."
+       return "Unknown nucleotide '" + nt + "' encountered in overprinted gene sequence.";
       }
      }
+     if (fnFindOverlap(geneIn, overGeneIn) == null) {
+      return "No overlap detected between input gene and overprinted gene.";
+     }
     }
+
     return false;
    }
    
@@ -1122,7 +1127,6 @@ table {
        seqHtmlOut += cod;
       }
      }
-     //geneOut = geneOut.substring(0,ol[0]) + '<b>' + geneOut.substring(ol[0],ol[0]-ol[1]+overGene.length) + '</b>'+geneOut.substring(ol[0]-ol[1]+overGene.length,geneOut.length);
     } else {
      for (var i=0; i<codons.length; i++) {
       var cod=codons[i]; 
@@ -1136,7 +1140,9 @@ table {
     
     $("#seq").html('<div class="mutDiv"><h3>'+seqHtmlOut+'</h3></div></br>');
     $("#mutants").html(prettyString);
-    fnAddRestrictionSiteInfo(arrMutants, geneIn);
+    if ($('#chkSites').prop('checked') == false) {
+     fnAddRestrictionSiteInfo(arrMutants, geneIn);
+    }
     return true;
    }
    
@@ -1147,7 +1153,7 @@ table {
    fnAddRestrictionSiteInfo = function(arrMutants, geneIn){
     var rs1 = fnFindRxSites(geneIn);
     for (var i = 0; i <arrMutants.length; i++){
-    setTimeout(fnAddRestrictionSiteInfo, 2);
+    setTimeout(fnAddRestrictionSiteInfo, 0);
      var divToEdit = "#rs" + i.toString();
      var seq2 = fnSeqify(fnInsertCodonMutation(fnCodonify(geneIn), arrMutants[i]));
      var rs2 = fnFindRxSites(seq2);
@@ -1282,7 +1288,8 @@ table {
      } else if (max21 > max12) {
       i2 = l2 - max21;
      } else {
-      alert("no overlap found");
+      //no overlap
+      return null;
      }
     }
     return [i1,i2];
@@ -1330,7 +1337,6 @@ table {
     return codons;
    }
   
-
    fnFindRxSites = function(strSeq) {
     var sites = [];
     for (var k=5; k<9; k++){
@@ -1443,9 +1449,12 @@ table {
    
    fnFindMutants = function(strSeq, intNumMutations, boolIgnoreRxSites, boolIsOverGene) {
     var codons = fnCodonify(strSeq);
+    var mutations = [];
     var possStops = fnFindPossibleStopCodons(codons, intNumMutations);
-    var startMuts = fnMutateStartCodon(codons[0], intNumMutations)
-    var mutations = startMuts;
+    if ($('#chkFirst').prop('checked') == false) {
+     var startMuts = fnMutateStartCodon(codons[0], intNumMutations)
+     mutations = startMuts;
+    }
     for (var i=0; i<possStops.length; i++){
      mutations.push(possStops[i]);
     }
@@ -1470,6 +1479,7 @@ table {
     if (boolIgnoreRxSites == false) {
      
     }
+    
     return mutations;    
    }
    
@@ -1500,6 +1510,8 @@ table {
    <br>
    <h3>Options:</h3>
    <input type="checkbox" id="chkSites"> Ignore restriction site changes</input>
+   </br>
+   <input type="checkbox" id="chkFirst"> Ignore start codon mutations</input>
    </br>
    <input type="checkbox" id="chkOver"> Input sequence contains overprinted gene</input>
    <div id="overpr">
