@@ -569,6 +569,11 @@ table {
     outline: 1px solid #D3D3D3;
     padding: 7px;
   }
+  .errorBox {
+    background: #FF4C4C;
+    outline: 1px solid #D3D3D3;
+    padding: 7px;
+  }
   #content {
     width: 70%;
     max-width: 850px;
@@ -1030,8 +1035,16 @@ table {
     $('#chkSites').prop('checked', false);
     document.getElementById("button").onclick = function() {
      var geneIn = $('#inputBox').val();
-     fnPrettyPrint(fnFindMutants(fnSanitize(geneIn), 1, $('#chkSites').prop('checked'), $('#chkOver').prop('checked')), geneIn);
-     $("#results").show();
+     $("#results").hide("fast");
+     $('#error').hide("fast");
+     var error = fnConfirmInput();
+     if (error) {
+      $('#error').html("<b>Error: </b>" + error)
+      $('#error').show("fast");
+     } else {
+      fnPrettyPrint(fnFindMutants(fnSanitize(geneIn), 1, $('#chkSites').prop('checked'), $('#chkOver').prop('checked')), geneIn);
+      $("#results").show();
+     }
     };
     $('#chkOver').change(function() {
      if($('#chkOver').prop('checked')){
@@ -1041,6 +1054,33 @@ table {
      }
     });
    };
+   
+   fnConfirmInput = function() {
+    var geneIn = fnSanitize($('#inputBox').val());
+    var overGeneIn = fnSanitize($('#overGeneBox').val());
+    var bOverGene = $('#chkOver').prop('checked');
+    if (geneIn == '') {
+     return "Please input a gene sequence.";
+    } 
+    if (overGeneIn == '' && bOverGene == true) {
+     return "Please input an overprinted sequence or uncheck the 'Input sequence contains overprinted gene' checkbox.";
+    }
+    for (i=0; i < geneIn.length; i++){
+     var nt = geneIn[i];
+     if (nt != 'A' && nt != 'C' && nt != 'T' && nt != 'G') {
+      return "Unknown nucleotide '" + nt + "' encountered in gene sequence."
+     }
+    }
+    if (bOverGene == true) {
+     for (i=0; i < overGeneIn.length; i++){
+      var nt = overGeneIn[i];
+      if (nt != 'A' && nt != 'C' && nt != 'T' && nt != 'G') {
+       return "Unknown nucleotide '" + nt + "' encountered in overprinted gene sequence."
+      }
+     }
+    }
+    return false;
+   }
    
    fnPrettyPrint = function(arrMutants, geneIn, overGeneIn) {
     var prettyString = '';
@@ -1104,7 +1144,7 @@ table {
    var arrSites = Object.keys(objRxSites);
    arrSites = arrSites.join();
    
-   fnAddRestrictionSiteInfo = function(arrMutants, geneIn){ //TODO
+   fnAddRestrictionSiteInfo = function(arrMutants, geneIn){
     var rs1 = fnFindRxSites(geneIn);
     for (var i = 0; i <arrMutants.length; i++){
     setTimeout(fnAddRestrictionSiteInfo, 2);
@@ -1132,7 +1172,6 @@ table {
       var strHTML = "";
       var pluralization = "";
       if (added.length > 0) {
-       //TODO: add equivalents for only added, and added + subtracted
        if (added.length == 1) {
         pluralization = "site";
        } else {
@@ -1481,6 +1520,8 @@ table {
   <h1 class="title"><span class="name">&nbsp;</span> </h1>
   </header>
    <h2>Results:</h2>
+   <div id="error" class="errorBox" style="line-height:120%;display:none;">
+   </div>
    <div id="results" style="display:none;">
     <div class="keyBox" style="line-height:120%;">
      Your input sequence is below.
