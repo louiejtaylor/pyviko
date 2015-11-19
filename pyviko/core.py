@@ -30,17 +30,16 @@ def translate(codons):
 	Translates a list of DNA codons into the corresponding amino 
 	acids, stopping translation if a stop codon is encountered.
 	'''
-	#optimization from js fnTranslate(): only one loop
 	codons = codonify(codons)
+	aa = ''
 	for i in range(0,len(codons)):
-		if codons[i] in stopCodons:
+		if codons[i] in stopCodons or len(codons[i]) <> 3:
 			codons = codons[:i]
 			break
-	if len(codons[-1]) <> 3:
-		codons = codons[:-1] # Remove last codon if incomplete
-	aa = ''
-	for c in codons:
-		aa = aa + translation[c]
+		try:
+			aa = aa + translation[codons[i]]
+		except KeyError as e:
+			raise SequenceError("Invalid codon: " + e.message)
 	return aa
 
 def insertMutation(codons, mut):

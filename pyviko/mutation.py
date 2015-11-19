@@ -1,8 +1,5 @@
 from pyviko import core, restriction
 
-# TODO - scrambling, excision KO?
-# TODO - allow for input of full overprinted gene (DONE: Overlap finder, now just need to handle input)
-
 class OverGene:
 	
 	frame = 1
@@ -11,7 +8,6 @@ class OverGene:
 	geneSequence = ''
 	postSequence = '' # includes 1-2nt removed by core.findOverGene
 	overAAs = ''
-	#find rsites using a comb sequence?	
 	
 	def __init__(self, overSeq, startNtIndex, seq, frameOver = 1):
 		if overSeq <> '':
@@ -20,7 +16,7 @@ class OverGene:
 				#overprinted gene starts before
 				startNtIndex = -1
 				frameOver = 4-(ol[1]%3)
-				self.preSequence = overSeq[ol[1]-(-frameOver+4):ol[1]] + seq[:3-(-frameOver+4)] #TODO: CHANGE ATG HERE
+				self.preSequence = overSeq[ol[1]-(-frameOver+4):ol[1]] + seq[:3-(-frameOver+4)]
 			else:
 				#overprinted gene starts after
 				startNtIndex = ol[0]
@@ -63,12 +59,6 @@ class Mutant:
 		else:
 			raise core.SequenceError("Could not find target sequence in vector sequence.")
 			
-	def addMutant(self, mut):
-		'''
-		Add individual point mutants by hand, mut tuple.
-		'''
-		#Should change all places I use `mut` to either ntMut or codMut for less ambiguity
-		
 	def findMutants(self, rSiteLength = 6, rSites = restriction.defaultEnzymes()):
 		'''
 		Returns a list of mutants that add a premature stop codon 
@@ -121,8 +111,7 @@ class Mutant:
 			
 			for mut in safeMutations:
 				newSites.append([])
-				for length in restrictionSiteLengths:
-					newSites[-1] += restriction.reFindEnzymes(core.seqify(core.insertMutation(self.codons, mut)))
+				newSites[-1] += restriction.reFindEnzymes(core.seqify(core.insertMutation(self.codons, mut)))
 				
 		### Non-regex:
 		else:
@@ -131,13 +120,18 @@ class Mutant:
 			for length in restrictionSiteLengths:
 				baseSites += restriction.findNcutters(self.seq, length)
 				
-			# baseSites = set(baseSites) #for some reason this will not work... Collection? Should use sets though
 			for mut in safeMutations:
 				newSites.append([])
 				for length in restrictionSiteLengths:
 					newSites[-1] += restriction.findNcutters(core.seqify(core.insertMutation(self.codons, mut)), length)
 					
-					
+		'''print "BASE\n" 
+		print baseSites 
+		print "\n\n"
+		print "NEW\n" 
+		print newSites 
+		print "\n\n"'''
+		
 		winners = {}
 		for l in newSites:
 			if l <> baseSites: #this is why I should use sets
@@ -165,7 +159,6 @@ class Mutant:
 		# next step: post process `winners` to make the tuples look pretty (- and +), store in Mutant object
 	
 def findPossibleStopCodons(codons, n):
-
 	'''
 	Given a list `codons`, finds individual codons that
 	can be mutated to a stop codon given `n` mutations. Returns 
@@ -213,17 +206,25 @@ def findPossibleStopCodons(codons, n):
 	return matches
 
 def mutateStartCodon(codons, n):
-	'''Given a list `codons`, makes `n` mutations
+	'''
+	Given a list `codons`, makes up to `n` mutations (n<2)
 	to destroy the start codon. Returns a formatted list
 	of tuples in the form `(index, 'mutated codon')`.
 	'''
-	#TODO: optimize this as in js
 	start = codons[0]
 	muts = []
-	for i in range(0,3):
+	for i in xrange(0,3):
 		for nt in 'ACTG':
 			mutCodon = start[:i]+nt+start[i+1:]
 			if mutCodon <> start and mutCodon <> 'ATG':
 				muts.append(mutCodon)
-	
-	return [(0,m) for m in muts]
+	newMuts = [z for z in muts]
+	if n == 2:
+		for e in muts:
+			for i in xrange(0,3):
+				for nt in 'ACTG':
+					mutCodon = e[:i]+nt+e[i+1:]
+					if mutCodon <> start and mutCodon <> 'ATG' and mutCodon not in newMuts:
+						newMuts.append(mutCodon)
+					
+	return [(0,m) for m in newMuts]

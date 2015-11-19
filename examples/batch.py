@@ -6,7 +6,7 @@ if __name__ == '__main__':
 	os.chdir('..')
 	#####
 	
-	from pyviko import core, mutation, restriction, bio
+	from pyviko import core, mutation, restriction
 
 	##	
 	#testing
@@ -36,13 +36,23 @@ if __name__ == '__main__':
 	toKO = core.readFasta('examples/ko.fasta')
 	t0 = time.time()
 	for i in range(len(toKO)):
-		m = mutation.Mutant(toKO[i][1],numMutations=1,regEx=False)
+		m = mutation.Mutant(toKO[i][1],numMutations=1,regEx=True)
 		m.setOverGene(overSeq = ovr[i][1])
-		print toKO[i][1]
+		#print toKO[i][1]
 		print m.findMutants(rSiteLength='all')[:5]
 		print "done "+str(i)		
 		print
 	print time.time()-t0
+	
+	t1 = time.time()
+	for i in range(len(toKO)):
+		m = mutation.Mutant(toKO[i][1],numMutations=1,regEx=True)
+		m.setOverGene(overSeq = ovr[i][1])
+		#print toKO[i][1]
+		print m.findMutants(rSiteLength='all')[:5]
+		print "done "+str(i)		
+		print
+	print time.time()-t1
 	
 	#overlaps = [core.findOverlap(toKO[i][1],ovr[i][1]) for i in range(len(toKO))]
 	#print overlaps

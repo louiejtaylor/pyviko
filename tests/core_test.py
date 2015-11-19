@@ -55,8 +55,8 @@ class coreTestCase(unittest.TestCase):
 		"""Tests translate takes cod -> aa"""
 		self.assertEqual(translate(self.cod), self.trans)
 	def test_translate_2(self):
-		"""Tests translate rasies TranslationError for invalid codon"""
-		self.assertRaises(TranslationError, lambda: translate(self.cod_invalid))
+		"""Tests translate rasies SequenceError for invalid codon"""
+		self.assertRaises(SequenceError, lambda: translate(self.cod_invalid))
 	#def test_translate_3(self):
 	#	"""Tests translate warns user if no start codon is found"""
 	#
