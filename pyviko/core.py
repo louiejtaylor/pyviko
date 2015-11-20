@@ -167,9 +167,22 @@ def readFasta(loc):
 					iden = line.strip()
 					seq = ''
 				else:
-					seq += line.strip().upper()
+					seq += line.strip().upper().replace(' ', '')
 			except IndexError: #blank line
 				next
 	seqs.append((iden, seq))
 	f.close()
 	return seqs
+	
+def writeFasta(fname, mutlist, floc = ""):
+	'''
+	Need doc
+	'''
+	#TODO: this function
+	fname = fname.replace('|', '.')[:30]
+	for character in fname:
+		if character not in 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,\'"()-_':
+			fname = fname.replace(character, ' ')
+	fname = ' '.join([i for i in fname.split(' ') if i <> '']) + '.fasta'
+	print fname
+	
