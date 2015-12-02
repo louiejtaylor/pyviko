@@ -1,7 +1,7 @@
 stopCodons = ['TAG', 'TAA', 'TGA']
 translation = {'CTT': 'L', 'ATG': 'M', 'AAG': 'K', 'AAA': 'K', 'ATC': 'I', 'AAC': 'N', 'ATA': 'I', 'AGG': 'R', 'CCT': 'P', 'ACT': 'T', 'AGC': 'S', 'ACA': 'T', 'AGA': 'R', 'CAT': 'H', 'AAT': 'N', 'ATT': 'I', 'CTG': 'L', 'CTA': 'L', 'CTC': 'L', 'CAC': 'H', 'ACG': 'T', 'CAA': 'Q', 'AGT': 'S', 'CAG': 'Q', 'CCG': 'P', 'CCC': 'P', 'TAT': 'Y', 'GGT': 'G', 'TGT': 'C', 'CGA': 'R', 'CCA': 'P', 'TCT': 'S', 'GAT': 'D', 'CGG': 'R', 'TTT': 'F', 'TGC': 'C', 'GGG': 'G', 'GGA': 'G', 'TGG': 'W', 'GGC': 'G', 'TAC': 'Y', 'GAG': 'E', 'TCG': 'S', 'TTA': 'L', 'GAC': 'D', 'TCC': 'S', 'GAA': 'E', 'TCA': 'S', 'GCA': 'A', 'GTA': 'V', 'GCC': 'A', 'GTC': 'V', 'GCG': 'A', 'GTG': 'V', 'TTC': 'F', 'GTT': 'V', 'GCT': 'A', 'ACC': 'T', 'TTG': 'L', 'CGT': 'R', 'CGC': 'R'}
 
-import warnings
+import warnings,os
 
 class SequenceError(Exception):
 	pass
@@ -174,15 +174,39 @@ def readFasta(loc):
 	f.close()
 	return seqs
 	
-def writeFasta(fname, mutlist, floc = ""):
+def writeFasta(fname, mutlist, seq, rloc = "", floc = ""):
 	'''
-	Need doc
+	Given a filename `fname`, list of mutations `mutlist` input sequence `seq`
+	and an optional file location  `rloc` (relative location) or `floc` (absolute location), 
+	generates a FASTA file with all mutants in the sequence.
 	'''
-	#TODO: this function
+	#TODO: clean this up
 	fname = fname.replace('|', '.')[:30]
 	for character in fname:
-		if character not in 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,\'"()-_':
+		if character not in '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,\'"()-_':
 			fname = fname.replace(character, ' ')
 	fname = ' '.join([i for i in fname.split(' ') if i <> '']) + '.fasta'
+	if floc == "":
+		dirs = os.listdir(os.getcwd())
+	else:
+		dirs = os.listdir(floc)
+	print dirs
+	if fname in dirs:
+		i = 1
+		while fname[:-6] + '(' + str(i) + ').fasta' in dirs:
+			i += 1
+		fname = fname[:-6] + '(' + str(i) + ').fasta'
+	#if file.exists(floc+fname): create file else while file.exists(newfname) create newfname
 	print fname
-	
+	##temp
+	fasta = open(fname, 'w')
+	##
+	#this is what mutlist looks like: ((26, 'TAG'), [(75, ['AflII'], '-')])
+	for m in mutlist:
+		fasta.write(">mutant at codon " + str(m[0][0]+1) +': \n' )
+		codons = codonify(seq)
+		mutSeq = seqify(codons[:m[0][0]]+[m[0][1]]+codons[m[0][0]+1:])
+		fasta.write('\n'.join([mutSeq[i:i+100] for i in range(0,len(mutSeq),100)]) +'\n')
+		
+	fasta.close()
+	return True

@@ -70,7 +70,9 @@ def findNcutters(seq, n, rSites = None):
 	
 	if rSites == None:
 		rSites = defaultEnzymes()
+		
 	tempSites = {}
+
 	for si in rSites.keys():
 		for se in findNonRegexEnzymeSite(si):
 			tempSites[se] = rSites[si]

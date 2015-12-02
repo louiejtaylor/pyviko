@@ -39,7 +39,8 @@ if __name__ == '__main__':
 		m = mutation.Mutant(toKO[i][1],numMutations=1,regEx=True)
 		m.setOverGene(overSeq = ovr[i][1])
 		#print toKO[i][1]
-		print m.findMutants(rSiteLength='all')[:5]
+		core.writeFasta(toKO[i][0],m.findMutants(rSiteLength='all'),m.seq)
+		#print m.findMutants(rSiteLength='all')[:5]
 		print "done "+str(i)		
 		print
 	print time.time()-t0

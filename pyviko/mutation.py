@@ -114,6 +114,9 @@ class Mutant:
 				newSites[-1] += restriction.reFindEnzymes(core.seqify(core.insertMutation(self.codons, mut)))
 				
 		### Non-regex:
+		#Here is where you can change it to only look at substrings as you do in the online version
+		#for every codon, look a little upstream and downstream, and ONLY look 
+		#at codons in SafeMutations, you don't need a list of lists at all the places
 		else:
 			
 			baseSites = []
