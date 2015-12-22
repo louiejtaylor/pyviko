@@ -8,6 +8,7 @@ except ImportError:
 	warnings.warn("To support overlapping restriction sites, please update to the new regex module.")
 	import re
 
+#RYWSMKBDHVN
 nucleotideMatrix = {	'R':['A','G'],
 					'Y':['C','T'],
 					'W':['A','T'],

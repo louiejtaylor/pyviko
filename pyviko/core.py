@@ -107,6 +107,7 @@ def reverseComplement(seq):
 			rev += pairs[nt]
 	except KeyError:
 		print "Unknown nucleotide '" + nt  + "' encountered."
+		return "False"
 	
 	return rev
 	
