@@ -39,7 +39,6 @@ def findGenes(geneList, positive):
 
 Entrez.email = ""
 handle = Entrez.esearch(db="nuccore", term='"complete genome"[All Fields] AND viruses[filter] NOT segment[All Fields] NOT partial[All Fields]', retmax=48770)
-#handle = Entrez.esearch(db="nuccore", term='"complete genome"[All Fields] AND viruses[filter] NOT segment[All Fields] NOT partial[All Fields]', retmax=131)
 record = Entrez.read(handle)
 idlist = record["IdList"]
 handle.close()
@@ -97,28 +96,3 @@ for jjj in range(1,int(len(idlist)/100)+2):
 	
 fiKO.close()
 fiOver.close()
-'''
-			try:
-				print core.findOverlap(toKO[i][2],over[i][2])
-			except core.SequenceError:
-				print "Ohno", toKO[i], over[i]
-			except IndexError:
-				print "we dont care"
-'''
-
-#print seq_record.id, len(over), len(toKO), ccc
-'''
-try:
-	print core.findOverlap(toKO[0][-1],over[0][-1])
-except core.SequenceError:
-	print "Ohno"
-except IndexError:
-	next
-'''
-
-'''records = Entrez.read(handle)
-for i in range(0,10):
-	print records[1]['GBSeq_feature-table'][i]
-	print
-handle.close()
-'''
