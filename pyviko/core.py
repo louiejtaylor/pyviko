@@ -135,7 +135,7 @@ def findOverlap(seq1, seq2):
 				max12 = i				
 		if max12 > max21:
 			i1 = l1 - max12
-		elif max12 < max21:
+		elif max12 <= max21: #without this small overlaps equal on both sides are mishandled
 			i2 = l2 - max21
 		else: 
 			raise SequenceError("No overlap detected between input sequences")

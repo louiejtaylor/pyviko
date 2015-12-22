@@ -32,8 +32,12 @@ if __name__ == '__main__':
 	
 	##
 
-	ovr = core.readFasta('examples/over.fasta')
-	toKO = core.readFasta('examples/ko.fasta')
+	#ovr = core.readFasta('examples/over.fasta')
+	#toKO = core.readFasta('examples/ko.fasta')
+	
+	ovr = core.readFasta('test/dem/over/0.fasta')
+	toKO = core.readFasta('test/dem/ko/0.fasta')
+	
 	t0 = time.time()
 	for i in range(len(toKO)):
 		m = mutation.Mutant(toKO[i][1],numMutations=1,regEx=True)
@@ -44,7 +48,7 @@ if __name__ == '__main__':
 		print "done "+str(i)		
 		print
 	print time.time()-t0
-	
+	'''
 	t1 = time.time()
 	for i in range(len(toKO)):
 		m = mutation.Mutant(toKO[i][1],numMutations=1,regEx=False)
@@ -54,7 +58,7 @@ if __name__ == '__main__':
 		print "done "+str(i)		
 		print
 	print time.time()-t1
-	
+	'''
 	#overlaps = [core.findOverlap(toKO[i][1],ovr[i][1]) for i in range(len(toKO))]
 	#print overlaps
 	

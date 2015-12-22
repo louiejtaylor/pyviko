@@ -33,19 +33,20 @@ record = Entrez.read(handle)
 idlist = record["IdList"]
 handle.close()
 addedCounter = 0
+finum = 0
+fiKO = open('test/dem/ko/'+str(finum)+'.fasta', 'w')
+fiOver = open('test/dem/over/'+str(finum)+'.fasta', 'w')
 handle = Entrez.efetch(db="nuccore", id=idlist, rettype="gb", retmode="text")
 results = SeqIO.parse(handle, "gb")
 for seq_record in results:
 	plus_genes = []
 	minus_genes = []
-	ccc = 0
 	for i in seq_record.features:
 		if i.type == "CDS":
-			ccc+=1
 			if "join" in str(i.location):
 				fancyJoin = extractJoin(str(i.location))
 				if i.location.strand == 1:
-					plus_genes += [(fancyJoin[0][0], fancyJoin[1][1], seq_record.seq[fancyJoin[0][0]:]+seq_record.seq[:fancyJoin[1][1]])]
+					plus_genes += [(fancyJoin[0][0], fancyJoin[1][1], str(seq_record.seq[fancyJoin[0][0]:]+seq_record.seq[:fancyJoin[1][1]]))]
 				elif i.location.strand == -1:
 					minus_genes += [(fancyJoin[1][1], fancyJoin[0][0], core.reverseComplement(seq_record.seq[fancyJoin[0][0]]+seq_record.seq[fancyJoin[1][1]]))]
 			else:
@@ -58,8 +59,43 @@ for seq_record in results:
 	overMinus, toKoMinus = findGenes(minus_genes,False)
 	over = overPlus + overMinus
 	toKO = toKoPlus + toKoMinus
-	#print seq_record.id, len(over), len(toKO), ccc
+	
+	if len(over) <> len(toKO):
+		print "ERROR: LENGTHS NOT EVEN"
+		print len(over), len(toKO), addedCounter
+	else:
+		for i in range(len(over)):
+			addedCounter += 1
+			if addedCounter % 100 == 0:
+				fiKO.close()
+				fiOver.close()
+				finum += 1
+				fiKO = open('test/dem/ko/'+str(finum)+'.fasta', 'w')
+				fiOver = open('test/dem/over/'+str(finum)+'.fasta', 'w')
+			fiKO.write('>'+str(seq_record.id)+' '+str(toKO[i][0])+':'+str(toKO[i][1]) +'\n'+toKO[i][2]+'\n')
+			fiOver.write('>'+str(seq_record.id)+' '+str(over[i][0])+':'+str(over[i][1])+'\n'+over[i][2]+'\n')
+
 handle.close()
+fiKO.close()
+fiOver.close()
+'''
+			try:
+				print core.findOverlap(toKO[i][2],over[i][2])
+			except core.SequenceError:
+				print "Ohno", toKO[i], over[i]
+			except IndexError:
+				print "we dont care"
+'''
+
+#print seq_record.id, len(over), len(toKO), ccc
+'''
+try:
+	print core.findOverlap(toKO[0][-1],over[0][-1])
+except core.SequenceError:
+	print "Ohno"
+except IndexError:
+	next
+'''
 
 '''records = Entrez.read(handle)
 for i in range(0,10):
