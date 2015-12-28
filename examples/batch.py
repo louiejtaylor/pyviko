@@ -35,15 +35,15 @@ if __name__ == '__main__':
 	#ovr = core.readFasta('examples/over.fasta')
 	#toKO = core.readFasta('examples/ko.fasta')
 	
-	ovr = core.readFasta('test/dem/over/0.fasta')
-	toKO = core.readFasta('test/dem/ko/0.fasta')
-	
+	ovr = core.readFasta('test/dem/over/2000.fasta')
+	toKO = core.readFasta('test/dem/ko/2000.fasta')
+	'''
 	t0 = time.time()
 	for i in range(len(toKO)):
 		m = mutation.Mutant(toKO[i][1],numMutations=1,regEx=True)
 		m.setOverGene(overSeq = ovr[i][1])
 		#print toKO[i][1]
-		core.writeFasta(toKO[i][0],m.findMutants(rSiteLength='all'),m.seq)
+		core.writeFasta(toKO[i][0],m.findMutants(rSiteLength='all'),m.seq,hasRxSites=True)
 		#print m.findMutants(rSiteLength='all')[:5]
 		print "done "+str(i)		
 		print
@@ -51,14 +51,16 @@ if __name__ == '__main__':
 	'''
 	t1 = time.time()
 	for i in range(len(toKO)):
-		m = mutation.Mutant(toKO[i][1],numMutations=1,regEx=False)
+		m = mutation.Mutant(toKO[i][1],numMutations=1,regEx=True)
 		m.setOverGene(overSeq = ovr[i][1])
 		#print toKO[i][1]
-		print m.findMutants(rSiteLength='all')[:5]
+		print m.findMutants(ignoreRxSites = False, rSiteLength='all')[:5]
+		print
+		print m.findMutants()[:5]
 		print "done "+str(i)		
 		print
 	print time.time()-t1
-	'''
+	
 	#overlaps = [core.findOverlap(toKO[i][1],ovr[i][1]) for i in range(len(toKO))]
 	#print overlaps
 	

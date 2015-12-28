@@ -146,7 +146,7 @@ def findOverlap(seq1, seq2):
 def readFasta(loc):
 	'''
 	Reads in a FASTA file, returns tuples in the form
-	`('> identifying information, 'sequence')`.
+	`('> identifying information', 'sequence')`.
 	'''
 	f = open(loc, 'r')
 	seqs = []
@@ -175,12 +175,15 @@ def readFasta(loc):
 	f.close()
 	return seqs
 	
-def writeFasta(fname, mutlist, seq, rloc = "", floc = ""):
+def writeFasta(fname, mutlist, seq, hasRxSites = False, rloc = "", floc = ""):
 	'''
 	Given a filename `fname`, list of mutations `mutlist` input sequence `seq`
 	and an optional file location  `rloc` (relative location) or `floc` (absolute location), 
 	generates a FASTA file with all mutants in the sequence.
+	Accepts input in two formats: if hasRxSites=False, assumes the mutations are of the form
+	`(mutant codon index, 'stop codon')`.
 	'''
+	print hasRxSites
 	#TODO: clean this up
 	fname = fname.replace('|', '.')[:30]
 	for character in fname:
@@ -191,7 +194,7 @@ def writeFasta(fname, mutlist, seq, rloc = "", floc = ""):
 		dirs = os.listdir(os.getcwd())
 	else:
 		dirs = os.listdir(floc)
-	print dirs
+	#print dirs
 	if fname in dirs:
 		i = 1
 		while fname[:-6] + '(' + str(i) + ').fasta' in dirs:

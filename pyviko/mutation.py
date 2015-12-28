@@ -59,7 +59,7 @@ class Mutant:
 		else:
 			raise core.SequenceError("Could not find target sequence in vector sequence.")
 			
-	def findMutants(self, rSiteLength = 6, rSites = restriction.defaultEnzymes()):
+	def findMutants(self, ignoreRxSites = True, rSiteLength = 6, rSites = restriction.defaultEnzymes()):
 		'''
 		Returns a list of mutants that add a premature stop codon 
 		(or mutate the start codon) without changing the overprinted 
@@ -70,24 +70,13 @@ class Mutant:
 		#(5.) need to allow to not care about rsites
 		##
 		
-		restrictionSiteLengths = list(set([len(k) for k in rSites.keys()]))
-		
-		if rSiteLength == 'all':
-			tempRestrictionSites = rSites
-		elif rSiteLength >= min(restrictionSiteLengths) and rSiteLength <= max(restrictionSiteLengths):
-			rKeys = [k for k in rSites.keys() if len(k) == rSiteLength]
-			tempRestrictionSites = {} # Reduce size of dict. searched
-			for site in rKeys:
-				tempRestrictionSites[site] = rSites[site]
-			restrictionSiteLengths = [rSiteLength]
-		else:
-			raise core.SequenceError("Invalid restriction site length.")
+
 			
 		stops = findPossibleStopCodons(self.codons, self.nMut)
 
 		if self.overGene != False:
 			if len(self.overGene.geneSequence) > 0:
-				stops += mutateStartCodon(self.codons, self.nMut)
+				stops = mutateStartCodon(self.codons, self.nMut) + stops
 			safeMutations = []
 			newPreSequence = '';
 			for poss in stops:
@@ -100,62 +89,69 @@ class Mutant:
 					safeMutations.append(poss)
 		else:
 			safeMutations = stops
-		
-		###### Two approaches: regex and non-regex.
-		newSites = [] # list of lists
-		
-		### Regex:
-		
-		if self.regex:
-			baseSites = restriction.reFindEnzymes(self.seq)
+		finalWinners = [s for s in safeMutations]
+		if not ignoreRxSites:
+			###### Two approaches: regex and non-regex.
+			restrictionSiteLengths = list(set([len(k) for k in rSites.keys()]))
 			
-			for mut in safeMutations:
-				newSites.append([])
-				newSites[-1] += restriction.reFindEnzymes(core.seqify(core.insertMutation(self.codons, mut)))
-				
-		### Non-regex:
-		#Here is where you can change it to only look at substrings as you do in the online version
-		#for every codon, look a little upstream and downstream, and ONLY look 
-		#at codons in SafeMutations, you don't need a list of lists at all the places
-		else:
+			if rSiteLength == 'all':
+				tempRestrictionSites = rSites
+			elif rSiteLength >= min(restrictionSiteLengths) and rSiteLength <= max(restrictionSiteLengths):
+				rKeys = [k for k in rSites.keys() if len(k) == rSiteLength]
+				tempRestrictionSites = {} # Reduce size of dict. searched
+				for site in rKeys:
+					tempRestrictionSites[site] = rSites[site]
+				restrictionSiteLengths = [rSiteLength]
+			else:
+				raise core.SequenceError("Invalid restriction site length.")		
 			
-			baseSites = []
-			for length in restrictionSiteLengths:
-				baseSites += restriction.findNcutters(self.seq, length)
+			newSites = [] # list of lists
+			
+			### Regex:
+			
+			if self.regex:
+				baseSites = restriction.reFindEnzymes(self.seq)
 				
-			for mut in safeMutations:
-				newSites.append([])
+				for mut in safeMutations:
+					newSites.append([])
+					newSites[-1] += restriction.reFindEnzymes(core.seqify(core.insertMutation(self.codons, mut)))
+					
+			### Non-regex:
+			#Here is where you can change it to only look at substrings as you do in the online version
+			#for every codon, look a little upstream and downstream, and ONLY look 
+			#at codons in SafeMutations, you don't need a list of lists at all the places
+			else:
+				
+				baseSites = []
 				for length in restrictionSiteLengths:
-					newSites[-1] += restriction.findNcutters(core.seqify(core.insertMutation(self.codons, mut)), length)
+					baseSites += restriction.findNcutters(self.seq, length)
 					
-		'''print "BASE\n" 
-		print baseSites 
-		print "\n\n"
-		print "NEW\n" 
-		print newSites 
-		print "\n\n"'''
-		
-		winners = {}
-		for l in newSites:
-			if l <> baseSites: #this is why I should use sets
-				tempSites = [c for c in baseSites]
-				tempAddedSites = []
-				for site in l: #basically, removing everything in the new list from the old list to get the differences
-					try:
-						tempSites.remove(site)
-					except ValueError:
-						tempAddedSites.append(site)
-				
-				for i in range(0,len(tempSites)):
-					tempSites[i] = (tempSites[i][0], tempSites[i][1], '-')
+				for mut in safeMutations:
+					newSites.append([])
+					for length in restrictionSiteLengths:
+						newSites[-1] += restriction.findNcutters(core.seqify(core.insertMutation(self.codons, mut)), length)
+			
+			winners = {}
+			for l in newSites:
+				if l <> baseSites: #this is why I should use sets
+					tempSites = [c for c in baseSites]
+					tempAddedSites = []
+					for site in l: #basically, removing everything in the new list from the old list to get the differences
+						try:
+							tempSites.remove(site)
+						except ValueError:
+							tempAddedSites.append(site)
 					
-				for i in range (0, len(tempAddedSites)):
-					tempAddedSites[i] = (tempAddedSites[i][0], tempAddedSites[i][1], '+')
-				
-				winners[safeMutations[newSites.index(l)]] = tempSites + tempAddedSites
-		
-		finalWinners = [(x,winners[x]) for x in sorted(winners.keys(), key=lambda x: x[0])]		
-		
+					for i in range(0,len(tempSites)):
+						tempSites[i] = (tempSites[i][0], tempSites[i][1], '-')
+						
+					for i in range (0, len(tempAddedSites)):
+						tempAddedSites[i] = (tempAddedSites[i][0], tempAddedSites[i][1], '+')
+					
+					winners[safeMutations[newSites.index(l)]] = tempSites + tempAddedSites
+			
+			finalWinners = [(x,winners[x]) for x in sorted(winners.keys(), key=lambda x: x[0])]		
+			
 		return finalWinners
 		
 		# also look for start codon KOs
