@@ -183,8 +183,6 @@ def writeFasta(fname, mutlist, seq, hasRxSites = False, rloc = "", floc = ""):
 	Accepts input in two formats: if hasRxSites=False, assumes the mutations are of the form
 	`(mutant codon index, 'stop codon')`.
 	'''
-	print hasRxSites
-	#TODO: clean this up
 	fname = fname.replace('|', '.')[:30]
 	for character in fname:
 		if character not in '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,\'"()-_':
@@ -194,18 +192,13 @@ def writeFasta(fname, mutlist, seq, hasRxSites = False, rloc = "", floc = ""):
 		dirs = os.listdir(os.getcwd())
 	else:
 		dirs = os.listdir(floc)
-	#print dirs
 	if fname in dirs:
 		i = 1
 		while fname[:-6] + '(' + str(i) + ').fasta' in dirs:
 			i += 1
 		fname = fname[:-6] + '(' + str(i) + ').fasta'
-	#if file.exists(floc+fname): create file else while file.exists(newfname) create newfname
-	print fname
-	##temp
+	del i
 	fasta = open(fname, 'w')
-	##
-	#this is what mutlist looks like: ((26, 'TAG'), [(75, ['AflII'], '-')])
 	for m in mutlist:
 		fasta.write(">mutant at codon " + str(m[0][0]+1) +': \n' )
 		codons = codonify(seq)

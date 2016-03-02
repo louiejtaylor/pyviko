@@ -10,7 +10,7 @@ Proof-of-concept module for pyViKO. [Examples and source](https://github.com/lou
 
 try:
 	from pyviko.core import codonify, seqify, insertMutation, translate, stopCodons
-	from pyviko.restriction import restrictionSites, findNcutters
+	from pyviko.restriction import findNcutters
 except ImportError as e:
 	print "ImportError!",
 	print e
