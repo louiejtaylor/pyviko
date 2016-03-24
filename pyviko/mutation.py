@@ -1,7 +1,9 @@
 from pyviko import core, restriction
 
 class OverGene:
-	
+	'''
+	Class for the overprinted gene.
+	'''
 	frame = 1
 	startNucleotideIndex = -1
 	preSequence = '' # includes 1-2nt removed by core.findOverGene
@@ -27,7 +29,9 @@ class OverGene:
 		self.overAAs = core.translate(self.preSequence + core.seqify(core.findOverprintedGene(seq, startNtIndex, frameOver)) + self.postSequence)
 
 class Mutant:
-	
+	'''
+	Class for target gene mutagenesis.
+	'''
 	seq = ''
 	codons = []
 	nMut = 1
