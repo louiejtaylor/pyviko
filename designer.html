@@ -4,7 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
   <meta name="google-site-verification" content="njaMN4BF73BKWGRck4K_TBFXQeS3CTB2VPLAmcDB39o" />
 
-    <title>Viral Knockouts with pyviko</title>
+    <title>Restriction site design with pyviko</title>
     <meta name="description" content="" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
@@ -1031,11 +1031,13 @@ table {
 
   <script type="text/javascript">
    window.onload = function() {
-    $('#chkOver').prop('checked', true);
-    $('#chkSites').prop('checked', false);
-    $('#chkFirst').prop('checked', false);
+    $('#txtDistance').val(20);
     document.getElementById("button").onclick = function() {
      var geneIn = $('#inputBox').val();
+     var overGeneIn = $('#overGeneBox').val();
+     var mutCodon = $('#txtMutCodon').val();
+     var mutCodonIndex = $('#txtCodonIndex').val();
+     var searchDist = $('#txtDistance').val();
      $("#results").hide();
      $('#error').hide("fast");
      var error = fnConfirmInput();
@@ -1043,18 +1045,42 @@ table {
       $('#error').html("<b>Error: </b>" + error)
       $('#error').show("fast");
      } else {
-      fnPrettyPrint(fnFindMutants(fnSanitize(geneIn), 1, $('#chkSites').prop('checked'), $('#chkOver').prop('checked')), geneIn);
+      fnFindMutantsRx(fnSanitize(geneIn), fnSanitize(overGeneIn), fnSanitize(mutCodon),parseInt(mutCodonIndex)-1,parseInt(searchDist));
       $("#results").show();
      }
     };
-    $('#chkOver').change(function() {
-     if($('#chkOver').prop('checked')){
-      $('#overpr').show("fast");
+    if (fnGetVars("gene")){
+     $('#inputBox').val(fnGetVars("gene"));
+     $('#overGeneBox').val(fnGetVars("ovr"));
+     $('#txtMutCodon').val(fnGetVars("mut"));
+     $('#txtCodonIndex').val(fnGetVars("muti"));
+     var geneIn = $('#inputBox').val();
+     var overGeneIn = $('#overGeneBox').val();
+     var mutCodon = $('#txtMutCodon').val();
+     var mutCodonIndex = $('#txtCodonIndex').val();
+     var searchDist = $('#txtDistance').val();
+     var error = fnConfirmInput();
+     if (error) {
+      $('#error').html("<b>Error: </b>" + error)
+      $('#error').show("fast");
      } else {
-      $('#overpr').hide("fast");
+      fnFindMutantsRx(fnSanitize(geneIn), fnSanitize(overGeneIn), fnSanitize(mutCodon),parseInt(mutCodonIndex)-1,parseInt(searchDist));
+      $("#results").show("slow");
      }
-    });
+    }
    };
+   
+   fnGetVars = function(name, url) {
+    //source: http://stackoverflow.com/a/901144/3440302
+    if (!url) url = window.location.href;
+    url = url.toLowerCase(); // This is just to avoid case sensitiveness  
+    name = name.replace(/[\[\]]/g, "\\$&").toLowerCase();// This is just to avoid case sensitiveness for query parameter name
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+   }
    
    fnConfirmInput = function() {
     var geneIn = fnSanitize($('#inputBox').val());
@@ -1087,146 +1113,9 @@ table {
     return false;
    }
    
-   fnPrettyPrint = function(arrMutants, geneIn) {
-    var prettyString = '';
-    geneIn = fnSanitize(geneIn);
-    var mutatedCodons = [];
-    var codons = fnCodonify(geneIn);
-    for (var i=0; i<arrMutants.length; i++) {
-     mutatedCodons.push(arrMutants[i][0]);
-     var m = arrMutants[i];
-     var mCodons = fnInsertCodonMutation(fnCodonify(geneIn),m);
-     var mutSeq = '';
-     for (var j=0; j<mCodons.length; j++) {
-      if (m[0] == j) {
-       mutSeq += '<b>' + mCodons[j] + '</b>';
-      }else{
-       mutSeq += mCodons[j];
-      }
-     }
-     prettyString += '<div id="c' +i.toString()+ '" class="mutDiv"><a name="c'+ i.toString()+ '"></a><b>> Mutant at codon '+(m[0]+1).toString() +': '+codons[m[0]] +' -> ' + m[1] + '; </b> <span id="rs'+ i.toString()+'" align="right"> </span> </br>' + mutSeq + ' </div></br>';
-    }
-    var seqHtmlOut = '';
-    if ($('#chkOver').prop('checked')){
-     var overGene = $('#overGeneBox').val();
-     var overGene = fnSanitize(overGene);
-     var ol = fnFindOverlap(geneIn, overGene);
-     for (var i=0; i<codons.length; i++) {
-      if (ol[0] < i*3+3 && ol[0] >= i*3){
-       var offset = (ol[0])%3;
-       var cod = codons[i].substring(0,offset) + '<b>' + codons[i].substring(offset,3);
-      } else if (ol[0]-ol[1]+overGene.length >= i*3 && ol[0]-ol[1]+overGene.length < i*3+3) {
-       var offset = (ol[0]-ol[1]+overGene.length) % 3;
-       var cod = codons[i].substring(0,offset) + '</b>' + codons[i].substring(offset,3);
-      } else {
-       var cod=codons[i];
-      }
-      if (mutatedCodons.indexOf(i) > -1) {
-       seqHtmlOut += '<a href="#c' + mutatedCodons.indexOf(i).toString() + '">' + cod + '</a>';
-      } else {
-       seqHtmlOut += cod;
-      }
-     }
-    } else {
-     for (var i=0; i<codons.length; i++) {
-      var cod=codons[i]; 
-      if (mutatedCodons.indexOf(i) > -1) {
-       seqHtmlOut += '<a href="#c' + mutatedCodons.indexOf(i).toString() + '">' + cod + '</a>';
-      } else {
-       seqHtmlOut += cod;
-      }
-     }
-    }
-    
-    $("#seq").html('<div class="mutDiv"><h3>'+seqHtmlOut+'</h3></div></br>');
-    $("#mutants").html(prettyString);
-    if ($('#chkSites').prop('checked') == false) {
-     fnAddRestrictionSiteInfo(arrMutants, geneIn, overGene);
-    }
-    return true;
-   }
-   
    var objRxSites = {'GCGATCGC': ['AsiSI'], 'ACATGT': ['PciI'], 'TCCGGA': ['BspEI'], 'GGCGCGCC': ['AscI'], 'AGTACT': ['ScaI'], 'ACGCGT': ['MluI'], 'CTCAAG': ['BpuEI'], 'GCCGAG': ['NmeAIII'], 'GGTACC': ['KpnI', 'Acc65I'], 'GGCGGA': ['EciI'], 'CAGCTG': ['PvuII'], 'TTCGAA': ['BstBI'], 'CCCAGT': ['BmrI'], 'GATATC': ['EcoRV'], 'CTCCTC': ['BseRI'], 'CTTGAG': ['BpuEI'], 'CTGCAG': ['PstI'], 'CTGAAG': ['AcuI'], 'CTGCAC': ['BsgI'], 'CATCGC': ['BtgZI'], 'GTATCC': ['BciVI'], 'CCGCGG': ['SacII'], 'GATCC': ['AlwI', 'Nt.AlwI'], 'ATTTAAAT': ['SwaI'], 'TCACC': ['HphI'], 'CTCGAG': ['XhoI'], 'GAGTC': ['Nt.BstNBI', 'MlyI', 'PleI'], 'CGGCCG': ['EagI'], 'CTGGAG': ['BpmI'], 'ACGGC': ['BceAI'], 'ACTGG': ['BsrI'], 'GGTCTC': ['BsaI'], 'GATGG': ['BccI'], 'GACTC': ['Nt.BstNBI', 'MlyI', 'PleI'], 'ACTAGT': ['SpeI'], 'TCGCGA': ['NruI'], 'CTTAAG': ['AflII'], 'GCGTC': ['HgaI'], 'CCTAGG': ['AvrII'], 'GCAGGT': ['BspMI'], 'ATTAAT': ['AseI'], 'CCTTC': ['HpyAV'], 'GCTGGG': ['BseYI'], 'CAATTG': ['MfeI'], 'AGATCT': ['BglII'], 'ACTGGG': ['BmrI'], 'AGCGCT': ['AfeI'], 'CTCGGC': ['NmeAIII'], 'GCTAGC': ['BmtI', 'NheI'], 'CATATG': ['NdeI'], 'TCATGA': ['BspHI'], 'ACCTGC': ['BspMI'], 'GCTCTTC': ['Nt.BspQI', 'SapI'], 'CATTGC': ['BsrDI', 'Nb.BsrDI'], 'GTGCAC': ['ApaLI'], 'GTGCAG': ['BsgI'], 'CACGAG': ['BssSI'], 'CTGAG': ['BspCNI'], 'GAAGG': ['HpyAV'], 'GAAGA': ['MboII'], 'ACCGGT': ['AgeI'], 'GGCGCC': ['KasI', 'SfoI', 'NarI', 'PluTI'], 'GTATAC': ['BstZ17I'], 'GTTAAC': ['HpaI'], 'GACGC': ['HgaI'], 'ATCGAT': ['ClaI'], 'GAAGAG': ['EarI'], 'GGATCC': ['BamHI'], 'GAAGAC': ['BbsI'], 'CGTCTC': ['BsmBI'], 'GAGACC': ['BsaI'], 'CTCTTC': ['EarI'], 'TACGTA': ['SnaBI'], 'CCTCAGC': ['Nb.BbvCI', 'Nt.BbvCI', 'BbvCI'], 'CACTGC': ['BtsI', 'Bts-alpha-I'], 'GTCCC': ['BsmFI'], 'GCATC': ['SfaNI'], 'AAGCTT': ['HindIII'], 'TCCGCC': ['EciI'], 'GCGGG': ['FauI'], 'CTCGTG': ['BssSI'], 'GCCGT': ['BceAI'], 'CCCGGG': ['SmaI', 'XmaI'], 'GAGGAG': ['BseRI'], 'TGATCA': ['BclI'], 'GACGTC': ['AatII', 'ZraI'], 'GCAGC': ['BbvI'], 'TTTAAA': ['DraI'], 'GACGTG': ['BmgBI'], 'CATCC': ['BtsCI', 'FokI'], 'CTCCAG': ['BpmI'], 'AACGTT': ['AclI'], 'CCCGC': ['FauI'], 'GTTTAAAC': ['PmeI'], 'CCCAGC': ['BseYI'], 'TCTTC': ['MboII'], 'CCATGG': ['NcoI'], 'GAGAC': ['Nt.BsmAI', 'BsmAI'], 'CCATC': ['BccI'], 'CCGCTC': ['BsrBI'], 'GAAGAGC': ['Nt.BspQI', 'SapI'], 'CTGCTG': ['EcoP15I'], 'GGTGA': ['HphI'], 'GCGCGC': ['BssHII'], 'GGGAC': ['BsmFI'], 'GGATAC': ['BciVI'], 'GCATGC': ['SphI'], 'GTCGAC': ['SalI'], 'GCAGTG': ['BtsI', 'Bts-alpha-I'], 'TCTAGA': ['XbaI'], 'GAGCTC': ['SacI', 'Eco53kI'], 'GCTGAGG': ['Nb.BbvCI', 'Nt.BbvCI', 'BbvCI'], 'CGTACG': ['BsiWI'], 'GCATTC': ['Nb.BsmI', 'BsmI'], 'GAATGC': ['Nb.BsmI', 'BsmI'], 'CAGCAG': ['EcoP15I'], 'GGATG': ['BtsCI', 'FokI'], 'GGATC': ['AlwI', 'Nt.AlwI'], 'TGCGCA': ['FspI'], 'GCGGCCGC': ['NotI'], 'TGTACA': ['BsrGI'], 'GCCGGC': ['NaeI', 'NgoMIV'], 'TGGCCA': ['MscI'], 'CTTCAG': ['AcuI'], 'GAGCGG': ['BsrBI'], 'TTAATTAA': ['PacI'], 'GCTGC': ['BbvI'], 'ATGCAT': ['NsiI'], 'GATGC': ['SfaNI'], 'CTCAG': ['BspCNI'], 'AATATT': ['SspI'], 'CACGTG': ['PmlI'], 'CACGTC': ['BmgBI'], 'GAGACG': ['BsmBI'], 'CGATCG': ['PvuI'], 'GGGCCC': ['PspOMI', 'ApaI'], 'CCAGT': ['BsrI'], 'GGCCGGCC': ['FseI'], 'GCAATG': ['BsrDI', 'Nb.BsrDI'], 'CCTGCAGG': ['SbfI'], 'GTCTTC': ['BbsI'], 'GAATTC': ['EcoRI'], 'TTATAA': ['PsiI'], 'GTCTC': ['Nt.BsmAI', 'BsmAI'], 'GCGATG': ['BtgZI'], 'AGGCCT': ['StuI'], 'GTTGGA': ['MmeI'], 'GTCGGA': ['MmeI'], 'TCCAAC': ['MmeI'], 'TCCGAC': ['MmeI']};
    var arrSites = Object.keys(objRxSites);
    arrSites = ','+arrSites.join()+',';
-   
-   fnAddRestrictionSiteInfo = function(arrMutants, geneIn, overGeneIn){
-    var rs1 = fnFindRxSites(geneIn);
-    for (var i = 0; i <arrMutants.length; i++){
-    setTimeout(fnAddRestrictionSiteInfo, 0);
-     var divToEdit = "#rs" + i.toString();
-     var seq2 = fnSeqify(fnInsertCodonMutation(fnCodonify(geneIn), arrMutants[i]));
-     var rs2 = fnFindRxSites(seq2);
-     var arrDiff = fnArrayDiff(rs1, rs2);
-     if (arrDiff) {
-      var added = [];
-      var removed = [];
-      for (var k=0; k<arrDiff.length; k++) {
-       if (objRxSites[arrDiff[k][0][1]]) {
-        var dictSites = objRxSites[arrDiff[k][0][1]];
-        if (arrDiff[k][1] == '+') {
-         for (var j=0; j<dictSites.length; j++) {
-          added.push(dictSites[j]);
-         }
-        } else {
-         for (var j=0; j<dictSites.length; j++) {
-          removed.push(dictSites[j]);
-         }
-        }
-       }
-      }
-      var strHTML = "";
-      var pluralization = "";
-      if (added.length > 0) {
-       if (added.length == 1) {
-        pluralization = "site";
-       } else {
-        pluralization = "sites";
-       }
-       strHTML +=  "<b>adds ";
-       for (var l=0; l<added.length; l++) {
-        strHTML += added[l];
-        if (l < added.length - 1) {
-         strHTML += ', ';
-        }
-       }
-       if (removed.length > 0) {
-        pluralization = "sites";
-        strHTML += "; removes ";
-        for (var l=0; l<removed.length; l++) {
-         strHTML += removed[l];
-         if (l < removed.length - 1) {
-          strHTML += ', ';
-         }
-        }
-       }
-       var toAdd = " restriction " + pluralization + "</b>";
-       strHTML += toAdd;
-      } else if (removed.length > 0) {
-       if (removed.length == 1 ) {
-        pluralization = "site";
-       } else {
-        pluralization = "sites";
-       }
-       strHTML += "<b>removes ";
-       for (var l=0; l<removed.length; l++) {
-        strHTML += removed[l];
-        if (l < removed.length - 1) {
-         strHTML += ', ';
-        }
-       }
-       var toAdd = " restriction " + pluralization + "</b>";
-       strHTML += toAdd;
-      } else {
-       strHTML = "<b>no restriction site changes</b>";
-      }
-      $(divToEdit).html(strHTML + " <a href=designer.html?gene="+geneIn+"&ovr="+overGeneIn+"&mut="+arrMutants[i][1]+"&muti="+arrMutants[i][0].toString()+"> design sites</a>");
-     } else {
-      $(divToEdit).html("<b>no restriction site changes</b>" + " <a href=designer.html?gene="+geneIn+"&ovr="+overGeneIn+"&mut="+arrMutants[i][1]+"&muti="+arrMutants[i][0].toString()+"> design sites</a>");
-     }
-    }
-    return false;
-   }
    
    fnSanitize = function(strToClean) {
     if (strToClean.indexOf('>') > -1) {
@@ -1339,6 +1228,7 @@ table {
   
    fnFindRxSites = function(strSeq) {
     var sites = [];
+    
     for (var k=5; k<9; k++){
      for (var z=0; z<strSeq.length-(k-1); z++) {
       site = strSeq.substring(z,z+k);
@@ -1447,40 +1337,159 @@ table {
     return diff;
    }
    
-   fnFindMutants = function(strSeq, intNumMutations, boolIgnoreRxSites, boolIsOverGene) {
-    var codons = fnCodonify(strSeq);
-    var mutations = [];
-    var possStops = fnFindPossibleStopCodons(codons, intNumMutations);
-    if ($('#chkFirst').prop('checked') == false) {
-     var startMuts = fnMutateStartCodon(codons[0], intNumMutations)
-     mutations = startMuts;
-    }
-    for (var i=0; i<possStops.length; i++){
-     mutations.push(possStops[i]);
-    }
+   fnInsertPointMutation = function(strSeqIn, arrMut){
+    return strSeqIn.substring(0, arrMut[0])+arrMut[1]+strSeqIn.substring(arrMut[0]+1, strSeqIn.length);
+   }
+   
+   fnFindMutantsRx = function(strSeq, strOverSeq, strMutCodon, intCodonIndex, intSearchDist) {
+    //returns [('mutant nt', intIndex,[rxAdded],[rxRemoved]),...]
+    var overGeneInfo = fnFindOverGeneInfo(strSeq,strOverSeq);
+    var mutSeq = fnSeqify(fnInsertCodonMutation(fnCodonify(strSeq), [intCodonIndex, strMutCodon]));
+    var strCombinedGene = strOverSeq.substring(0,overGeneInfo['overlap'][1])+mutSeq+strOverSeq.substring(overGeneInfo['overlap'][1]+mutSeq.length-1,strOverSeq.length);
+    var intMutCodPos = overGeneInfo['overlap'][1]+intCodonIndex*3+overGeneInfo.frameOver-4; //get approx. position of mutated codon in frame
+    var intFixedSearch = Math.ceil(intSearchDist/3)*3;
+    var intNeg = intMutCodPos - intFixedSearch+6;
+    var intPos = intMutCodPos + intFixedSearch+6;
+    var strSearchRegion = strCombinedGene.substring(intNeg, intPos);
+    var strTranslation = fnTranslate(fnCodonify(strSearchRegion));
     
-    if (boolIsOverGene) {
-     var strOverSeq = fnSanitize($('#overGeneBox').val());
-     var overGeneInfo = fnFindOverGeneInfo(strSeq,strOverSeq);   
-     var safeMutations = [];
-     var overAAs = fnTranslate(fnCodonify(overGeneInfo.prefix + fnSeqify(fnFindOverprintedGene(strSeq, overGeneInfo.startIndex, overGeneInfo.frameOver))))
-     for (var i=0; i<mutations.length; i++) {
-      var newCodons = fnInsertCodonMutation(codons, mutations[i]);
-      var newFirst = newCodons[0];
-      var newPrefix = overGeneInfo.prefix.substring(0,4-overGeneInfo.frameOver) + newFirst.substring(0,overGeneInfo.frameOver-1);
-      var newOverAAs = fnTranslate(fnCodonify(newPrefix + fnSeqify(fnFindOverprintedGene(fnSeqify(newCodons), overGeneInfo.startIndex, overGeneInfo.frameOver))));
-      if (newOverAAs == overAAs) {
-       safeMutations.push(mutations[i]);
+    var mutations = [];
+    var arrNt = ['A','C','G','T'];
+    var rs1 = fnFindRxSites(strSearchRegion);
+    for (var i=0; i<intFixedSearch/3*2-3; i++){
+     var intNewIndex = (i+2)*3-1;
+     for (var j=0; j<4; j++) {
+      if (arrNt[j] != strSearchRegion[intNewIndex]){
+       var newSeq = fnInsertPointMutation(strSearchRegion,[intNewIndex,arrNt[j]])
+       var newTranslation = fnTranslate(fnCodonify(newSeq));
+       if (newTranslation==strTranslation) {
+        var newSites = fnFindRxSites(newSeq);
+        var arrDiff = fnArrayDiff(rs1, newSites);
+        if (arrDiff) {
+         var added = [];
+         var removed = [];
+         for (var k=0; k<arrDiff.length; k++) {
+          if (objRxSites[arrDiff[k][0][1]]) {
+           var dictSites = objRxSites[arrDiff[k][0][1]];
+           if (arrDiff[k][1] == '+') {
+            for (var m=0; m<dictSites.length; m++) {
+             added.push(dictSites[m]);
+            }
+           } else {
+            for (var m=0; m<dictSites.length; m++) {
+             removed.push(dictSites[m]);
+            }
+           }
+          }
+         }
+         mutations.push([arrNt[j],intNewIndex,added,removed]);
+        }
+       }
       }
      }
-     mutations = safeMutations;
+    } 
+    fnPrettyPrint(mutations, overGeneInfo, strCombinedGene, intNeg, strOverSeq.length);
+    //the index should be intNeg + whatever index is saved
+    return mutations;
+   }
+   
+   fnPrettyPrint = function(arrMutants, ovrInfo, combSeq, startPos, lenOverGene) {
+    var seqHtmlOut = '';
+    var prettyString = '';
+    //[('mutant nt', intIndex,[rxAdded],[rxRemoved]),...]
+    var features = [];
+    features.push([ovrInfo.overlap[1],'<b>'])
+    features.push([ovrInfo.overlap[0]+lenOverGene,'</b>'])
+    for (var i=0;i<arrMutants.length;i++){
+     features.push([startPos+arrMutants[i][1],'<a href="#n'+arrMutants[i][1].toString()+'">'])
     }
+    var toggle = false;
+    for (var i=0;i<combSeq.length; i++) {
+     for (var j=0;j<features.length;j++){
+      if (i == features[j][0]){
+       seqHtmlOut += features[j][1];
+        if (features[j][1].indexOf('href') > -1){
+         toggle = true;
+       }
+      }
+     }
+     seqHtmlOut += combSeq[i];
+     if (toggle==true){
+      seqHtmlOut += '</a>';
+      toggle = false;
+     }
+    }
+    for (var i=0;i<arrMutants.length;i++){
+     var m = arrMutants[i];
+     var pos = startPos+m[1];
+     var mutSeq = combSeq.substring(0,pos) + '<b>' + m[0] + '</b>' + combSeq.substring(pos+1, combSeq.length);
+     prettyString += '<div id="c' +m[1].toString()+ '" class="mutDiv"><a name="n'+ m[1].toString()+ '"></a><b>> Mutant at nt '+(pos+1).toString() +': '+combSeq[pos] +' -> ' + m[0] + '; </b> <span id="rs'+ m[1].toString()+'" align="right"> </span> </br>' + mutSeq + ' </div></br>';
+    }
+    $("#seq").html('<div class="mutDiv"><h3>'+seqHtmlOut+'</h3></div></br>');
+    $("#mutants").html(prettyString);
+    fnAddRestrictionSiteInfo(arrMutants);
     
-    if (boolIgnoreRxSites == false) {
+    return true;
+   }
+   
+   fnAddRestrictionSiteInfo = function(arrMutants){
+    
+    for (var i = 0; i <arrMutants.length; i++){
+    setTimeout(fnAddRestrictionSiteInfo, 0);
+     var divToEdit = "#rs" + arrMutants[i][1].toString();
      
+     var added = arrMutants[i][2];
+     var removed = arrMutants[i][3];
+      
+     var strHTML = "";
+     var pluralization = "";
+     if (added.length > 0) {
+      if (added.length == 1) {
+       pluralization = "site";
+      } else {
+       pluralization = "sites";
+      }
+      strHTML +=  "<b>adds ";
+      for (var l=0; l<added.length; l++) {
+       strHTML += added[l];
+       if (l < added.length - 1) {
+        strHTML += ', ';
+       }
+      }
+      if (removed.length > 0) {
+       pluralization = "sites";
+       strHTML += "; removes ";
+       for (var l=0; l<removed.length; l++) {
+        strHTML += removed[l];
+        if (l < removed.length - 1) {
+         strHTML += ', ';
+        }
+       }
+      }
+      var toAdd = " restriction " + pluralization + "</b>";
+      strHTML += toAdd;
+     } else if (removed.length > 0) {
+      if (removed.length == 1 ) {
+       pluralization = "site";
+      } else {
+       pluralization = "sites";
+      }
+      strHTML += "<b>removes ";
+      for (var l=0; l<removed.length; l++) {
+       strHTML += removed[l];
+       if (l < removed.length - 1) {
+        strHTML += ', ';
+       }
+      }
+      var toAdd = " restriction " + pluralization + "</b>";
+      strHTML += toAdd;
+     } else {
+      strHTML = "<b>no restriction site changes</b>";
+     }
+     $(divToEdit).html(strHTML);
     }
-    
-    return mutations;    
+   
+    return false;
    }
    
   </script>
@@ -1501,26 +1510,22 @@ table {
     
   
   <div id="sidebar">
-   <h1>pyViKO knockouts</h1>
+   <h1>pyViKO designer</h1>
    <ul id="index">
 
    <h2>Input:</h2>
-   <p style="line-height:120%; margin-bottom:5px;">Enter the DNA sequence of the gene you wish to knock out in either plain text or FASTA format.</p>
+   <p style="line-height:120%; margin-bottom:5px;">Enter the DNA sequence of the target gene you wish to knock out in either plain text or FASTA format:</p>
    <textarea id="inputBox" name="input" rows="7" style="width:100%;"></textarea> 
-   <br>
    <h3>Options:</h3>
-   <input type="checkbox" id="chkSites"> Ignore restriction site changes</input>
+   <input type="text" id="txtMutCodon" size=2> Mutated codon</input>
    </br>
-   <input type="checkbox" id="chkFirst"> Ignore start codon mutations</input>
+   <input type="text" id="txtCodonIndex" size=1> Codon position</input>
    </br>
-   <input type="checkbox" id="chkOver"> Input sequence contains overprinted gene</input>
-   <div id="overpr">
-    <p style=" border-top: 1px dotted black; margin:0px; padding:0px;line-height:120%;">
-     Enter the DNA sequence of the overprinted gene: </br>
-     <textarea id="overGeneBox" name="input" rows="5" style="width:100%;"></textarea> 
-    </p>
-   </div>
+   <input type="text" id="txtDistance" size=1> Search range (nt away from mutation)</input>
    </br>
+   <p style="line-height:120%; margin-bottom:5px;">Enter the DNA sequence of the overprinted gene:</p>
+   <textarea id="overGeneBox" name="input" rows="5" style="width:100%;"></textarea>
+   <br>
    <input id="button" type="submit" name="button" value="Submit"/>
 
    </ul>
@@ -1531,18 +1536,18 @@ table {
   <header id="section-intro">
   <h1 class="title"><span class="name">&nbsp;</span> </h1>
   </header>
-   <h2>Results:</h2>
+   <h2>Results of restriction site design:</h2>
    <div id="error" class="errorBox" style="line-height:120%;display:none;">
    </div>
    <div id="results" style="display:none;">
     <div class="keyBox" style="line-height:120%;">
-     Your input sequence is below.
+     The input consensus gene sequence is below, including the input mutated codon.
      <b>Overlapping nucleotides are shown in bold.</b>
-     <a href="#">Green nucleotides</a> indicate codons that can be mutated to a stop (or non-start) codon without changing the amino acid sequence of the overprinted gene, and are links to full mutant sequences.
+     <a href="#">Green nucleotides</a> indicate point mutants that add or remove a restriction site without changing the amino acid sequence of the overprinted gene, and are links to full mutant sequences.
     </div>
-    <span id="seq">Sequencetest</span>
+    <span id="seq">seq.</span>
     <div class="keyBox">
-     Sequences of individual point mutants are below in FASTA format, with the mutated codon shown in <b>bold</b>.
+     Sequences of individual point mutants are below, with the mutated nucleotide shown in <b>bold</b>.
     </div>
     </br>
     <span id="mutants"></span>
