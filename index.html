@@ -1220,7 +1220,7 @@ table {
       } else {
        strHTML = "<b>no restriction site changes</b>";
       }
-      $(divToEdit).html(strHTML + " <a href=designer.html?gene="+geneIn+"&ovr="+overGeneIn+"&mut="+arrMutants[i][1]+"&muti="+arrMutants[i][0].toString()+"> design sites</a>");
+      $(divToEdit).html(strHTML + " <a href=designer.html?gene="+geneIn+"&ovr="+overGeneIn+"&mut="+arrMutants[i][1]+"&muti="+(arrMutants[i][0]+1).toString()+"> design sites</a>");
      } else {
       $(divToEdit).html("<b>no restriction site changes</b>" + " <a href=designer.html?gene="+geneIn+"&ovr="+overGeneIn+"&mut="+arrMutants[i][1]+"&muti="+arrMutants[i][0].toString()+"> design sites</a>");
      }

@@ -1045,7 +1045,7 @@ table {
       $('#error').html("<b>Error: </b>" + error)
       $('#error').show("fast");
      } else {
-      fnFindMutantsRx(fnSanitize(geneIn), fnSanitize(overGeneIn), fnSanitize(mutCodon),parseInt(mutCodonIndex),parseInt(searchDist));
+      fnFindMutantsRx(fnSanitize(geneIn), fnSanitize(overGeneIn), fnSanitize(mutCodon),parseInt(mutCodonIndex)-1,parseInt(searchDist));
       $("#results").show();
      }
     };
