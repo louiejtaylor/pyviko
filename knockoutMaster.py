@@ -6,7 +6,6 @@ Proof-of-concept module for pyViKO. [Examples and source](https://github.com/lou
 
 #from collections import Counter
 
-# import os
 
 try:
 	from pyviko.core import codonify, seqify, insertMutation, translate, stopCodons
