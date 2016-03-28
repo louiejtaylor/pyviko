@@ -1072,7 +1072,7 @@ table {
       return "Unknown nucleotide '" + nt + "' encountered in gene sequence.";
      }
     }
-    if (bOverGene == true) {
+    if (bOverGene) {
      for (i=0; i < overGeneIn.length; i++){
       var nt = overGeneIn[i];
       if (nt != 'A' && nt != 'C' && nt != 'T' && nt != 'G') {

@@ -1085,7 +1085,7 @@ table {
    fnConfirmInput = function() {
     var geneIn = fnSanitize($('#inputBox').val());
     var overGeneIn = fnSanitize($('#overGeneBox').val());
-    var bOverGene = $('#chkOver').prop('checked');
+    var bOverGene = true;
     if (geneIn == '') {
      return "Please input a gene sequence.";
     } 
@@ -1098,7 +1098,7 @@ table {
       return "Unknown nucleotide '" + nt + "' encountered in gene sequence.";
      }
     }
-    if (bOverGene == true) {
+    if (bOverGene) {
      for (i=0; i < overGeneIn.length; i++){
       var nt = overGeneIn[i];
       if (nt != 'A' && nt != 'C' && nt != 'T' && nt != 'G') {
