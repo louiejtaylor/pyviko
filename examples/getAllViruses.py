@@ -1,14 +1,16 @@
-#There is a lineage paramater that may be helpful
+'''
+Script to extract overprinted gene pairs from NCBI Nucleotide database.
+'''
 from Bio import Entrez, SeqIO
-import os #TEMP
+import os
 os.chdir('..')
 import pyviko.core as core
 import time
-
-def extractJoin(location):
-	return ((int(location[location.index('[')+1:location.index(':')]),int(location[location.index(':')+1:location.index(']')])),(int(location[location.rindex('[')+1:location.rindex(':')]),int(location[location.rindex(':')+1:location.rindex(']')])))
 	
 def findGenes(geneList, positive):
+	'''
+	Extracts gene pairs from Entrez records.
+	'''
 	over = []
 	toKO = []
 	goodGenes = []
@@ -16,7 +18,6 @@ def findGenes(geneList, positive):
 		trigger = False
 		for notNt in ['R', 'Y', 'W', 'S', 'M', 'K', 'B', 'D', 'H', 'V', 'N', 'F']:
 			if notNt in gene[2]:
-				print "Bad nt caught: " + notNt				
 				trigger = True
 		if trigger == False:
 			goodGenes.append(gene)
@@ -37,11 +38,21 @@ def findGenes(geneList, positive):
 						toKO.append(gene)
 	return over, toKO
 
-Entrez.email = ""
+def extractJoin(location):
+	'''
+	Extracts the locations of genes and their 
+	overprinted counterparts from Entrez record.
+	'''
+	return ((int(location[location.index('[')+1:location.index(':')]),int(location[location.index(':')+1:location.index(']')])),(int(location[location.rindex('[')+1:location.rindex(':')]),int(location[location.rindex(':')+1:location.rindex(']')])))
+
+#setup
+Entrez.email = "your_email_here@university.edu"
+#query
 handle = Entrez.esearch(db="nuccore", term='"complete genome"[All Fields] AND viruses[filter] NOT segment[All Fields] NOT partial[All Fields]', retmax=48770)
 record = Entrez.read(handle)
 idlist = record["IdList"]
 handle.close()
+#setting up files to store collected genes
 addedCounter = 0
 finum = 0
 fiKO = open('test/dem/ko/'+str(finum)+'.fasta', 'w')
@@ -49,7 +60,8 @@ fiOver = open('test/dem/over/'+str(finum)+'.fasta', 'w')
 for jjj in range(1,int(len(idlist)/100)+2):
 	print 
 	print "Page: " + str(jjj) + " of " +str(int(len(idlist)/100)+1)
-	time.sleep(2)
+	time.sleep(1)
+	#grab genes
 	handle = Entrez.efetch(db="nuccore", id=idlist[jjj*100-100:jjj*100], rettype="gb", retmode="text")
 	results = SeqIO.parse(handle, "gb")
 	for seq_record in results:
@@ -57,6 +69,7 @@ for jjj in range(1,int(len(idlist)/100)+2):
 		minus_genes = []
 		for i in seq_record.features:
 			try:
+				#find coding sequences
 				if i.type == "CDS":
 					if "join" in str(i.location):
 						fancyJoin = extractJoin(str(i.location))
@@ -70,20 +83,25 @@ for jjj in range(1,int(len(idlist)/100)+2):
 						elif i.location.strand == -1:
 							minus_genes += [(int(i.location.end), int(i.location.start), str(core.reverseComplement(seq_record.seq[i.location.start:i.location.end])))]
 			except:
+				#rare errors, but just in case
 				print "Error with: "
 				print i
 		overPlus, toKoPlus = findGenes(plus_genes, True)
 		overMinus, toKoMinus = findGenes(minus_genes,False)
+		#store total genes
 		over = overPlus + overMinus
 		toKO = toKoPlus + toKoMinus
 		
 		if len(over) <> len(toKO):
-			print "ERROR: LENGTHS NOT EVEN"
+			#if gene pair lists are not of even size (for whatever reason), we don't want to store this round
+			print "Error: file lengths uneven"
 			print len(over), len(toKO), addedCounter
 		else:
+			#add genes to files
 			for i in range(len(over)):
 				addedCounter += 1
 				if addedCounter % 100 == 0:
+					#generate multiple files so that we don't have a single giant FASTA
 					fiKO.close()
 					fiOver.close()
 					finum += 1

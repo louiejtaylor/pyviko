@@ -14,13 +14,11 @@ class OverGene:
 	def __init__(self, overSeq, startNtIndex, seq, frameOver = 1):
 		if overSeq <> '':
 			ol = core.findOverlap(seq, overSeq)
-			if ol[0] == 0:
-				#overprinted gene starts before
+			if ol[0] == 0: #overprinted gene starts before
 				startNtIndex = -1
 				frameOver = 4-(ol[1]%3)
 				self.preSequence = overSeq[ol[1]-(-frameOver+4):ol[1]] + seq[:3-(-frameOver+4)]
-			else:
-				#overprinted gene starts after
+			else: #overprinted gene starts after
 				startNtIndex = ol[0]
 		self.geneSequence = overSeq
 		self.startNucleotideIndex = startNtIndex
@@ -69,13 +67,6 @@ class Mutant:
 		(or mutate the start codon) without changing the overprinted 
 		gene, and which add or remove a restriction site.
 		'''
-		
-		##
-		#(5.) need to allow to not care about rsites
-		##
-		
-
-			
 		stops = findPossibleStopCodons(self.codons, self.nMut)
 
 		if self.overGene != False:
@@ -112,7 +103,6 @@ class Mutant:
 			newSites = [] # list of lists
 			
 			### Regex:
-			
 			if self.regex:
 				baseSites = restriction.reFindEnzymes(self.seq)
 				
@@ -121,9 +111,6 @@ class Mutant:
 					newSites[-1] += restriction.reFindEnzymes(core.seqify(core.insertMutation(self.codons, mut)))
 					
 			### Non-regex:
-			#Here is where you can change it to only look at substrings as you do in the online version
-			#for every codon, look a little upstream and downstream, and ONLY look 
-			#at codons in SafeMutations, you don't need a list of lists at all the places
 			else:
 				
 				baseSites = []
@@ -157,9 +144,6 @@ class Mutant:
 			finalWinners = [(x,winners[x]) for x in sorted(winners.keys(), key=lambda x: x[0])]		
 			
 		return finalWinners
-		
-		# also look for start codon KOs
-		# next step: post process `winners` to make the tuples look pretty (- and +), store in Mutant object
 	
 def findPossibleStopCodons(codons, n):
 	'''
