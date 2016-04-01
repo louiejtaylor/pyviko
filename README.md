@@ -10,4 +10,25 @@ An overprinted gene is defined as the extension of one gene's open reading frame
 
 ###How do I install Pyviko?
 If you have `pip`:
+
     pip install pyviko
+
+Otherwise, you can install it directly using `setup.py`:
+
+    python `setup.py` install
+    
+([What is setup.py?](http://stackoverflow.com/questions/1471994/what-is-setup-py))
+
+###Can I use Pyviko without installing anything?
+Yes, the basic workflow is [available as a web-based JavaScript user interface](http://louiejtaylor.github.io/pyViKO/). Also check out the [Quick-start guide](http://louiejtaylor.github.io/pyViKO/doc/Pyviko_quick-start.pdf) for more information on using the web interface.
+
+###How do I use Pyviko?
+Here's a simple example in an interpreter:
+
+    >>> from pyviko import mutation
+    >>> m = mutation.Mutant(        "ATGCATCCCTCAAGTGACTAA")
+    >>> m.setOverGene(overSeq = "ATGTATGCATCCCTCAAGTGA")
+    >>> m.findMutants()
+    [(0, 'ACG'), (3, 'TAA'), (3, 'TGA')]
+    
+There are more sample scripts in the `examples` folder.
