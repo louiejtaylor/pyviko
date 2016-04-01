@@ -1,11 +1,18 @@
 from distutils.core import setup
 
 setup(name='pyviko',
-      version='1.0',
-      description='Python Viral Knockouts',
-      author='Louis Taylor',
-      author_email='l'+'taylor'+str(3+4)+'@'+'tu'+'lane.edu',
-      url='',
-      py_modules = ['pyviko.core', 'pyviko.mutation', 'pyviko.restriction'],
-      data_files=[('tests', ['tests/core_test.py'])]
+	version='1.0.0.3',
+	description='Design knockout viruses in Python',
+	author='LJ Taylor',
+	author_email='l'+'taylor'+str(3+4)+'@'+'tu'+'lane.edu',
+	url='https://github.com/louiejtaylor/pyViKO',
+	packages=['pyviko'],
+	license='MIT License',
+	classifiers = ['Intended Audience :: Science/Research',
+				'Environment :: Console',
+				'Environment :: Web Environment',
+				'License :: OSI Approved :: MIT License',
+				'Programming Language :: Python :: 2.7',
+				'Topic :: Scientific/Engineering :: Bio-Informatics',],
+	py_modules = ['pyviko.core', 'pyviko.mutation', 'pyviko.restriction']
      )

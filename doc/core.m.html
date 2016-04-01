@@ -1046,12 +1046,15 @@ table {
       
   <ul>
     <li class="mono"><a href="#pyviko.core.codonify">codonify</a></li>
+    <li class="mono"><a href="#pyviko.core.findOverlap">findOverlap</a></li>
     <li class="mono"><a href="#pyviko.core.findOverprintedGene">findOverprintedGene</a></li>
     <li class="mono"><a href="#pyviko.core.insertMutation">insertMutation</a></li>
     <li class="mono"><a href="#pyviko.core.pointMutant">pointMutant</a></li>
+    <li class="mono"><a href="#pyviko.core.readFasta">readFasta</a></li>
     <li class="mono"><a href="#pyviko.core.reverseComplement">reverseComplement</a></li>
     <li class="mono"><a href="#pyviko.core.seqify">seqify</a></li>
     <li class="mono"><a href="#pyviko.core.translate">translate</a></li>
+    <li class="mono"><a href="#pyviko.core.writeFasta">writeFasta</a></li>
   </ul>
 
     </li>
@@ -1084,7 +1087,7 @@ table {
     <div class="codehilite"><pre><span class="n">stopCodons</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;TAG&#39;</span><span class="p">,</span> <span class="s">&#39;TAA&#39;</span><span class="p">,</span> <span class="s">&#39;TGA&#39;</span><span class="p">]</span>
 <span class="n">translation</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;CTT&#39;</span><span class="p">:</span> <span class="s">&#39;L&#39;</span><span class="p">,</span> <span class="s">&#39;ATG&#39;</span><span class="p">:</span> <span class="s">&#39;M&#39;</span><span class="p">,</span> <span class="s">&#39;AAG&#39;</span><span class="p">:</span> <span class="s">&#39;K&#39;</span><span class="p">,</span> <span class="s">&#39;AAA&#39;</span><span class="p">:</span> <span class="s">&#39;K&#39;</span><span class="p">,</span> <span class="s">&#39;ATC&#39;</span><span class="p">:</span> <span class="s">&#39;I&#39;</span><span class="p">,</span> <span class="s">&#39;AAC&#39;</span><span class="p">:</span> <span class="s">&#39;N&#39;</span><span class="p">,</span> <span class="s">&#39;ATA&#39;</span><span class="p">:</span> <span class="s">&#39;I&#39;</span><span class="p">,</span> <span class="s">&#39;AGG&#39;</span><span class="p">:</span> <span class="s">&#39;R&#39;</span><span class="p">,</span> <span class="s">&#39;CCT&#39;</span><span class="p">:</span> <span class="s">&#39;P&#39;</span><span class="p">,</span> <span class="s">&#39;ACT&#39;</span><span class="p">:</span> <span class="s">&#39;T&#39;</span><span class="p">,</span> <span class="s">&#39;AGC&#39;</span><span class="p">:</span> <span class="s">&#39;S&#39;</span><span class="p">,</span> <span class="s">&#39;ACA&#39;</span><span class="p">:</span> <span class="s">&#39;T&#39;</span><span class="p">,</span> <span class="s">&#39;AGA&#39;</span><span class="p">:</span> <span class="s">&#39;R&#39;</span><span class="p">,</span> <span class="s">&#39;CAT&#39;</span><span class="p">:</span> <span class="s">&#39;H&#39;</span><span class="p">,</span> <span class="s">&#39;AAT&#39;</span><span class="p">:</span> <span class="s">&#39;N&#39;</span><span class="p">,</span> <span class="s">&#39;ATT&#39;</span><span class="p">:</span> <span class="s">&#39;I&#39;</span><span class="p">,</span> <span class="s">&#39;CTG&#39;</span><span class="p">:</span> <span class="s">&#39;L&#39;</span><span class="p">,</span> <span class="s">&#39;CTA&#39;</span><span class="p">:</span> <span class="s">&#39;L&#39;</span><span class="p">,</span> <span class="s">&#39;CTC&#39;</span><span class="p">:</span> <span class="s">&#39;L&#39;</span><span class="p">,</span> <span class="s">&#39;CAC&#39;</span><span class="p">:</span> <span class="s">&#39;H&#39;</span><span class="p">,</span> <span class="s">&#39;ACG&#39;</span><span class="p">:</span> <span class="s">&#39;T&#39;</span><span class="p">,</span> <span class="s">&#39;CAA&#39;</span><span class="p">:</span> <span class="s">&#39;Q&#39;</span><span class="p">,</span> <span class="s">&#39;AGT&#39;</span><span class="p">:</span> <span class="s">&#39;S&#39;</span><span class="p">,</span> <span class="s">&#39;CAG&#39;</span><span class="p">:</span> <span class="s">&#39;Q&#39;</span><span class="p">,</span> <span class="s">&#39;CCG&#39;</span><span class="p">:</span> <span class="s">&#39;P&#39;</span><span class="p">,</span> <span class="s">&#39;CCC&#39;</span><span class="p">:</span> <span class="s">&#39;P&#39;</span><span class="p">,</span> <span class="s">&#39;TAT&#39;</span><span class="p">:</span> <span class="s">&#39;Y&#39;</span><span class="p">,</span> <span class="s">&#39;GGT&#39;</span><span class="p">:</span> <span class="s">&#39;G&#39;</span><span class="p">,</span> <span class="s">&#39;TGT&#39;</span><span class="p">:</span> <span class="s">&#39;C&#39;</span><span class="p">,</span> <span class="s">&#39;CGA&#39;</span><span class="p">:</span> <span class="s">&#39;R&#39;</span><span class="p">,</span> <span class="s">&#39;CCA&#39;</span><span class="p">:</span> <span class="s">&#39;P&#39;</span><span class="p">,</span> <span class="s">&#39;TCT&#39;</span><span class="p">:</span> <span class="s">&#39;S&#39;</span><span class="p">,</span> <span class="s">&#39;GAT&#39;</span><span class="p">:</span> <span class="s">&#39;D&#39;</span><span class="p">,</span> <span class="s">&#39;CGG&#39;</span><span class="p">:</span> <span class="s">&#39;R&#39;</span><span class="p">,</span> <span class="s">&#39;TTT&#39;</span><span class="p">:</span> <span class="s">&#39;F&#39;</span><span class="p">,</span> <span class="s">&#39;TGC&#39;</span><span class="p">:</span> <span class="s">&#39;C&#39;</span><span class="p">,</span> <span class="s">&#39;GGG&#39;</span><span class="p">:</span> <span class="s">&#39;G&#39;</span><span class="p">,</span> <span class="s">&#39;GGA&#39;</span><span class="p">:</span> <span class="s">&#39;G&#39;</span><span class="p">,</span> <span class="s">&#39;TGG&#39;</span><span class="p">:</span> <span class="s">&#39;W&#39;</span><span class="p">,</span> <span class="s">&#39;GGC&#39;</span><span class="p">:</span> <span class="s">&#39;G&#39;</span><span class="p">,</span> <span class="s">&#39;TAC&#39;</span><span class="p">:</span> <span class="s">&#39;Y&#39;</span><span class="p">,</span> <span class="s">&#39;GAG&#39;</span><span class="p">:</span> <span class="s">&#39;E&#39;</span><span class="p">,</span> <span class="s">&#39;TCG&#39;</span><span class="p">:</span> <span class="s">&#39;S&#39;</span><span class="p">,</span> <span class="s">&#39;TTA&#39;</span><span class="p">:</span> <span class="s">&#39;L&#39;</span><span class="p">,</span> <span class="s">&#39;GAC&#39;</span><span class="p">:</span> <span class="s">&#39;D&#39;</span><span class="p">,</span> <span class="s">&#39;TCC&#39;</span><span class="p">:</span> <span class="s">&#39;S&#39;</span><span class="p">,</span> <span class="s">&#39;GAA&#39;</span><span class="p">:</span> <span class="s">&#39;E&#39;</span><span class="p">,</span> <span class="s">&#39;TCA&#39;</span><span class="p">:</span> <span class="s">&#39;S&#39;</span><span class="p">,</span> <span class="s">&#39;GCA&#39;</span><span class="p">:</span> <span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;GTA&#39;</span><span class="p">:</span> <span class="s">&#39;V&#39;</span><span class="p">,</span> <span class="s">&#39;GCC&#39;</span><span class="p">:</span> <span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;GTC&#39;</span><span class="p">:</span> <span class="s">&#39;V&#39;</span><span class="p">,</span> <span class="s">&#39;GCG&#39;</span><span class="p">:</span> <span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;GTG&#39;</span><span class="p">:</span> <span class="s">&#39;V&#39;</span><span class="p">,</span> <span class="s">&#39;TTC&#39;</span><span class="p">:</span> <span class="s">&#39;F&#39;</span><span class="p">,</span> <span class="s">&#39;GTT&#39;</span><span class="p">:</span> <span class="s">&#39;V&#39;</span><span class="p">,</span> <span class="s">&#39;GCT&#39;</span><span class="p">:</span> <span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;ACC&#39;</span><span class="p">:</span> <span class="s">&#39;T&#39;</span><span class="p">,</span> <span class="s">&#39;TTG&#39;</span><span class="p">:</span> <span class="s">&#39;L&#39;</span><span class="p">,</span> <span class="s">&#39;CGT&#39;</span><span class="p">:</span> <span class="s">&#39;R&#39;</span><span class="p">,</span> <span class="s">&#39;CGC&#39;</span><span class="p">:</span> <span class="s">&#39;R&#39;</span><span class="p">}</span>
 
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">warnings</span><span class="o">,</span><span class="nn">os</span>
 
 <span class="k">class</span> <span class="nc">SequenceError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 	<span class="k">pass</span>
@@ -1113,15 +1116,16 @@ table {
 <span class="sd">	Translates a list of DNA codons into the corresponding amino </span>
 <span class="sd">	acids, stopping translation if a stop codon is encountered.</span>
 <span class="sd">	&#39;&#39;&#39;</span>
+	<span class="n">codons</span> <span class="o">=</span> <span class="n">codonify</span><span class="p">(</span><span class="n">codons</span><span class="p">)</span>
+	<span class="n">aa</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
 	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">codons</span><span class="p">)):</span>
-		<span class="k">if</span> <span class="n">codons</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">stopCodons</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">codons</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">stopCodons</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">codons</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&lt;&gt;</span> <span class="mi">3</span><span class="p">:</span>
 			<span class="n">codons</span> <span class="o">=</span> <span class="n">codons</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span>
 			<span class="k">break</span>
-	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">codons</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;&gt;</span> <span class="mi">3</span><span class="p">:</span>
-		<span class="n">codons</span> <span class="o">=</span> <span class="n">codons</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c"># Remove last codon if incomplete</span>
-	<span class="n">aa</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
-	<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">codons</span><span class="p">:</span>
-		<span class="n">aa</span> <span class="o">=</span> <span class="n">aa</span> <span class="o">+</span> <span class="n">translation</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">aa</span> <span class="o">=</span> <span class="n">aa</span> <span class="o">+</span> <span class="n">translation</span><span class="p">[</span><span class="n">codons</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+		<span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">SequenceError</span><span class="p">(</span><span class="s">&quot;Invalid codon: &quot;</span> <span class="o">+</span> <span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
 	<span class="k">return</span> <span class="n">aa</span>
 
 <span class="k">def</span> <span class="nf">insertMutation</span><span class="p">(</span><span class="n">codons</span><span class="p">,</span> <span class="n">mut</span><span class="p">):</span>
@@ -1134,9 +1138,8 @@ table {
 <span class="sd">	the newly mutated codon in its position. </span>
 <span class="sd">	&#39;&#39;&#39;</span>
 	<span class="n">iCodons</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">codons</span><span class="p">]</span>
-	<span class="n">iCodons</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">mut</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c">#is this popping faster? or would it be faster to just do codons[:i] + mut[1] + codons [i+1:]</span>
-	<span class="n">newCodons</span> <span class="o">=</span> <span class="n">iCodons</span><span class="p">[:</span><span class="n">mut</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="p">[</span><span class="n">mut</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">+</span> <span class="n">iCodons</span><span class="p">[</span><span class="n">mut</span><span class="p">[</span><span class="mi">0</span><span class="p">]:]</span>
-	<span class="k">return</span> <span class="n">newCodons</span>
+	<span class="n">iCodons</span><span class="p">[</span><span class="n">mut</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">mut</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>	
+	<span class="k">return</span> <span class="n">iCodons</span>
 	
 <span class="k">def</span> <span class="nf">pointMutant</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">mut</span><span class="p">):</span>
 	<span class="sd">&#39;&#39;&#39;</span>
@@ -1144,7 +1147,6 @@ table {
 <span class="sd">	and a tuple `mut` in the form (index, &#39;mutated nt&#39;) ex. `(3, &#39;A&#39;)`.</span>
 <span class="sd">	Returns a nucleotide sequence with a point mutation.</span>
 <span class="sd">	&#39;&#39;&#39;</span>
-	<span class="c">## INDEX OR POSITION?!</span>
 	<span class="k">return</span> <span class="n">seq</span><span class="p">[:</span><span class="n">mut</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="n">mut</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">seq</span><span class="p">[</span><span class="n">mut</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">:]</span>
 	
 <span class="k">def</span> <span class="nf">findOverprintedGene</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">startIndex</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
@@ -1159,6 +1161,7 @@ table {
 <span class="sd">	so if the overprinted gene starts from the 59th nucleotide</span>
 <span class="sd">	of `seq`, the `startIndex` will be 58.</span>
 <span class="sd">	&#39;&#39;&#39;</span>
+	
 	<span class="k">if</span> <span class="n">startIndex</span> <span class="o">&lt;&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
 		<span class="n">frame</span> <span class="o">=</span> <span class="mi">1</span>   <span class="c"># In case `frame` argument provided erroneously</span>
 		<span class="n">codons</span> <span class="o">=</span> <span class="n">codonify</span><span class="p">(</span><span class="n">seq</span><span class="p">[</span><span class="n">startIndex</span><span class="p">:])[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c"># Remove last (incomplete) codon</span>
@@ -1166,13 +1169,13 @@ table {
 		<span class="k">if</span> <span class="n">frame</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
 			<span class="k">raise</span> <span class="n">SequenceError</span><span class="p">(</span><span class="s">&quot;The overprinted sequence is in the same frame as the main coding sequence. Please provide a frame argument.&quot;</span><span class="p">)</span>
 		<span class="n">codons</span> <span class="o">=</span> <span class="n">codonify</span><span class="p">(</span><span class="n">seq</span><span class="p">[</span><span class="n">frame</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:])[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c"># Remove last (incomplete) codon</span>
-
-	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">codons</span><span class="p">)):</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">codons</span><span class="p">)):</span>
 		<span class="k">if</span> <span class="n">codons</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">stopCodons</span><span class="p">:</span>
 			<span class="n">codons</span> <span class="o">=</span> <span class="n">codons</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span>
 			<span class="k">break</span>
 		
 	<span class="k">if</span> <span class="n">codons</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&gt;</span> <span class="s">&#39;ATG&#39;</span> <span class="ow">and</span> <span class="n">startIndex</span> <span class="o">&lt;&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+		<span class="c">##NOTE: Not all viral genes are initiated with ATG.</span>
 		<span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&quot;The first codon of your sequence is not a start codon.&quot;</span><span class="p">)</span>
 		
 	<span class="k">return</span> <span class="n">codons</span>
@@ -1190,8 +1193,106 @@ table {
 			<span class="n">rev</span> <span class="o">+=</span> <span class="n">pairs</span><span class="p">[</span><span class="n">nt</span><span class="p">]</span>
 	<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
 		<span class="k">print</span> <span class="s">&quot;Unknown nucleotide &#39;&quot;</span> <span class="o">+</span> <span class="n">nt</span>  <span class="o">+</span> <span class="s">&quot;&#39; encountered.&quot;</span>
+		<span class="k">return</span> <span class="s">&quot;False&quot;</span>
 	
 	<span class="k">return</span> <span class="n">rev</span>
+	
+<span class="k">def</span> <span class="nf">findOverlap</span><span class="p">(</span><span class="n">seq1</span><span class="p">,</span> <span class="n">seq2</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	Given two sequences, returns a tuple `(i1, i2)` where `i1`</span>
+<span class="sd">	is the index in `seq1` where the overlap with `seq2` begins and</span>
+<span class="sd">	`i2` is the corresponding index in `seq2`.</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="n">i1</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">i2</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="k">if</span> <span class="n">seq1</span> <span class="ow">in</span> <span class="n">seq2</span><span class="p">:</span>
+		<span class="n">i2</span> <span class="o">=</span> <span class="n">seq2</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">seq1</span><span class="p">)</span>
+	<span class="k">elif</span> <span class="n">seq2</span> <span class="ow">in</span> <span class="n">seq1</span><span class="p">:</span>
+		<span class="n">i1</span> <span class="o">=</span> <span class="n">seq1</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">seq2</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">max12</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="n">max21</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="n">l1</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq1</span><span class="p">)</span>
+		<span class="n">l2</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq2</span><span class="p">)</span>
+		<span class="n">overall</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">l1</span><span class="p">,</span><span class="n">l2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">overall</span><span class="p">):</span>
+			<span class="k">if</span> <span class="n">seq1</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">seq2</span><span class="p">[</span><span class="n">l2</span><span class="o">-</span><span class="n">i</span><span class="p">:]:</span>
+				<span class="n">max21</span> <span class="o">=</span> <span class="n">i</span>
+			<span class="k">if</span> <span class="n">seq2</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">seq1</span><span class="p">[</span><span class="n">l1</span><span class="o">-</span><span class="n">i</span><span class="p">:]:</span>
+				<span class="n">max12</span> <span class="o">=</span> <span class="n">i</span>				
+		<span class="k">if</span> <span class="n">max12</span> <span class="o">&gt;</span> <span class="n">max21</span><span class="p">:</span>
+			<span class="n">i1</span> <span class="o">=</span> <span class="n">l1</span> <span class="o">-</span> <span class="n">max12</span>
+		<span class="k">elif</span> <span class="n">max12</span> <span class="o">&lt;=</span> <span class="n">max21</span><span class="p">:</span> <span class="c">#without this small overlaps equal on both sides are mishandled</span>
+			<span class="n">i2</span> <span class="o">=</span> <span class="n">l2</span> <span class="o">-</span> <span class="n">max21</span>
+		<span class="k">else</span><span class="p">:</span> 
+			<span class="k">raise</span> <span class="n">SequenceError</span><span class="p">(</span><span class="s">&quot;No overlap detected between input sequences&quot;</span><span class="p">)</span>
+			
+	<span class="k">return</span> <span class="p">(</span><span class="n">i1</span><span class="p">,</span> <span class="n">i2</span><span class="p">)</span>
+	
+<span class="k">def</span> <span class="nf">readFasta</span><span class="p">(</span><span class="n">loc</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	Reads in a FASTA file, returns tuples in the form</span>
+<span class="sd">	`(&#39;&gt; identifying information&#39;, &#39;sequence&#39;)`.</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span>
+	<span class="n">seqs</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">iden</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+	<span class="n">seq</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+	<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+		<span class="k">if</span> <span class="n">iden</span> <span class="o">==</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&gt;</span> <span class="s">&#39;&gt;&#39;</span><span class="p">:</span>
+					<span class="k">raise</span> <span class="n">SequenceError</span><span class="p">(</span><span class="s">&quot;Invalid file format: id line doesn&#39;t begin with &#39;&gt;&#39;&quot;</span><span class="p">)</span>
+				<span class="n">iden</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+			<span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span> <span class="c">#blank line</span>
+				<span class="nb">next</span>
+				<span class="k">print</span> <span class="s">&#39;boop&#39;</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;&gt;&#39;</span><span class="p">:</span>
+					<span class="n">seqs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">iden</span><span class="p">,</span> <span class="n">seq</span><span class="p">))</span>
+					<span class="n">iden</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+					<span class="n">seq</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">seq</span> <span class="o">+=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+			<span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span> <span class="c">#blank line</span>
+				<span class="nb">next</span>
+	<span class="n">seqs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">iden</span><span class="p">,</span> <span class="n">seq</span><span class="p">))</span>
+	<span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+	<span class="k">return</span> <span class="n">seqs</span>
+	
+<span class="k">def</span> <span class="nf">writeFasta</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">mutlist</span><span class="p">,</span> <span class="n">seq</span><span class="p">,</span> <span class="n">hasRxSites</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">rloc</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">floc</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	Given a filename `fname`, list of mutations `mutlist` input sequence `seq`</span>
+<span class="sd">	and an optional file location  `rloc` (relative location) or `floc` (absolute location), </span>
+<span class="sd">	generates a FASTA file with all mutants in the sequence.</span>
+<span class="sd">	Accepts input in two formats: if hasRxSites=False, assumes the mutations are of the form</span>
+<span class="sd">	`(mutant codon index, &#39;stop codon&#39;)`.</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="n">fname</span> <span class="o">=</span> <span class="n">fname</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;|&#39;</span><span class="p">,</span> <span class="s">&#39;.&#39;</span><span class="p">)[:</span><span class="mi">30</span><span class="p">]</span>
+	<span class="k">for</span> <span class="n">character</span> <span class="ow">in</span> <span class="n">fname</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">character</span> <span class="ow">not</span> <span class="ow">in</span> <span class="s">&#39;0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,</span><span class="se">\&#39;</span><span class="s">&quot;()-_&#39;</span><span class="p">:</span>
+			<span class="n">fname</span> <span class="o">=</span> <span class="n">fname</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">character</span><span class="p">,</span> <span class="s">&#39; &#39;</span><span class="p">)</span>
+	<span class="n">fname</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">fname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;&gt;</span> <span class="s">&#39;&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s">&#39;.fasta&#39;</span>
+	<span class="k">if</span> <span class="n">floc</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
+		<span class="n">dirs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">dirs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">floc</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">fname</span> <span class="ow">in</span> <span class="n">dirs</span><span class="p">:</span>
+		<span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+		<span class="k">while</span> <span class="n">fname</span><span class="p">[:</span><span class="o">-</span><span class="mi">6</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;(&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;).fasta&#39;</span> <span class="ow">in</span> <span class="n">dirs</span><span class="p">:</span>
+			<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+		<span class="n">fname</span> <span class="o">=</span> <span class="n">fname</span><span class="p">[:</span><span class="o">-</span><span class="mi">6</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;(&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;).fasta&#39;</span>
+	<span class="k">del</span> <span class="n">i</span>
+	<span class="n">fasta</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">mutlist</span><span class="p">:</span>
+		<span class="n">fasta</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;&gt;mutant at codon &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span><span class="s">&#39;: </span><span class="se">\n</span><span class="s">&#39;</span> <span class="p">)</span>
+		<span class="n">codons</span> <span class="o">=</span> <span class="n">codonify</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>
+		<span class="n">mutSeq</span> <span class="o">=</span> <span class="n">seqify</span><span class="p">(</span><span class="n">codons</span><span class="p">[:</span><span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span><span class="o">+</span><span class="p">[</span><span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span><span class="o">+</span><span class="n">codons</span><span class="p">[</span><span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">:])</span>
+		<span class="n">fasta</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">mutSeq</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">100</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">mutSeq</span><span class="p">),</span><span class="mi">100</span><span class="p">)])</span> <span class="o">+</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+		
+	<span class="n">fasta</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+	<span class="k">return</span> <span class="bp">True</span>
 </pre></div>
 
   </div>
@@ -1247,6 +1348,59 @@ table {
   
       
   <div class="item">
+    <div class="name def" id="pyviko.core.findOverlap">
+    <p>def <span class="ident">findOverlap</span>(</p><p>seq1, seq2)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Given two sequences, returns a tuple <code>(i1, i2)</code> where <code>i1</code>
+is the index in <code>seq1</code> where the overlap with <code>seq2</code> begins and
+<code>i2</code> is the corresponding index in <code>seq2</code>.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pyviko.core.findOverlap', this);">Show source &equiv;</a></p>
+  <div id="source-pyviko.core.findOverlap" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">findOverlap</span><span class="p">(</span><span class="n">seq1</span><span class="p">,</span> <span class="n">seq2</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	Given two sequences, returns a tuple `(i1, i2)` where `i1`</span>
+<span class="sd">	is the index in `seq1` where the overlap with `seq2` begins and</span>
+<span class="sd">	`i2` is the corresponding index in `seq2`.</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="n">i1</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">i2</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="k">if</span> <span class="n">seq1</span> <span class="ow">in</span> <span class="n">seq2</span><span class="p">:</span>
+		<span class="n">i2</span> <span class="o">=</span> <span class="n">seq2</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">seq1</span><span class="p">)</span>
+	<span class="k">elif</span> <span class="n">seq2</span> <span class="ow">in</span> <span class="n">seq1</span><span class="p">:</span>
+		<span class="n">i1</span> <span class="o">=</span> <span class="n">seq1</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">seq2</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">max12</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="n">max21</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="n">l1</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq1</span><span class="p">)</span>
+		<span class="n">l2</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq2</span><span class="p">)</span>
+		<span class="n">overall</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">l1</span><span class="p">,</span><span class="n">l2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">overall</span><span class="p">):</span>
+			<span class="k">if</span> <span class="n">seq1</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">seq2</span><span class="p">[</span><span class="n">l2</span><span class="o">-</span><span class="n">i</span><span class="p">:]:</span>
+				<span class="n">max21</span> <span class="o">=</span> <span class="n">i</span>
+			<span class="k">if</span> <span class="n">seq2</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">seq1</span><span class="p">[</span><span class="n">l1</span><span class="o">-</span><span class="n">i</span><span class="p">:]:</span>
+				<span class="n">max12</span> <span class="o">=</span> <span class="n">i</span>				
+		<span class="k">if</span> <span class="n">max12</span> <span class="o">&gt;</span> <span class="n">max21</span><span class="p">:</span>
+			<span class="n">i1</span> <span class="o">=</span> <span class="n">l1</span> <span class="o">-</span> <span class="n">max12</span>
+		<span class="k">elif</span> <span class="n">max12</span> <span class="o">&lt;=</span> <span class="n">max21</span><span class="p">:</span> <span class="c">#without this small overlaps equal on both sides are mishandled</span>
+			<span class="n">i2</span> <span class="o">=</span> <span class="n">l2</span> <span class="o">-</span> <span class="n">max21</span>
+		<span class="k">else</span><span class="p">:</span> 
+			<span class="k">raise</span> <span class="n">SequenceError</span><span class="p">(</span><span class="s">&quot;No overlap detected between input sequences&quot;</span><span class="p">)</span>
+			
+	<span class="k">return</span> <span class="p">(</span><span class="n">i1</span><span class="p">,</span> <span class="n">i2</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
     <div class="name def" id="pyviko.core.findOverprintedGene">
     <p>def <span class="ident">findOverprintedGene</span>(</p><p>seq, startIndex, frame=1)</p>
     </div>
@@ -1278,6 +1432,7 @@ of <code>seq</code>, the <code>startIndex</code> will be 58.</p></div>
 <span class="sd">	so if the overprinted gene starts from the 59th nucleotide</span>
 <span class="sd">	of `seq`, the `startIndex` will be 58.</span>
 <span class="sd">	&#39;&#39;&#39;</span>
+	
 	<span class="k">if</span> <span class="n">startIndex</span> <span class="o">&lt;&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
 		<span class="n">frame</span> <span class="o">=</span> <span class="mi">1</span>   <span class="c"># In case `frame` argument provided erroneously</span>
 		<span class="n">codons</span> <span class="o">=</span> <span class="n">codonify</span><span class="p">(</span><span class="n">seq</span><span class="p">[</span><span class="n">startIndex</span><span class="p">:])[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c"># Remove last (incomplete) codon</span>
@@ -1285,13 +1440,13 @@ of <code>seq</code>, the <code>startIndex</code> will be 58.</p></div>
 		<span class="k">if</span> <span class="n">frame</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
 			<span class="k">raise</span> <span class="n">SequenceError</span><span class="p">(</span><span class="s">&quot;The overprinted sequence is in the same frame as the main coding sequence. Please provide a frame argument.&quot;</span><span class="p">)</span>
 		<span class="n">codons</span> <span class="o">=</span> <span class="n">codonify</span><span class="p">(</span><span class="n">seq</span><span class="p">[</span><span class="n">frame</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:])[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c"># Remove last (incomplete) codon</span>
-
-	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">codons</span><span class="p">)):</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">codons</span><span class="p">)):</span>
 		<span class="k">if</span> <span class="n">codons</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">stopCodons</span><span class="p">:</span>
 			<span class="n">codons</span> <span class="o">=</span> <span class="n">codons</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span>
 			<span class="k">break</span>
 		
 	<span class="k">if</span> <span class="n">codons</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&gt;</span> <span class="s">&#39;ATG&#39;</span> <span class="ow">and</span> <span class="n">startIndex</span> <span class="o">&lt;&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+		<span class="c">##NOTE: Not all viral genes are initiated with ATG.</span>
 		<span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&quot;The first codon of your sequence is not a start codon.&quot;</span><span class="p">)</span>
 		
 	<span class="k">return</span> <span class="n">codons</span>
@@ -1330,9 +1485,8 @@ the newly mutated codon in its position.</p></div>
 <span class="sd">	the newly mutated codon in its position. </span>
 <span class="sd">	&#39;&#39;&#39;</span>
 	<span class="n">iCodons</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">codons</span><span class="p">]</span>
-	<span class="n">iCodons</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">mut</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c">#is this popping faster? or would it be faster to just do codons[:i] + mut[1] + codons [i+1:]</span>
-	<span class="n">newCodons</span> <span class="o">=</span> <span class="n">iCodons</span><span class="p">[:</span><span class="n">mut</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="p">[</span><span class="n">mut</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">+</span> <span class="n">iCodons</span><span class="p">[</span><span class="n">mut</span><span class="p">[</span><span class="mi">0</span><span class="p">]:]</span>
-	<span class="k">return</span> <span class="n">newCodons</span>
+	<span class="n">iCodons</span><span class="p">[</span><span class="n">mut</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">mut</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>	
+	<span class="k">return</span> <span class="n">iCodons</span>
 </pre></div>
 
   </div>
@@ -1361,8 +1515,59 @@ Returns a nucleotide sequence with a point mutation.</p></div>
 <span class="sd">	and a tuple `mut` in the form (index, &#39;mutated nt&#39;) ex. `(3, &#39;A&#39;)`.</span>
 <span class="sd">	Returns a nucleotide sequence with a point mutation.</span>
 <span class="sd">	&#39;&#39;&#39;</span>
-	<span class="c">## INDEX OR POSITION?!</span>
 	<span class="k">return</span> <span class="n">seq</span><span class="p">[:</span><span class="n">mut</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="n">mut</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">seq</span><span class="p">[</span><span class="n">mut</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">:]</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="pyviko.core.readFasta">
+    <p>def <span class="ident">readFasta</span>(</p><p>loc)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Reads in a FASTA file, returns tuples in the form
+<code>('&gt; identifying information', 'sequence')</code>.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pyviko.core.readFasta', this);">Show source &equiv;</a></p>
+  <div id="source-pyviko.core.readFasta" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">readFasta</span><span class="p">(</span><span class="n">loc</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	Reads in a FASTA file, returns tuples in the form</span>
+<span class="sd">	`(&#39;&gt; identifying information&#39;, &#39;sequence&#39;)`.</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span>
+	<span class="n">seqs</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">iden</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+	<span class="n">seq</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+	<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+		<span class="k">if</span> <span class="n">iden</span> <span class="o">==</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&gt;</span> <span class="s">&#39;&gt;&#39;</span><span class="p">:</span>
+					<span class="k">raise</span> <span class="n">SequenceError</span><span class="p">(</span><span class="s">&quot;Invalid file format: id line doesn&#39;t begin with &#39;&gt;&#39;&quot;</span><span class="p">)</span>
+				<span class="n">iden</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+			<span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span> <span class="c">#blank line</span>
+				<span class="nb">next</span>
+				<span class="k">print</span> <span class="s">&#39;boop&#39;</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;&gt;&#39;</span><span class="p">:</span>
+					<span class="n">seqs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">iden</span><span class="p">,</span> <span class="n">seq</span><span class="p">))</span>
+					<span class="n">iden</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+					<span class="n">seq</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">seq</span> <span class="o">+=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+			<span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span> <span class="c">#blank line</span>
+				<span class="nb">next</span>
+	<span class="n">seqs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">iden</span><span class="p">,</span> <span class="n">seq</span><span class="p">))</span>
+	<span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+	<span class="k">return</span> <span class="n">seqs</span>
 </pre></div>
 
   </div>
@@ -1396,6 +1601,7 @@ Returns a nucleotide sequence with a point mutation.</p></div>
 			<span class="n">rev</span> <span class="o">+=</span> <span class="n">pairs</span><span class="p">[</span><span class="n">nt</span><span class="p">]</span>
 	<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
 		<span class="k">print</span> <span class="s">&quot;Unknown nucleotide &#39;&quot;</span> <span class="o">+</span> <span class="n">nt</span>  <span class="o">+</span> <span class="s">&quot;&#39; encountered.&quot;</span>
+		<span class="k">return</span> <span class="s">&quot;False&quot;</span>
 	
 	<span class="k">return</span> <span class="n">rev</span>
 </pre></div>
@@ -1454,16 +1660,73 @@ acids, stopping translation if a stop codon is encountered.</p></div>
 <span class="sd">	Translates a list of DNA codons into the corresponding amino </span>
 <span class="sd">	acids, stopping translation if a stop codon is encountered.</span>
 <span class="sd">	&#39;&#39;&#39;</span>
+	<span class="n">codons</span> <span class="o">=</span> <span class="n">codonify</span><span class="p">(</span><span class="n">codons</span><span class="p">)</span>
+	<span class="n">aa</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
 	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">codons</span><span class="p">)):</span>
-		<span class="k">if</span> <span class="n">codons</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">stopCodons</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">codons</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">stopCodons</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">codons</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&lt;&gt;</span> <span class="mi">3</span><span class="p">:</span>
 			<span class="n">codons</span> <span class="o">=</span> <span class="n">codons</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span>
 			<span class="k">break</span>
-	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">codons</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;&gt;</span> <span class="mi">3</span><span class="p">:</span>
-		<span class="n">codons</span> <span class="o">=</span> <span class="n">codons</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c"># Remove last codon if incomplete</span>
-	<span class="n">aa</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
-	<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">codons</span><span class="p">:</span>
-		<span class="n">aa</span> <span class="o">=</span> <span class="n">aa</span> <span class="o">+</span> <span class="n">translation</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">aa</span> <span class="o">=</span> <span class="n">aa</span> <span class="o">+</span> <span class="n">translation</span><span class="p">[</span><span class="n">codons</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+		<span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">SequenceError</span><span class="p">(</span><span class="s">&quot;Invalid codon: &quot;</span> <span class="o">+</span> <span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
 	<span class="k">return</span> <span class="n">aa</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="pyviko.core.writeFasta">
+    <p>def <span class="ident">writeFasta</span>(</p><p>fname, mutlist, seq, hasRxSites=False, rloc=&#39;&#39;, floc=&#39;&#39;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Given a filename <code>fname</code>, list of mutations <code>mutlist</code> input sequence <code>seq</code>
+and an optional file location  <code>rloc</code> (relative location) or <code>floc</code> (absolute location), 
+generates a FASTA file with all mutants in the sequence.
+Accepts input in two formats: if hasRxSites=False, assumes the mutations are of the form
+<code>(mutant codon index, 'stop codon')</code>.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pyviko.core.writeFasta', this);">Show source &equiv;</a></p>
+  <div id="source-pyviko.core.writeFasta" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">writeFasta</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">mutlist</span><span class="p">,</span> <span class="n">seq</span><span class="p">,</span> <span class="n">hasRxSites</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">rloc</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">floc</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	Given a filename `fname`, list of mutations `mutlist` input sequence `seq`</span>
+<span class="sd">	and an optional file location  `rloc` (relative location) or `floc` (absolute location), </span>
+<span class="sd">	generates a FASTA file with all mutants in the sequence.</span>
+<span class="sd">	Accepts input in two formats: if hasRxSites=False, assumes the mutations are of the form</span>
+<span class="sd">	`(mutant codon index, &#39;stop codon&#39;)`.</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="n">fname</span> <span class="o">=</span> <span class="n">fname</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;|&#39;</span><span class="p">,</span> <span class="s">&#39;.&#39;</span><span class="p">)[:</span><span class="mi">30</span><span class="p">]</span>
+	<span class="k">for</span> <span class="n">character</span> <span class="ow">in</span> <span class="n">fname</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">character</span> <span class="ow">not</span> <span class="ow">in</span> <span class="s">&#39;0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,</span><span class="se">\&#39;</span><span class="s">&quot;()-_&#39;</span><span class="p">:</span>
+			<span class="n">fname</span> <span class="o">=</span> <span class="n">fname</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">character</span><span class="p">,</span> <span class="s">&#39; &#39;</span><span class="p">)</span>
+	<span class="n">fname</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">fname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;&gt;</span> <span class="s">&#39;&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s">&#39;.fasta&#39;</span>
+	<span class="k">if</span> <span class="n">floc</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
+		<span class="n">dirs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">dirs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">floc</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">fname</span> <span class="ow">in</span> <span class="n">dirs</span><span class="p">:</span>
+		<span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+		<span class="k">while</span> <span class="n">fname</span><span class="p">[:</span><span class="o">-</span><span class="mi">6</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;(&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;).fasta&#39;</span> <span class="ow">in</span> <span class="n">dirs</span><span class="p">:</span>
+			<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+		<span class="n">fname</span> <span class="o">=</span> <span class="n">fname</span><span class="p">[:</span><span class="o">-</span><span class="mi">6</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;(&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;).fasta&#39;</span>
+	<span class="k">del</span> <span class="n">i</span>
+	<span class="n">fasta</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">mutlist</span><span class="p">:</span>
+		<span class="n">fasta</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;&gt;mutant at codon &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span><span class="s">&#39;: </span><span class="se">\n</span><span class="s">&#39;</span> <span class="p">)</span>
+		<span class="n">codons</span> <span class="o">=</span> <span class="n">codonify</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>
+		<span class="n">mutSeq</span> <span class="o">=</span> <span class="n">seqify</span><span class="p">(</span><span class="n">codons</span><span class="p">[:</span><span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span><span class="o">+</span><span class="p">[</span><span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span><span class="o">+</span><span class="n">codons</span><span class="p">[</span><span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">:])</span>
+		<span class="n">fasta</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">mutSeq</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">100</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">mutSeq</span><span class="p">),</span><span class="mi">100</span><span class="p">)])</span> <span class="o">+</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+		
+	<span class="n">fasta</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+	<span class="k">return</span> <span class="bp">True</span>
 </pre></div>
 
   </div>

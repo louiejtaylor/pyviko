@@ -1038,7 +1038,7 @@ table {
       
   <ul>
     <li class="mono"><a href="#pyviko.mutation.findPossibleStopCodons">findPossibleStopCodons</a></li>
-    <li class="mono"><a href="#pyviko.mutation.primers">primers</a></li>
+    <li class="mono"><a href="#pyviko.mutation.mutateStartCodon">mutateStartCodon</a></li>
   </ul>
 
     </li>
@@ -1051,7 +1051,6 @@ table {
           
   <ul>
     <li class="mono"><a href="#pyviko.mutation.Mutant.__init__">__init__</a></li>
-    <li class="mono"><a href="#pyviko.mutation.Mutant.addMutant">addMutant</a></li>
     <li class="mono"><a href="#pyviko.mutation.Mutant.findMutants">findMutants</a></li>
     <li class="mono"><a href="#pyviko.mutation.Mutant.setOverGene">setOverGene</a></li>
     <li class="mono"><a href="#pyviko.mutation.Mutant.vector">vector</a></li>
@@ -1089,38 +1088,55 @@ table {
     <div class="codehilite"><pre><span class="kn">from</span> <span class="nn">pyviko</span> <span class="kn">import</span> <span class="n">core</span><span class="p">,</span> <span class="n">restriction</span>
 
 <span class="k">class</span> <span class="nc">OverGene</span><span class="p">:</span>
-	
-	<span class="c"># dummy variables</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	Class for the overprinted gene.</span>
+<span class="sd">	&#39;&#39;&#39;</span>
 	<span class="n">frame</span> <span class="o">=</span> <span class="mi">1</span>
-	<span class="n">startNucleotide</span> <span class="o">=</span> <span class="mi">0</span>
-	<span class="n">sequence</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+	<span class="n">startNucleotideIndex</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+	<span class="n">preSequence</span> <span class="o">=</span> <span class="s">&#39;&#39;</span> <span class="c"># includes 1-2nt removed by core.findOverGene</span>
+	<span class="n">geneSequence</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+	<span class="n">postSequence</span> <span class="o">=</span> <span class="s">&#39;&#39;</span> <span class="c"># includes 1-2nt removed by core.findOverGene</span>
 	<span class="n">overAAs</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
 	
-	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">startNt</span><span class="p">,</span> <span class="n">seq</span><span class="p">,</span> <span class="n">frameOver</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">startNucleotide</span> <span class="o">=</span> <span class="n">startNt</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">sequence</span> <span class="o">=</span> <span class="n">seq</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overSeq</span><span class="p">,</span> <span class="n">startNtIndex</span><span class="p">,</span> <span class="n">seq</span><span class="p">,</span> <span class="n">frameOver</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">overSeq</span> <span class="o">&lt;&gt;</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+			<span class="n">ol</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">findOverlap</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">overSeq</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">ol</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c">#overprinted gene starts before</span>
+				<span class="n">startNtIndex</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+				<span class="n">frameOver</span> <span class="o">=</span> <span class="mi">4</span><span class="o">-</span><span class="p">(</span><span class="n">ol</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">%</span><span class="mi">3</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">preSequence</span> <span class="o">=</span> <span class="n">overSeq</span><span class="p">[</span><span class="n">ol</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="n">frameOver</span><span class="o">+</span><span class="mi">4</span><span class="p">):</span><span class="n">ol</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">+</span> <span class="n">seq</span><span class="p">[:</span><span class="mi">3</span><span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="n">frameOver</span><span class="o">+</span><span class="mi">4</span><span class="p">)]</span>
+			<span class="k">else</span><span class="p">:</span> <span class="c">#overprinted gene starts after</span>
+				<span class="n">startNtIndex</span> <span class="o">=</span> <span class="n">ol</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">geneSequence</span> <span class="o">=</span> <span class="n">overSeq</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">startNucleotideIndex</span> <span class="o">=</span> <span class="n">startNtIndex</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">combSequence</span> <span class="o">=</span> <span class="n">seq</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">frameOver</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">overAAs</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">findOverprintedGene</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">startNt</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">frameOver</span><span class="p">))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">overAAs</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">preSequence</span> <span class="o">+</span> <span class="n">core</span><span class="o">.</span><span class="n">seqify</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">findOverprintedGene</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">startNtIndex</span><span class="p">,</span> <span class="n">frameOver</span><span class="p">))</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">postSequence</span><span class="p">)</span>
 
 <span class="k">class</span> <span class="nc">Mutant</span><span class="p">:</span>
-	
-	<span class="c"># dummy variables</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	Class for target gene mutagenesis.</span>
+<span class="sd">	&#39;&#39;&#39;</span>
 	<span class="n">seq</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
 	<span class="n">codons</span> <span class="o">=</span> <span class="p">[]</span>
 	<span class="n">nMut</span> <span class="o">=</span> <span class="mi">1</span>
 	<span class="n">overGene</span> <span class="o">=</span> <span class="bp">False</span>
 	<span class="n">mutants</span> <span class="o">=</span> <span class="p">[]</span>
 	
-	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">numMutations</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">numMutations</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">regEx</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">seq</span> <span class="o">=</span> <span class="n">sequence</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">nMut</span> <span class="o">=</span> <span class="n">numMutations</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">codons</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">codonify</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">regex</span> <span class="o">=</span> <span class="n">regEx</span>
 		
-	<span class="k">def</span> <span class="nf">setOverGene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">startNt</span><span class="p">,</span> <span class="n">overFrame</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+	<span class="k">def</span> <span class="nf">setOverGene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overSeq</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">startNtIndex</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">overFrame</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
 		<span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">		Adds the overprinted gene to the current `Mutant` object.</span>
 <span class="sd">		&#39;&#39;&#39;</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">overGene</span> <span class="o">=</span> <span class="n">OverGene</span><span class="p">(</span><span class="n">startNt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">,</span> <span class="n">overFrame</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">overSeq</span> <span class="o">==</span> <span class="s">&#39;&#39;</span> <span class="ow">and</span> <span class="n">startNtIndex</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">overFrame</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">core</span><span class="o">.</span><span class="n">SequenceError</span><span class="p">(</span><span class="s">&quot;You must provide either the sequence of an overprinted gene, or its start position/frame in the knockout sequence.&quot;</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">overGene</span> <span class="o">=</span> <span class="n">OverGene</span><span class="p">(</span><span class="n">overSeq</span><span class="p">,</span> <span class="n">startNtIndex</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">,</span> <span class="n">overFrame</span><span class="p">)</span>
 		
 	<span class="k">def</span> <span class="nf">vector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sequence</span><span class="p">):</span>
 		<span class="sd">&#39;&#39;&#39;</span>
@@ -1132,81 +1148,98 @@ table {
 		<span class="k">else</span><span class="p">:</span>
 			<span class="k">raise</span> <span class="n">core</span><span class="o">.</span><span class="n">SequenceError</span><span class="p">(</span><span class="s">&quot;Could not find target sequence in vector sequence.&quot;</span><span class="p">)</span>
 			
-	<span class="k">def</span> <span class="nf">addMutant</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mut</span><span class="p">):</span>
-		<span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">		Add individual point mutants by hand, mut tuple</span>
-<span class="sd">		&#39;&#39;&#39;</span>
-		<span class="c">#Should change all places I use `mut` to either ntMut or codMut for less ambiguity</span>
-		
-	<span class="k">def</span> <span class="nf">findMutants</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rSiteLength</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">rSites</span> <span class="o">=</span> <span class="n">restriction</span><span class="o">.</span><span class="n">restrictionSites</span><span class="p">):</span>
+	<span class="k">def</span> <span class="nf">findMutants</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ignoreRxSites</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">rSiteLength</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">rSites</span> <span class="o">=</span> <span class="n">restriction</span><span class="o">.</span><span class="n">defaultEnzymes</span><span class="p">()):</span>
 		<span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">		Returns a list of mutants that add a premature stop codon </span>
 <span class="sd">		(or mutate the start codon) without changing the overprinted </span>
 <span class="sd">		gene, and which add or remove a restriction site.</span>
 <span class="sd">		&#39;&#39;&#39;</span>
-		<span class="n">restrictionSiteLengths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">rSites</span><span class="o">.</span><span class="n">keys</span><span class="p">()]))</span>
-		
-		<span class="k">if</span> <span class="n">rSiteLength</span> <span class="o">==</span> <span class="s">&#39;all&#39;</span><span class="p">:</span>
-			<span class="n">tempRestrictionSites</span> <span class="o">=</span> <span class="n">rSites</span>
-		<span class="k">elif</span> <span class="n">rSiteLength</span> <span class="o">&gt;=</span> <span class="nb">min</span><span class="p">(</span><span class="n">restrictionSiteLengths</span><span class="p">)</span> <span class="ow">and</span> <span class="n">rSiteLength</span> <span class="o">&lt;=</span> <span class="nb">max</span><span class="p">(</span><span class="n">restrictionSiteLengths</span><span class="p">):</span>
-			<span class="n">rKeys</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">rSites</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">==</span> <span class="n">rSiteLength</span><span class="p">]</span>
-			<span class="n">tempRestrictionSites</span> <span class="o">=</span> <span class="p">{}</span> <span class="c"># Reduce size of dict. searched</span>
-			<span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">rKeys</span><span class="p">:</span>
-				<span class="n">tempRestrictionSites</span><span class="p">[</span><span class="n">site</span><span class="p">]</span> <span class="o">=</span> <span class="n">rSites</span><span class="p">[</span><span class="n">site</span><span class="p">]</span>
-			<span class="n">restrictionSiteLengths</span> <span class="o">=</span> <span class="p">[</span><span class="n">rSiteLength</span><span class="p">]</span>
-		<span class="k">else</span><span class="p">:</span>
-			<span class="k">raise</span> <span class="n">core</span><span class="o">.</span><span class="n">SequenceError</span><span class="p">(</span><span class="s">&quot;Invalid restriction site length.&quot;</span><span class="p">)</span>
-			
 		<span class="n">stops</span> <span class="o">=</span> <span class="n">findPossibleStopCodons</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">codons</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nMut</span><span class="p">)</span>
-			
-		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="p">:</span>
+
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overGene</span> <span class="o">!=</span> <span class="bp">False</span><span class="p">:</span>
+			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">geneSequence</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+				<span class="n">stops</span> <span class="o">=</span> <span class="n">mutateStartCodon</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">codons</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nMut</span><span class="p">)</span> <span class="o">+</span> <span class="n">stops</span>
 			<span class="n">safeMutations</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="n">newPreSequence</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">;</span>
 			<span class="k">for</span> <span class="n">poss</span> <span class="ow">in</span> <span class="n">stops</span><span class="p">:</span>
 				<span class="n">nCodons</span> <span class="o">=</span> <span class="p">[</span><span class="n">codon</span> <span class="k">for</span> <span class="n">codon</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">codons</span><span class="p">]</span>
 				<span class="n">newCodons</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">insertMutation</span><span class="p">(</span><span class="n">nCodons</span><span class="p">,</span> <span class="n">poss</span><span class="p">)</span>
-				<span class="n">newOverAAs</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">findOverprintedGene</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">seqify</span><span class="p">(</span><span class="n">newCodons</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">startNucleotide</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">frame</span><span class="p">))</span>
+				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">geneSequence</span> <span class="o">&lt;&gt;</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+					<span class="n">newPreSequence</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">preSequence</span><span class="p">[:</span><span class="mi">4</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">frame</span><span class="p">]</span> <span class="o">+</span> <span class="n">newCodons</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">frame</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+				<span class="n">newOverAAs</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">newPreSequence</span> <span class="o">+</span> <span class="n">core</span><span class="o">.</span><span class="n">seqify</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">findOverprintedGene</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">seqify</span><span class="p">(</span><span class="n">newCodons</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">startNucleotideIndex</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">frame</span><span class="p">)))</span>
 				<span class="k">if</span> <span class="n">newOverAAs</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">overAAs</span><span class="p">:</span>
 					<span class="n">safeMutations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">poss</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="n">safeMutations</span> <span class="o">=</span> <span class="n">stops</span>
+		<span class="n">finalWinners</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">safeMutations</span><span class="p">]</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">ignoreRxSites</span><span class="p">:</span>
+			<span class="c">###### Two approaches: regex and non-regex.</span>
+			<span class="n">restrictionSiteLengths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">rSites</span><span class="o">.</span><span class="n">keys</span><span class="p">()]))</span>
 			
-		<span class="c">###### Two approaches: regex and non-regex.</span>
-		<span class="c">### Non-regex:</span>
-		
-		<span class="c">#TODO still: account for regex queries (in the non-regex search)		</span>
-		
-		<span class="n">baseSites</span> <span class="o">=</span> <span class="p">[]</span>
-		<span class="k">for</span> <span class="n">length</span> <span class="ow">in</span> <span class="n">restrictionSiteLengths</span><span class="p">:</span>
-			<span class="n">baseSites</span> <span class="o">+=</span> <span class="n">restriction</span><span class="o">.</span><span class="n">findNcutters</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">rSiteLength</span> <span class="o">==</span> <span class="s">&#39;all&#39;</span><span class="p">:</span>
+				<span class="n">tempRestrictionSites</span> <span class="o">=</span> <span class="n">rSites</span>
+			<span class="k">elif</span> <span class="n">rSiteLength</span> <span class="o">&gt;=</span> <span class="nb">min</span><span class="p">(</span><span class="n">restrictionSiteLengths</span><span class="p">)</span> <span class="ow">and</span> <span class="n">rSiteLength</span> <span class="o">&lt;=</span> <span class="nb">max</span><span class="p">(</span><span class="n">restrictionSiteLengths</span><span class="p">):</span>
+				<span class="n">rKeys</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">rSites</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">==</span> <span class="n">rSiteLength</span><span class="p">]</span>
+				<span class="n">tempRestrictionSites</span> <span class="o">=</span> <span class="p">{}</span> <span class="c"># Reduce size of dict. searched</span>
+				<span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">rKeys</span><span class="p">:</span>
+					<span class="n">tempRestrictionSites</span><span class="p">[</span><span class="n">site</span><span class="p">]</span> <span class="o">=</span> <span class="n">rSites</span><span class="p">[</span><span class="n">site</span><span class="p">]</span>
+				<span class="n">restrictionSiteLengths</span> <span class="o">=</span> <span class="p">[</span><span class="n">rSiteLength</span><span class="p">]</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">raise</span> <span class="n">core</span><span class="o">.</span><span class="n">SequenceError</span><span class="p">(</span><span class="s">&quot;Invalid restriction site length.&quot;</span><span class="p">)</span>		
 			
-		<span class="c"># baseSites = set(baseSites) #for some reason this will not work... Collection? Should use sets though</span>
-		<span class="n">newSites</span> <span class="o">=</span> <span class="p">[]</span> <span class="c"># list of lists</span>
-		<span class="k">for</span> <span class="n">mut</span> <span class="ow">in</span> <span class="n">safeMutations</span><span class="p">:</span>
-			<span class="n">newSites</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
-			<span class="k">for</span> <span class="n">length</span> <span class="ow">in</span> <span class="n">restrictionSiteLengths</span><span class="p">:</span>
-				<span class="n">newSites</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">restriction</span><span class="o">.</span><span class="n">findNcutters</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">seqify</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">insertMutation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">codons</span><span class="p">,</span> <span class="n">mut</span><span class="p">)),</span> <span class="n">length</span><span class="p">)</span>
+			<span class="n">newSites</span> <span class="o">=</span> <span class="p">[]</span> <span class="c"># list of lists</span>
+			
+			<span class="c">### Regex:</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">regex</span><span class="p">:</span>
+				<span class="n">baseSites</span> <span class="o">=</span> <span class="n">restriction</span><span class="o">.</span><span class="n">reFindEnzymes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">)</span>
 				
-		<span class="n">winners</span> <span class="o">=</span> <span class="p">[]</span>
-		<span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">newSites</span><span class="p">:</span>
-			<span class="k">if</span> <span class="n">l</span> <span class="o">&lt;&gt;</span> <span class="n">baseSites</span><span class="p">:</span> <span class="c">#this is why I should use sets</span>
-				<span class="n">tempSites</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">baseSites</span><span class="p">]</span>
-				<span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">l</span><span class="p">:</span> <span class="c">#basically, removing everything in the new list from the old list to get the differences</span>
-					<span class="k">try</span><span class="p">:</span>
-						<span class="n">tempSites</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">site</span><span class="p">)</span>
-					<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-						<span class="n">tempSites</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">site</span><span class="p">,</span> <span class="s">&#39;+&#39;</span><span class="p">))</span>
+				<span class="k">for</span> <span class="n">mut</span> <span class="ow">in</span> <span class="n">safeMutations</span><span class="p">:</span>
+					<span class="n">newSites</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+					<span class="n">newSites</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">restriction</span><span class="o">.</span><span class="n">reFindEnzymes</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">seqify</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">insertMutation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">codons</span><span class="p">,</span> <span class="n">mut</span><span class="p">)))</span>
+					
+			<span class="c">### Non-regex:</span>
+			<span class="k">else</span><span class="p">:</span>
+				
+				<span class="n">baseSites</span> <span class="o">=</span> <span class="p">[]</span>
+				<span class="k">for</span> <span class="n">length</span> <span class="ow">in</span> <span class="n">restrictionSiteLengths</span><span class="p">:</span>
+					<span class="n">baseSites</span> <span class="o">+=</span> <span class="n">restriction</span><span class="o">.</span><span class="n">findNcutters</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+					
+				<span class="k">for</span> <span class="n">mut</span> <span class="ow">in</span> <span class="n">safeMutations</span><span class="p">:</span>
+					<span class="n">newSites</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+					<span class="k">for</span> <span class="n">length</span> <span class="ow">in</span> <span class="n">restrictionSiteLengths</span><span class="p">:</span>
+						<span class="n">newSites</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">restriction</span><span class="o">.</span><span class="n">findNcutters</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">seqify</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">insertMutation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">codons</span><span class="p">,</span> <span class="n">mut</span><span class="p">)),</span> <span class="n">length</span><span class="p">)</span>
+			
+			<span class="n">winners</span> <span class="o">=</span> <span class="p">{}</span>
+			<span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">newSites</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">l</span> <span class="o">&lt;&gt;</span> <span class="n">baseSites</span><span class="p">:</span> <span class="c">#this is why I should use sets</span>
+					<span class="n">tempSites</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">baseSites</span><span class="p">]</span>
+					<span class="n">tempAddedSites</span> <span class="o">=</span> <span class="p">[]</span>
+					<span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">l</span><span class="p">:</span> <span class="c">#basically, removing everything in the new list from the old list to get the differences</span>
+						<span class="k">try</span><span class="p">:</span>
+							<span class="n">tempSites</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">site</span><span class="p">)</span>
+						<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+							<span class="n">tempAddedSites</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">site</span><span class="p">)</span>
+					
+					<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">tempSites</span><span class="p">)):</span>
+						<span class="n">tempSites</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">tempSites</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">tempSites</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="s">&#39;-&#39;</span><span class="p">)</span>
 						
-				<span class="n">winners</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">safeMutations</span><span class="p">[</span><span class="n">newSites</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">l</span><span class="p">)],</span> <span class="n">tempSites</span><span class="p">))</span>
-		<span class="c"># also look for start codon KOs</span>
-		<span class="c"># next step: post process `winners` to make the tuples look pretty (- and +), store in Mutant object</span>
+					<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tempAddedSites</span><span class="p">)):</span>
+						<span class="n">tempAddedSites</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">tempAddedSites</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">tempAddedSites</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="s">&#39;+&#39;</span><span class="p">)</span>
+					
+					<span class="n">winners</span><span class="p">[</span><span class="n">safeMutations</span><span class="p">[</span><span class="n">newSites</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">l</span><span class="p">)]]</span> <span class="o">=</span> <span class="n">tempSites</span> <span class="o">+</span> <span class="n">tempAddedSites</span>
+			
+			<span class="n">finalWinners</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x</span><span class="p">,</span><span class="n">winners</span><span class="p">[</span><span class="n">x</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">winners</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>		
+			
+		<span class="k">return</span> <span class="n">finalWinners</span>
 	
 <span class="k">def</span> <span class="nf">findPossibleStopCodons</span><span class="p">(</span><span class="n">codons</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
-
 	<span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">	Given a list of `codons`, finds individual codons that</span>
+<span class="sd">	Given a list `codons`, finds individual codons that</span>
 <span class="sd">	can be mutated to a stop codon given `n` mutations. Returns </span>
-<span class="sd">	a list of tuples of the form `(index, &#39;codon&#39;)` where </span>
+<span class="sd">	a list of tuples of the form `(index, &#39;codon&#39;)` where `&#39;codon&#39;`</span>
+<span class="sd">	is the mutated codon. </span>
 <span class="sd">	&#39;&#39;&#39;</span>
+	<span class="c">#TODO: can optimize this as in js</span>
 	<span class="k">if</span> <span class="n">codons</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">core</span><span class="o">.</span><span class="n">stopCodons</span><span class="p">:</span> 
 		<span class="n">codons</span> <span class="o">=</span> <span class="n">codons</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c">#remove c-terminal stop codon</span>
 	
@@ -1234,7 +1267,6 @@ table {
 		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">almostStopCodons</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
 			<span class="n">almostStopCodons</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">almostStopCodons</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
 	
-	
 	<span class="c"># creates a list of tuples of the form (index, [&#39;list&#39;, &#39;of&#39;, &#39;stop&#39;, &#39;codons&#39;]) to be further pre-processed	</span>
 	<span class="n">preMatches</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">almostStopCodons</span><span class="p">[</span><span class="n">codons</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">codons</span><span class="p">))</span> <span class="k">if</span> <span class="n">codons</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">almostStopCodons</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
 	
@@ -1247,12 +1279,29 @@ table {
 			
 	<span class="k">return</span> <span class="n">matches</span>
 
-<span class="k">def</span> <span class="nf">primers</span><span class="p">(</span><span class="n">mutant</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">30</span><span class="p">):</span>
-	<span class="c">#need doc, ALSO need to figure out a way to tell the primer function *which* mutant to make</span>
-	<span class="k">try</span><span class="p">:</span>
-		<span class="n">primer</span> <span class="o">=</span> <span class="mi">5</span>
-	<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-		<span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;Vector sequence not found. Please add a vector sequence to the Mutant with the .vector() method.&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">mutateStartCodon</span><span class="p">(</span><span class="n">codons</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	Given a list `codons`, makes up to `n` mutations (n&lt;2)</span>
+<span class="sd">	to destroy the start codon. Returns a formatted list</span>
+<span class="sd">	of tuples in the form `(index, &#39;mutated codon&#39;)`.</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="n">start</span> <span class="o">=</span> <span class="n">codons</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="n">muts</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">nt</span> <span class="ow">in</span> <span class="s">&#39;ACTG&#39;</span><span class="p">:</span>
+			<span class="n">mutCodon</span> <span class="o">=</span> <span class="n">start</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">nt</span><span class="o">+</span><span class="n">start</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:]</span>
+			<span class="k">if</span> <span class="n">mutCodon</span> <span class="o">&lt;&gt;</span> <span class="n">start</span> <span class="ow">and</span> <span class="n">mutCodon</span> <span class="o">&lt;&gt;</span> <span class="s">&#39;ATG&#39;</span><span class="p">:</span>
+				<span class="n">muts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mutCodon</span><span class="p">)</span>
+	<span class="n">newMuts</span> <span class="o">=</span> <span class="p">[</span><span class="n">z</span> <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">muts</span><span class="p">]</span>
+	<span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">muts</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">):</span>
+				<span class="k">for</span> <span class="n">nt</span> <span class="ow">in</span> <span class="s">&#39;ACTG&#39;</span><span class="p">:</span>
+					<span class="n">mutCodon</span> <span class="o">=</span> <span class="n">e</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">nt</span><span class="o">+</span><span class="n">e</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:]</span>
+					<span class="k">if</span> <span class="n">mutCodon</span> <span class="o">&lt;&gt;</span> <span class="n">start</span> <span class="ow">and</span> <span class="n">mutCodon</span> <span class="o">&lt;&gt;</span> <span class="s">&#39;ATG&#39;</span> <span class="ow">and</span> <span class="n">mutCodon</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">newMuts</span><span class="p">:</span>
+						<span class="n">newMuts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mutCodon</span><span class="p">)</span>
+					
+	<span class="k">return</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">newMuts</span><span class="p">]</span>
 </pre></div>
 
   </div>
@@ -1271,19 +1320,21 @@ table {
 
     
   
-    <div class="desc"><p>Given a list of <code>codons</code>, finds individual codons that
+    <div class="desc"><p>Given a list <code>codons</code>, finds individual codons that
 can be mutated to a stop codon given <code>n</code> mutations. Returns 
-a list of tuples of the form <code>(index, 'codon')</code> where</p></div>
+a list of tuples of the form <code>(index, 'codon')</code> where <code>'codon'</code>
+is the mutated codon.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pyviko.mutation.findPossibleStopCodons', this);">Show source &equiv;</a></p>
   <div id="source-pyviko.mutation.findPossibleStopCodons" class="source">
     <div class="codehilite"><pre><span class="k">def</span> <span class="nf">findPossibleStopCodons</span><span class="p">(</span><span class="n">codons</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
-
 	<span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">	Given a list of `codons`, finds individual codons that</span>
+<span class="sd">	Given a list `codons`, finds individual codons that</span>
 <span class="sd">	can be mutated to a stop codon given `n` mutations. Returns </span>
-<span class="sd">	a list of tuples of the form `(index, &#39;codon&#39;)` where </span>
+<span class="sd">	a list of tuples of the form `(index, &#39;codon&#39;)` where `&#39;codon&#39;`</span>
+<span class="sd">	is the mutated codon. </span>
 <span class="sd">	&#39;&#39;&#39;</span>
+	<span class="c">#TODO: can optimize this as in js</span>
 	<span class="k">if</span> <span class="n">codons</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">core</span><span class="o">.</span><span class="n">stopCodons</span><span class="p">:</span> 
 		<span class="n">codons</span> <span class="o">=</span> <span class="n">codons</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c">#remove c-terminal stop codon</span>
 	
@@ -1311,7 +1362,6 @@ a list of tuples of the form <code>(index, 'codon')</code> where</p></div>
 		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">almostStopCodons</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
 			<span class="n">almostStopCodons</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">almostStopCodons</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
 	
-	
 	<span class="c"># creates a list of tuples of the form (index, [&#39;list&#39;, &#39;of&#39;, &#39;stop&#39;, &#39;codons&#39;]) to be further pre-processed	</span>
 	<span class="n">preMatches</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">almostStopCodons</span><span class="p">[</span><span class="n">codons</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">codons</span><span class="p">))</span> <span class="k">if</span> <span class="n">codons</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">almostStopCodons</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
 	
@@ -1332,22 +1382,42 @@ a list of tuples of the form <code>(index, 'codon')</code> where</p></div>
   
       
   <div class="item">
-    <div class="name def" id="pyviko.mutation.primers">
-    <p>def <span class="ident">primers</span>(</p><p>mutant, length=30)</p>
+    <div class="name def" id="pyviko.mutation.mutateStartCodon">
+    <p>def <span class="ident">mutateStartCodon</span>(</p><p>codons, n)</p>
     </div>
     
 
     
   
+    <div class="desc"><p>Given a list <code>codons</code>, makes up to <code>n</code> mutations (n&lt;2)
+to destroy the start codon. Returns a formatted list
+of tuples in the form <code>(index, 'mutated codon')</code>.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pyviko.mutation.primers', this);">Show source &equiv;</a></p>
-  <div id="source-pyviko.mutation.primers" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">primers</span><span class="p">(</span><span class="n">mutant</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">30</span><span class="p">):</span>
-	<span class="c">#need doc, ALSO need to figure out a way to tell the primer function *which* mutant to make</span>
-	<span class="k">try</span><span class="p">:</span>
-		<span class="n">primer</span> <span class="o">=</span> <span class="mi">5</span>
-	<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-		<span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;Vector sequence not found. Please add a vector sequence to the Mutant with the .vector() method.&quot;</span><span class="p">)</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pyviko.mutation.mutateStartCodon', this);">Show source &equiv;</a></p>
+  <div id="source-pyviko.mutation.mutateStartCodon" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">mutateStartCodon</span><span class="p">(</span><span class="n">codons</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	Given a list `codons`, makes up to `n` mutations (n&lt;2)</span>
+<span class="sd">	to destroy the start codon. Returns a formatted list</span>
+<span class="sd">	of tuples in the form `(index, &#39;mutated codon&#39;)`.</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="n">start</span> <span class="o">=</span> <span class="n">codons</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="n">muts</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">nt</span> <span class="ow">in</span> <span class="s">&#39;ACTG&#39;</span><span class="p">:</span>
+			<span class="n">mutCodon</span> <span class="o">=</span> <span class="n">start</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">nt</span><span class="o">+</span><span class="n">start</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:]</span>
+			<span class="k">if</span> <span class="n">mutCodon</span> <span class="o">&lt;&gt;</span> <span class="n">start</span> <span class="ow">and</span> <span class="n">mutCodon</span> <span class="o">&lt;&gt;</span> <span class="s">&#39;ATG&#39;</span><span class="p">:</span>
+				<span class="n">muts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mutCodon</span><span class="p">)</span>
+	<span class="n">newMuts</span> <span class="o">=</span> <span class="p">[</span><span class="n">z</span> <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">muts</span><span class="p">]</span>
+	<span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">muts</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">):</span>
+				<span class="k">for</span> <span class="n">nt</span> <span class="ow">in</span> <span class="s">&#39;ACTG&#39;</span><span class="p">:</span>
+					<span class="n">mutCodon</span> <span class="o">=</span> <span class="n">e</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">nt</span><span class="o">+</span><span class="n">e</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:]</span>
+					<span class="k">if</span> <span class="n">mutCodon</span> <span class="o">&lt;&gt;</span> <span class="n">start</span> <span class="ow">and</span> <span class="n">mutCodon</span> <span class="o">&lt;&gt;</span> <span class="s">&#39;ATG&#39;</span> <span class="ow">and</span> <span class="n">mutCodon</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">newMuts</span><span class="p">:</span>
+						<span class="n">newMuts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mutCodon</span><span class="p">)</span>
+					
+	<span class="k">return</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">newMuts</span><span class="p">]</span>
 </pre></div>
 
   </div>
@@ -1362,28 +1432,34 @@ a list of tuples of the form <code>(index, 'codon')</code> where</p></div>
       <p id="pyviko.mutation.Mutant" class="name">class <span class="ident">Mutant</span></p>
       
   
+    <div class="desc"><p>Class for target gene mutagenesis.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pyviko.mutation.Mutant', this);">Show source &equiv;</a></p>
   <div id="source-pyviko.mutation.Mutant" class="source">
     <div class="codehilite"><pre><span class="k">class</span> <span class="nc">Mutant</span><span class="p">:</span>
-	
-	<span class="c"># dummy variables</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	Class for target gene mutagenesis.</span>
+<span class="sd">	&#39;&#39;&#39;</span>
 	<span class="n">seq</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
 	<span class="n">codons</span> <span class="o">=</span> <span class="p">[]</span>
 	<span class="n">nMut</span> <span class="o">=</span> <span class="mi">1</span>
 	<span class="n">overGene</span> <span class="o">=</span> <span class="bp">False</span>
 	<span class="n">mutants</span> <span class="o">=</span> <span class="p">[]</span>
 	
-	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">numMutations</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">numMutations</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">regEx</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">seq</span> <span class="o">=</span> <span class="n">sequence</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">nMut</span> <span class="o">=</span> <span class="n">numMutations</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">codons</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">codonify</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">regex</span> <span class="o">=</span> <span class="n">regEx</span>
 		
-	<span class="k">def</span> <span class="nf">setOverGene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">startNt</span><span class="p">,</span> <span class="n">overFrame</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+	<span class="k">def</span> <span class="nf">setOverGene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overSeq</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">startNtIndex</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">overFrame</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
 		<span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">		Adds the overprinted gene to the current `Mutant` object.</span>
 <span class="sd">		&#39;&#39;&#39;</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">overGene</span> <span class="o">=</span> <span class="n">OverGene</span><span class="p">(</span><span class="n">startNt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">,</span> <span class="n">overFrame</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">overSeq</span> <span class="o">==</span> <span class="s">&#39;&#39;</span> <span class="ow">and</span> <span class="n">startNtIndex</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">overFrame</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">core</span><span class="o">.</span><span class="n">SequenceError</span><span class="p">(</span><span class="s">&quot;You must provide either the sequence of an overprinted gene, or its start position/frame in the knockout sequence.&quot;</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">overGene</span> <span class="o">=</span> <span class="n">OverGene</span><span class="p">(</span><span class="n">overSeq</span><span class="p">,</span> <span class="n">startNtIndex</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">,</span> <span class="n">overFrame</span><span class="p">)</span>
 		
 	<span class="k">def</span> <span class="nf">vector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sequence</span><span class="p">):</span>
 		<span class="sd">&#39;&#39;&#39;</span>
@@ -1395,71 +1471,89 @@ a list of tuples of the form <code>(index, 'codon')</code> where</p></div>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="k">raise</span> <span class="n">core</span><span class="o">.</span><span class="n">SequenceError</span><span class="p">(</span><span class="s">&quot;Could not find target sequence in vector sequence.&quot;</span><span class="p">)</span>
 			
-	<span class="k">def</span> <span class="nf">addMutant</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mut</span><span class="p">):</span>
-		<span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">		Add individual point mutants by hand, mut tuple</span>
-<span class="sd">		&#39;&#39;&#39;</span>
-		<span class="c">#Should change all places I use `mut` to either ntMut or codMut for less ambiguity</span>
-		
-	<span class="k">def</span> <span class="nf">findMutants</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rSiteLength</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">rSites</span> <span class="o">=</span> <span class="n">restriction</span><span class="o">.</span><span class="n">restrictionSites</span><span class="p">):</span>
+	<span class="k">def</span> <span class="nf">findMutants</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ignoreRxSites</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">rSiteLength</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">rSites</span> <span class="o">=</span> <span class="n">restriction</span><span class="o">.</span><span class="n">defaultEnzymes</span><span class="p">()):</span>
 		<span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">		Returns a list of mutants that add a premature stop codon </span>
 <span class="sd">		(or mutate the start codon) without changing the overprinted </span>
 <span class="sd">		gene, and which add or remove a restriction site.</span>
 <span class="sd">		&#39;&#39;&#39;</span>
-		<span class="n">restrictionSiteLengths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">rSites</span><span class="o">.</span><span class="n">keys</span><span class="p">()]))</span>
-		
-		<span class="k">if</span> <span class="n">rSiteLength</span> <span class="o">==</span> <span class="s">&#39;all&#39;</span><span class="p">:</span>
-			<span class="n">tempRestrictionSites</span> <span class="o">=</span> <span class="n">rSites</span>
-		<span class="k">elif</span> <span class="n">rSiteLength</span> <span class="o">&gt;=</span> <span class="nb">min</span><span class="p">(</span><span class="n">restrictionSiteLengths</span><span class="p">)</span> <span class="ow">and</span> <span class="n">rSiteLength</span> <span class="o">&lt;=</span> <span class="nb">max</span><span class="p">(</span><span class="n">restrictionSiteLengths</span><span class="p">):</span>
-			<span class="n">rKeys</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">rSites</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">==</span> <span class="n">rSiteLength</span><span class="p">]</span>
-			<span class="n">tempRestrictionSites</span> <span class="o">=</span> <span class="p">{}</span> <span class="c"># Reduce size of dict. searched</span>
-			<span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">rKeys</span><span class="p">:</span>
-				<span class="n">tempRestrictionSites</span><span class="p">[</span><span class="n">site</span><span class="p">]</span> <span class="o">=</span> <span class="n">rSites</span><span class="p">[</span><span class="n">site</span><span class="p">]</span>
-			<span class="n">restrictionSiteLengths</span> <span class="o">=</span> <span class="p">[</span><span class="n">rSiteLength</span><span class="p">]</span>
-		<span class="k">else</span><span class="p">:</span>
-			<span class="k">raise</span> <span class="n">core</span><span class="o">.</span><span class="n">SequenceError</span><span class="p">(</span><span class="s">&quot;Invalid restriction site length.&quot;</span><span class="p">)</span>
-			
 		<span class="n">stops</span> <span class="o">=</span> <span class="n">findPossibleStopCodons</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">codons</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nMut</span><span class="p">)</span>
-			
-		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="p">:</span>
+
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overGene</span> <span class="o">!=</span> <span class="bp">False</span><span class="p">:</span>
+			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">geneSequence</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+				<span class="n">stops</span> <span class="o">=</span> <span class="n">mutateStartCodon</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">codons</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nMut</span><span class="p">)</span> <span class="o">+</span> <span class="n">stops</span>
 			<span class="n">safeMutations</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="n">newPreSequence</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">;</span>
 			<span class="k">for</span> <span class="n">poss</span> <span class="ow">in</span> <span class="n">stops</span><span class="p">:</span>
 				<span class="n">nCodons</span> <span class="o">=</span> <span class="p">[</span><span class="n">codon</span> <span class="k">for</span> <span class="n">codon</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">codons</span><span class="p">]</span>
 				<span class="n">newCodons</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">insertMutation</span><span class="p">(</span><span class="n">nCodons</span><span class="p">,</span> <span class="n">poss</span><span class="p">)</span>
-				<span class="n">newOverAAs</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">findOverprintedGene</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">seqify</span><span class="p">(</span><span class="n">newCodons</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">startNucleotide</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">frame</span><span class="p">))</span>
+				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">geneSequence</span> <span class="o">&lt;&gt;</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+					<span class="n">newPreSequence</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">preSequence</span><span class="p">[:</span><span class="mi">4</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">frame</span><span class="p">]</span> <span class="o">+</span> <span class="n">newCodons</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">frame</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+				<span class="n">newOverAAs</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">newPreSequence</span> <span class="o">+</span> <span class="n">core</span><span class="o">.</span><span class="n">seqify</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">findOverprintedGene</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">seqify</span><span class="p">(</span><span class="n">newCodons</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">startNucleotideIndex</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">frame</span><span class="p">)))</span>
 				<span class="k">if</span> <span class="n">newOverAAs</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">overAAs</span><span class="p">:</span>
 					<span class="n">safeMutations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">poss</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="n">safeMutations</span> <span class="o">=</span> <span class="n">stops</span>
+		<span class="n">finalWinners</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">safeMutations</span><span class="p">]</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">ignoreRxSites</span><span class="p">:</span>
+			<span class="c">###### Two approaches: regex and non-regex.</span>
+			<span class="n">restrictionSiteLengths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">rSites</span><span class="o">.</span><span class="n">keys</span><span class="p">()]))</span>
 			
-		<span class="c">###### Two approaches: regex and non-regex.</span>
-		<span class="c">### Non-regex:</span>
-		
-		<span class="c">#TODO still: account for regex queries (in the non-regex search)		</span>
-		
-		<span class="n">baseSites</span> <span class="o">=</span> <span class="p">[]</span>
-		<span class="k">for</span> <span class="n">length</span> <span class="ow">in</span> <span class="n">restrictionSiteLengths</span><span class="p">:</span>
-			<span class="n">baseSites</span> <span class="o">+=</span> <span class="n">restriction</span><span class="o">.</span><span class="n">findNcutters</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">rSiteLength</span> <span class="o">==</span> <span class="s">&#39;all&#39;</span><span class="p">:</span>
+				<span class="n">tempRestrictionSites</span> <span class="o">=</span> <span class="n">rSites</span>
+			<span class="k">elif</span> <span class="n">rSiteLength</span> <span class="o">&gt;=</span> <span class="nb">min</span><span class="p">(</span><span class="n">restrictionSiteLengths</span><span class="p">)</span> <span class="ow">and</span> <span class="n">rSiteLength</span> <span class="o">&lt;=</span> <span class="nb">max</span><span class="p">(</span><span class="n">restrictionSiteLengths</span><span class="p">):</span>
+				<span class="n">rKeys</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">rSites</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">==</span> <span class="n">rSiteLength</span><span class="p">]</span>
+				<span class="n">tempRestrictionSites</span> <span class="o">=</span> <span class="p">{}</span> <span class="c"># Reduce size of dict. searched</span>
+				<span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">rKeys</span><span class="p">:</span>
+					<span class="n">tempRestrictionSites</span><span class="p">[</span><span class="n">site</span><span class="p">]</span> <span class="o">=</span> <span class="n">rSites</span><span class="p">[</span><span class="n">site</span><span class="p">]</span>
+				<span class="n">restrictionSiteLengths</span> <span class="o">=</span> <span class="p">[</span><span class="n">rSiteLength</span><span class="p">]</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">raise</span> <span class="n">core</span><span class="o">.</span><span class="n">SequenceError</span><span class="p">(</span><span class="s">&quot;Invalid restriction site length.&quot;</span><span class="p">)</span>		
 			
-		<span class="c"># baseSites = set(baseSites) #for some reason this will not work... Collection? Should use sets though</span>
-		<span class="n">newSites</span> <span class="o">=</span> <span class="p">[]</span> <span class="c"># list of lists</span>
-		<span class="k">for</span> <span class="n">mut</span> <span class="ow">in</span> <span class="n">safeMutations</span><span class="p">:</span>
-			<span class="n">newSites</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
-			<span class="k">for</span> <span class="n">length</span> <span class="ow">in</span> <span class="n">restrictionSiteLengths</span><span class="p">:</span>
-				<span class="n">newSites</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">restriction</span><span class="o">.</span><span class="n">findNcutters</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">seqify</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">insertMutation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">codons</span><span class="p">,</span> <span class="n">mut</span><span class="p">)),</span> <span class="n">length</span><span class="p">)</span>
+			<span class="n">newSites</span> <span class="o">=</span> <span class="p">[]</span> <span class="c"># list of lists</span>
+			
+			<span class="c">### Regex:</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">regex</span><span class="p">:</span>
+				<span class="n">baseSites</span> <span class="o">=</span> <span class="n">restriction</span><span class="o">.</span><span class="n">reFindEnzymes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">)</span>
 				
-		<span class="n">winners</span> <span class="o">=</span> <span class="p">[]</span>
-		<span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">newSites</span><span class="p">:</span>
-			<span class="k">if</span> <span class="n">l</span> <span class="o">&lt;&gt;</span> <span class="n">baseSites</span><span class="p">:</span> <span class="c">#this is why I should use sets</span>
-				<span class="n">tempSites</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">baseSites</span><span class="p">]</span>
-				<span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">l</span><span class="p">:</span> <span class="c">#basically, removing everything in the new list from the old list to get the differences</span>
-					<span class="k">try</span><span class="p">:</span>
-						<span class="n">tempSites</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">site</span><span class="p">)</span>
-					<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-						<span class="n">tempSites</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">site</span><span class="p">,</span> <span class="s">&#39;+&#39;</span><span class="p">))</span>
+				<span class="k">for</span> <span class="n">mut</span> <span class="ow">in</span> <span class="n">safeMutations</span><span class="p">:</span>
+					<span class="n">newSites</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+					<span class="n">newSites</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">restriction</span><span class="o">.</span><span class="n">reFindEnzymes</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">seqify</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">insertMutation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">codons</span><span class="p">,</span> <span class="n">mut</span><span class="p">)))</span>
+					
+			<span class="c">### Non-regex:</span>
+			<span class="k">else</span><span class="p">:</span>
+				
+				<span class="n">baseSites</span> <span class="o">=</span> <span class="p">[]</span>
+				<span class="k">for</span> <span class="n">length</span> <span class="ow">in</span> <span class="n">restrictionSiteLengths</span><span class="p">:</span>
+					<span class="n">baseSites</span> <span class="o">+=</span> <span class="n">restriction</span><span class="o">.</span><span class="n">findNcutters</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+					
+				<span class="k">for</span> <span class="n">mut</span> <span class="ow">in</span> <span class="n">safeMutations</span><span class="p">:</span>
+					<span class="n">newSites</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+					<span class="k">for</span> <span class="n">length</span> <span class="ow">in</span> <span class="n">restrictionSiteLengths</span><span class="p">:</span>
+						<span class="n">newSites</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">restriction</span><span class="o">.</span><span class="n">findNcutters</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">seqify</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">insertMutation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">codons</span><span class="p">,</span> <span class="n">mut</span><span class="p">)),</span> <span class="n">length</span><span class="p">)</span>
+			
+			<span class="n">winners</span> <span class="o">=</span> <span class="p">{}</span>
+			<span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">newSites</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">l</span> <span class="o">&lt;&gt;</span> <span class="n">baseSites</span><span class="p">:</span> <span class="c">#this is why I should use sets</span>
+					<span class="n">tempSites</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">baseSites</span><span class="p">]</span>
+					<span class="n">tempAddedSites</span> <span class="o">=</span> <span class="p">[]</span>
+					<span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">l</span><span class="p">:</span> <span class="c">#basically, removing everything in the new list from the old list to get the differences</span>
+						<span class="k">try</span><span class="p">:</span>
+							<span class="n">tempSites</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">site</span><span class="p">)</span>
+						<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+							<span class="n">tempAddedSites</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">site</span><span class="p">)</span>
+					
+					<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">tempSites</span><span class="p">)):</span>
+						<span class="n">tempSites</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">tempSites</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">tempSites</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="s">&#39;-&#39;</span><span class="p">)</span>
 						
-				<span class="n">winners</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">safeMutations</span><span class="p">[</span><span class="n">newSites</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">l</span><span class="p">)],</span> <span class="n">tempSites</span><span class="p">))</span>
+					<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tempAddedSites</span><span class="p">)):</span>
+						<span class="n">tempAddedSites</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">tempAddedSites</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">tempAddedSites</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="s">&#39;+&#39;</span><span class="p">)</span>
+					
+					<span class="n">winners</span><span class="p">[</span><span class="n">safeMutations</span><span class="p">[</span><span class="n">newSites</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">l</span><span class="p">)]]</span> <span class="o">=</span> <span class="n">tempSites</span> <span class="o">+</span> <span class="n">tempAddedSites</span>
+			
+			<span class="n">finalWinners</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x</span><span class="p">,</span><span class="n">winners</span><span class="p">[</span><span class="n">x</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">winners</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>		
+			
+		<span class="k">return</span> <span class="n">finalWinners</span>
 </pre></div>
 
   </div>
@@ -1544,6 +1638,16 @@ a list of tuples of the form <code>(index, 'codon')</code> where</p></div>
 
             </div>
             <div class="item">
+            <p id="pyviko.mutation.Mutant.regex" class="name">var <span class="ident">regex</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
             <p id="pyviko.mutation.Mutant.seq" class="name">var <span class="ident">seq</span></p>
             
 
@@ -1557,7 +1661,7 @@ a list of tuples of the form <code>(index, 'codon')</code> where</p></div>
             
   <div class="item">
     <div class="name def" id="pyviko.mutation.Mutant.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, sequence, numMutations=1)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, sequence, numMutations=1, regEx=False)</p>
     </div>
     
 
@@ -1566,34 +1670,11 @@ a list of tuples of the form <code>(index, 'codon')</code> where</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pyviko.mutation.Mutant.__init__', this);">Show source &equiv;</a></p>
   <div id="source-pyviko.mutation.Mutant.__init__" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">numMutations</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">numMutations</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">regEx</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
 	<span class="bp">self</span><span class="o">.</span><span class="n">seq</span> <span class="o">=</span> <span class="n">sequence</span>
 	<span class="bp">self</span><span class="o">.</span><span class="n">nMut</span> <span class="o">=</span> <span class="n">numMutations</span>
 	<span class="bp">self</span><span class="o">.</span><span class="n">codons</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">codonify</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="pyviko.mutation.Mutant.addMutant">
-    <p>def <span class="ident">addMutant</span>(</p><p>self, mut)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Add individual point mutants by hand, mut tuple</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pyviko.mutation.Mutant.addMutant', this);">Show source &equiv;</a></p>
-  <div id="source-pyviko.mutation.Mutant.addMutant" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">addMutant</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mut</span><span class="p">):</span>
-	<span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">	Add individual point mutants by hand, mut tuple</span>
-<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="bp">self</span><span class="o">.</span><span class="n">regex</span> <span class="o">=</span> <span class="n">regEx</span>
 </pre></div>
 
   </div>
@@ -1604,7 +1685,7 @@ a list of tuples of the form <code>(index, 'codon')</code> where</p></div>
             
   <div class="item">
     <div class="name def" id="pyviko.mutation.Mutant.findMutants">
-    <p>def <span class="ident">findMutants</span>(</p><p>self, rSiteLength=6, rSites={&#39;CTCTTC&#39;: [&#39;EarI&#39;], &#39;GACGTC&#39;: [&#39;AatII&#39;, &#39;ZraI&#39;], &#39;TCCGAC&#39;: [&#39;MmeI&#39;], &#39;TACGTA&#39;: [&#39;SnaBI&#39;], &#39;CCTCAGC&#39;: [&#39;Nb.BbvCI&#39;, &#39;Nt.BbvCI&#39;, &#39;BbvCI&#39;], &#39;CACTGC&#39;: [&#39;BtsI&#39;, &#39;Bts-alpha-I&#39;], &#39;GCGATCGC&#39;: [&#39;AsiSI&#39;], &#39;CTCGAG&#39;: [&#39;XhoI&#39;], &#39;CTCAG&#39;: [&#39;BspCNI&#39;], &#39;ACATGT&#39;: [&#39;PciI&#39;], &#39;AAGCTT&#39;: [&#39;HindIII&#39;], &#39;TCCGGA&#39;: [&#39;BspEI&#39;], &#39;GGCGCGCC&#39;: [&#39;AscI&#39;], &#39;TCCGCC&#39;: [&#39;EciI&#39;], &#39;AGTACT&#39;: [&#39;ScaI&#39;], &#39;CTCGTG&#39;: [&#39;BssSI&#39;], &#39;ACGCGT&#39;: [&#39;MluI&#39;], &#39;GGATG&#39;: [&#39;BtsCI&#39;, &#39;FokI&#39;], &#39;CTCAAG&#39;: [&#39;BpuEI&#39;], &#39;GGCGCC&#39;: [&#39;KasI&#39;, &#39;SfoI&#39;, &#39;NarI&#39;, &#39;PluTI&#39;], &#39;GCCGAG&#39;: [&#39;NmeAIII&#39;], &#39;GGTACC&#39;: [&#39;KpnI&#39;, &#39;Acc65I&#39;], &#39;ATCGAT&#39;: [&#39;ClaI&#39;], &#39;GGCGGA&#39;: [&#39;EciI&#39;], &#39;CAGCTG&#39;: [&#39;PvuII&#39;], &#39;GCAGC&#39;: [&#39;BbvI&#39;], &#39;TTTAAA&#39;: [&#39;DraI&#39;], &#39;TTCGAA&#39;: [&#39;BstBI&#39;], &#39;GACGTG&#39;: [&#39;BmgBI&#39;], &#39;GAATTC&#39;: [&#39;EcoRI&#39;], &#39;CATCC&#39;: [&#39;BtsCI&#39;, &#39;FokI&#39;], &#39;CTCCAG&#39;: [&#39;BpmI&#39;], &#39;AACGTT&#39;: [&#39;AclI&#39;], &#39;GATATC&#39;: [&#39;EcoRV&#39;], &#39;TTAATTAA&#39;: [&#39;PacI&#39;], &#39;CTCCTC&#39;: [&#39;BseRI&#39;], &#39;CTTGAG&#39;: [&#39;BpuEI&#39;], &#39;GGCCGGCC&#39;: [&#39;FseI&#39;], &#39;TGCGCA&#39;: [&#39;FspI&#39;], &#39;CCCGC&#39;: [&#39;FauI&#39;], &#39;GAGACG&#39;: [&#39;BsmBI&#39;], &#39;GTTTAAAC&#39;: [&#39;PmeI&#39;], &#39;CTGCAG&#39;: [&#39;PstI&#39;], &#39;CCCAGC&#39;: [&#39;BseYI&#39;], &#39;GATCC&#39;: [&#39;AlwI&#39;, &#39;Nt.AlwI&#39;], &#39;CTGCAC&#39;: [&#39;BsgI&#39;], &#39;GTTGGA&#39;: [&#39;MmeI&#39;], &#39;GTCTTC&#39;: [&#39;BbsI&#39;], &#39;CATCGC&#39;: [&#39;BtgZI&#39;], &#39;CCATGG&#39;: [&#39;NcoI&#39;], &#39;GAGAC&#39;: [&#39;Nt.BsmAI&#39;, &#39;BsmAI&#39;], &#39;GTATCC&#39;: [&#39;BciVI&#39;], &#39;GTCCC&#39;: [&#39;BsmFI&#39;], &#39;CCGCGG&#39;: [&#39;SacII&#39;], &#39;CCCAGT&#39;: [&#39;BmrI&#39;], &#39;ATTTAAAT&#39;: [&#39;SwaI&#39;], &#39;CCGCTC&#39;: [&#39;BsrBI&#39;], &#39;TCACC&#39;: [&#39;HphI&#39;], &#39;CTGCTG&#39;: [&#39;EcoP15I&#39;], &#39;GCATC&#39;: [&#39;SfaNI&#39;], &#39;GAGTC&#39;: [&#39;Nt.BstNBI&#39;, &#39;MlyI&#39;, &#39;PleI&#39;], &#39;GGTGA&#39;: [&#39;HphI&#39;], &#39;CGGCCG&#39;: [&#39;EagI&#39;], &#39;CTGGAG&#39;: [&#39;BpmI&#39;], &#39;ACGGC&#39;: [&#39;BceAI&#39;], &#39;GCTGC&#39;: [&#39;BbvI&#39;], &#39;AATATT&#39;: [&#39;SspI&#39;], &#39;ACTGG&#39;: [&#39;BsrI&#39;], &#39;GGTCTC&#39;: [&#39;BsaI&#39;], &#39;GCATGC&#39;: [&#39;SphI&#39;], &#39;GTCGAC&#39;: [&#39;SalI&#39;], &#39;GCAGTG&#39;: [&#39;BtsI&#39;, &#39;Bts-alpha-I&#39;], &#39;TCTAGA&#39;: [&#39;XbaI&#39;], &#39;GACTC&#39;: [&#39;Nt.BstNBI&#39;, &#39;MlyI&#39;, &#39;PleI&#39;], &#39;GGATC&#39;: [&#39;AlwI&#39;, &#39;Nt.AlwI&#39;], &#39;ACTAGT&#39;: [&#39;SpeI&#39;], &#39;GAGCTC&#39;: [&#39;SacI&#39;, &#39;Eco53kI&#39;], &#39;GAATGC&#39;: [&#39;Nb.BsmI&#39;, &#39;BsmI&#39;], &#39;TCGCGA&#39;: [&#39;NruI&#39;], &#39;GCGCGC&#39;: [&#39;BssHII&#39;], &#39;CTTAAG&#39;: [&#39;AflII&#39;], &#39;GCGTC&#39;: [&#39;HgaI&#39;], &#39;GCATTC&#39;: [&#39;Nb.BsmI&#39;, &#39;BsmI&#39;], &#39;CCTAGG&#39;: [&#39;AvrII&#39;], &#39;CAGCAG&#39;: [&#39;EcoP15I&#39;], &#39;GAAGAGC&#39;: [&#39;Nt.BspQI&#39;, &#39;SapI&#39;], &#39;CACGTG&#39;: [&#39;PmlI&#39;], &#39;GCAGGT&#39;: [&#39;BspMI&#39;], &#39;ATTAAT&#39;: [&#39;AseI&#39;], &#39;CCTTC&#39;: [&#39;HpyAV&#39;], &#39;GCTGGG&#39;: [&#39;BseYI&#39;], &#39;CAATTG&#39;: [&#39;MfeI&#39;], &#39;AGATCT&#39;: [&#39;BglII&#39;], &#39;GCGGG&#39;: [&#39;FauI&#39;], &#39;GGGAC&#39;: [&#39;BsmFI&#39;], &#39;CGTACG&#39;: [&#39;BsiWI&#39;], &#39;ACTGGG&#39;: [&#39;BmrI&#39;], &#39;GCCGGC&#39;: [&#39;NaeI&#39;, &#39;NgoMIV&#39;], &#39;AGCGCT&#39;: [&#39;AfeI&#39;], &#39;CTCGGC&#39;: [&#39;NmeAIII&#39;], &#39;TGTACA&#39;: [&#39;BsrGI&#39;], &#39;GTCGGA&#39;: [&#39;MmeI&#39;], &#39;GAGCGG&#39;: [&#39;BsrBI&#39;], &#39;GCTAGC&#39;: [&#39;BmtI&#39;, &#39;NheI&#39;], &#39;CATATG&#39;: [&#39;NdeI&#39;], &#39;TCATGA&#39;: [&#39;BspHI&#39;], &#39;GGATAC&#39;: [&#39;BciVI&#39;], &#39;GCCGT&#39;: [&#39;BceAI&#39;], &#39;ACCTGC&#39;: [&#39;BspMI&#39;], &#39;CTGAAG&#39;: [&#39;AcuI&#39;], &#39;ATGCAT&#39;: [&#39;NsiI&#39;], &#39;GATGC&#39;: [&#39;SfaNI&#39;], &#39;AGGCCT&#39;: [&#39;StuI&#39;], &#39;GATGG&#39;: [&#39;BccI&#39;], &#39;CATTGC&#39;: [&#39;BsrDI&#39;, &#39;Nb.BsrDI&#39;], &#39;GTGCAC&#39;: [&#39;ApaLI&#39;], &#39;GCGGCCGC&#39;: [&#39;NotI&#39;], &#39;TCTTC&#39;: [&#39;MboII&#39;], &#39;GTGCAG&#39;: [&#39;BsgI&#39;], &#39;CACGTC&#39;: [&#39;BmgBI&#39;], &#39;CACGAG&#39;: [&#39;BssSI&#39;], &#39;CTTCAG&#39;: [&#39;AcuI&#39;], &#39;CTGAG&#39;: [&#39;BspCNI&#39;], &#39;GAAGG&#39;: [&#39;HpyAV&#39;], &#39;CGATCG&#39;: [&#39;PvuI&#39;], &#39;GAAGA&#39;: [&#39;MboII&#39;], &#39;ACCGGT&#39;: [&#39;AgeI&#39;], &#39;CCATC&#39;: [&#39;BccI&#39;], &#39;CCCGGG&#39;: [&#39;SmaI&#39;, &#39;XmaI&#39;], &#39;GGGCCC&#39;: [&#39;PspOMI&#39;, &#39;ApaI&#39;], &#39;GCTCTTC&#39;: [&#39;Nt.BspQI&#39;, &#39;SapI&#39;], &#39;CCAGT&#39;: [&#39;BsrI&#39;], &#39;GTATAC&#39;: [&#39;BstZ17I&#39;], &#39;GTTAAC&#39;: [&#39;HpaI&#39;], &#39;GCAATG&#39;: [&#39;BsrDI&#39;, &#39;Nb.BsrDI&#39;], &#39;GACGC&#39;: [&#39;HgaI&#39;], &#39;TGGCCA&#39;: [&#39;MscI&#39;], &#39;GCTGAGG&#39;: [&#39;Nb.BbvCI&#39;, &#39;Nt.BbvCI&#39;, &#39;BbvCI&#39;], &#39;TCCAAC&#39;: [&#39;MmeI&#39;], &#39;CCTGCAGG&#39;: [&#39;SbfI&#39;], &#39;GAGGAG&#39;: [&#39;BseRI&#39;], &#39;GAAGAG&#39;: [&#39;EarI&#39;], &#39;TTATAA&#39;: [&#39;PsiI&#39;], &#39;GGATCC&#39;: [&#39;BamHI&#39;], &#39;GAAGAC&#39;: [&#39;BbsI&#39;], &#39;CGTCTC&#39;: [&#39;BsmBI&#39;], &#39;GTCTC&#39;: [&#39;Nt.BsmAI&#39;, &#39;BsmAI&#39;], &#39;GCGATG&#39;: [&#39;BtgZI&#39;], &#39;GAGACC&#39;: [&#39;BsaI&#39;], &#39;TGATCA&#39;: [&#39;BclI&#39;]})</p>
+    <p>def <span class="ident">findMutants</span>(</p><p>self, ignoreRxSites=True, rSiteLength=6, rSites={&#39;CTCTTC&#39;: [&#39;EarI&#39;], &#39;GACGTC&#39;: [&#39;AatII&#39;, &#39;ZraI&#39;], &#39;TCCGAC&#39;: [&#39;MmeI&#39;], &#39;TACGTA&#39;: [&#39;SnaBI&#39;], &#39;CCTCAGC&#39;: [&#39;Nb.BbvCI&#39;, &#39;Nt.BbvCI&#39;, &#39;BbvCI&#39;], &#39;CACTGC&#39;: [&#39;BtsI&#39;, &#39;Bts-alpha-I&#39;], &#39;GCGATCGC&#39;: [&#39;AsiSI&#39;], &#39;CTCGAG&#39;: [&#39;XhoI&#39;], &#39;CTCAG&#39;: [&#39;BspCNI&#39;], &#39;ACATGT&#39;: [&#39;PciI&#39;], &#39;AAGCTT&#39;: [&#39;HindIII&#39;], &#39;TCCGGA&#39;: [&#39;BspEI&#39;], &#39;GGCGCGCC&#39;: [&#39;AscI&#39;], &#39;TCCGCC&#39;: [&#39;EciI&#39;], &#39;AGTACT&#39;: [&#39;ScaI&#39;], &#39;CTCGTG&#39;: [&#39;BssSI&#39;], &#39;ACGCGT&#39;: [&#39;MluI&#39;], &#39;GGATG&#39;: [&#39;BtsCI&#39;, &#39;FokI&#39;], &#39;CTCAAG&#39;: [&#39;BpuEI&#39;], &#39;GGCGCC&#39;: [&#39;KasI&#39;, &#39;SfoI&#39;, &#39;NarI&#39;, &#39;PluTI&#39;], &#39;GCCGAG&#39;: [&#39;NmeAIII&#39;], &#39;GGTACC&#39;: [&#39;KpnI&#39;, &#39;Acc65I&#39;], &#39;ATCGAT&#39;: [&#39;ClaI&#39;], &#39;GGCGGA&#39;: [&#39;EciI&#39;], &#39;CAGCTG&#39;: [&#39;PvuII&#39;], &#39;GCAGC&#39;: [&#39;BbvI&#39;], &#39;TTTAAA&#39;: [&#39;DraI&#39;], &#39;TTCGAA&#39;: [&#39;BstBI&#39;], &#39;GACGTG&#39;: [&#39;BmgBI&#39;], &#39;GAATTC&#39;: [&#39;EcoRI&#39;], &#39;CATCC&#39;: [&#39;BtsCI&#39;, &#39;FokI&#39;], &#39;CTCCAG&#39;: [&#39;BpmI&#39;], &#39;AACGTT&#39;: [&#39;AclI&#39;], &#39;GATATC&#39;: [&#39;EcoRV&#39;], &#39;TTAATTAA&#39;: [&#39;PacI&#39;], &#39;CTCCTC&#39;: [&#39;BseRI&#39;], &#39;CTTGAG&#39;: [&#39;BpuEI&#39;], &#39;GGCCGGCC&#39;: [&#39;FseI&#39;], &#39;TGCGCA&#39;: [&#39;FspI&#39;], &#39;CCCGC&#39;: [&#39;FauI&#39;], &#39;GAGACG&#39;: [&#39;BsmBI&#39;], &#39;GTTTAAAC&#39;: [&#39;PmeI&#39;], &#39;CTGCAG&#39;: [&#39;PstI&#39;], &#39;CCCAGC&#39;: [&#39;BseYI&#39;], &#39;GATCC&#39;: [&#39;AlwI&#39;, &#39;Nt.AlwI&#39;], &#39;CTGCAC&#39;: [&#39;BsgI&#39;], &#39;GTTGGA&#39;: [&#39;MmeI&#39;], &#39;GTCTTC&#39;: [&#39;BbsI&#39;], &#39;CATCGC&#39;: [&#39;BtgZI&#39;], &#39;CCATGG&#39;: [&#39;NcoI&#39;], &#39;GAGAC&#39;: [&#39;Nt.BsmAI&#39;, &#39;BsmAI&#39;], &#39;GTATCC&#39;: [&#39;BciVI&#39;], &#39;GTCCC&#39;: [&#39;BsmFI&#39;], &#39;CCGCGG&#39;: [&#39;SacII&#39;], &#39;CCCAGT&#39;: [&#39;BmrI&#39;], &#39;ATTTAAAT&#39;: [&#39;SwaI&#39;], &#39;CCGCTC&#39;: [&#39;BsrBI&#39;], &#39;TCACC&#39;: [&#39;HphI&#39;], &#39;CTGCTG&#39;: [&#39;EcoP15I&#39;], &#39;GCATC&#39;: [&#39;SfaNI&#39;], &#39;GAGTC&#39;: [&#39;Nt.BstNBI&#39;, &#39;MlyI&#39;, &#39;PleI&#39;], &#39;GGTGA&#39;: [&#39;HphI&#39;], &#39;CGGCCG&#39;: [&#39;EagI&#39;], &#39;CTGGAG&#39;: [&#39;BpmI&#39;], &#39;ACGGC&#39;: [&#39;BceAI&#39;], &#39;GCTGC&#39;: [&#39;BbvI&#39;], &#39;AATATT&#39;: [&#39;SspI&#39;], &#39;ACTGG&#39;: [&#39;BsrI&#39;], &#39;GGTCTC&#39;: [&#39;BsaI&#39;], &#39;GCATGC&#39;: [&#39;SphI&#39;], &#39;GTCGAC&#39;: [&#39;SalI&#39;], &#39;GCAGTG&#39;: [&#39;BtsI&#39;, &#39;Bts-alpha-I&#39;], &#39;TCTAGA&#39;: [&#39;XbaI&#39;], &#39;GACTC&#39;: [&#39;Nt.BstNBI&#39;, &#39;MlyI&#39;, &#39;PleI&#39;], &#39;GGATC&#39;: [&#39;AlwI&#39;, &#39;Nt.AlwI&#39;], &#39;ACTAGT&#39;: [&#39;SpeI&#39;], &#39;GAGCTC&#39;: [&#39;SacI&#39;, &#39;Eco53kI&#39;], &#39;GAATGC&#39;: [&#39;Nb.BsmI&#39;, &#39;BsmI&#39;], &#39;TCGCGA&#39;: [&#39;NruI&#39;], &#39;GCGCGC&#39;: [&#39;BssHII&#39;], &#39;CTTAAG&#39;: [&#39;AflII&#39;], &#39;GCGTC&#39;: [&#39;HgaI&#39;], &#39;GCATTC&#39;: [&#39;Nb.BsmI&#39;, &#39;BsmI&#39;], &#39;CCTAGG&#39;: [&#39;AvrII&#39;], &#39;CAGCAG&#39;: [&#39;EcoP15I&#39;], &#39;GAAGAGC&#39;: [&#39;Nt.BspQI&#39;, &#39;SapI&#39;], &#39;CACGTG&#39;: [&#39;PmlI&#39;], &#39;GCAGGT&#39;: [&#39;BspMI&#39;], &#39;ATTAAT&#39;: [&#39;AseI&#39;], &#39;CCTTC&#39;: [&#39;HpyAV&#39;], &#39;GCTGGG&#39;: [&#39;BseYI&#39;], &#39;CAATTG&#39;: [&#39;MfeI&#39;], &#39;AGATCT&#39;: [&#39;BglII&#39;], &#39;GCGGG&#39;: [&#39;FauI&#39;], &#39;GGGAC&#39;: [&#39;BsmFI&#39;], &#39;CGTACG&#39;: [&#39;BsiWI&#39;], &#39;ACTGGG&#39;: [&#39;BmrI&#39;], &#39;GCCGGC&#39;: [&#39;NaeI&#39;, &#39;NgoMIV&#39;], &#39;AGCGCT&#39;: [&#39;AfeI&#39;], &#39;CTCGGC&#39;: [&#39;NmeAIII&#39;], &#39;TGTACA&#39;: [&#39;BsrGI&#39;], &#39;GTCGGA&#39;: [&#39;MmeI&#39;], &#39;GAGCGG&#39;: [&#39;BsrBI&#39;], &#39;GCTAGC&#39;: [&#39;BmtI&#39;, &#39;NheI&#39;], &#39;CATATG&#39;: [&#39;NdeI&#39;], &#39;TCATGA&#39;: [&#39;BspHI&#39;], &#39;GGATAC&#39;: [&#39;BciVI&#39;], &#39;GCCGT&#39;: [&#39;BceAI&#39;], &#39;ACCTGC&#39;: [&#39;BspMI&#39;], &#39;CTGAAG&#39;: [&#39;AcuI&#39;], &#39;ATGCAT&#39;: [&#39;NsiI&#39;], &#39;GATGC&#39;: [&#39;SfaNI&#39;], &#39;AGGCCT&#39;: [&#39;StuI&#39;], &#39;GATGG&#39;: [&#39;BccI&#39;], &#39;CATTGC&#39;: [&#39;BsrDI&#39;, &#39;Nb.BsrDI&#39;], &#39;GTGCAC&#39;: [&#39;ApaLI&#39;], &#39;GCGGCCGC&#39;: [&#39;NotI&#39;], &#39;TCTTC&#39;: [&#39;MboII&#39;], &#39;GTGCAG&#39;: [&#39;BsgI&#39;], &#39;CACGTC&#39;: [&#39;BmgBI&#39;], &#39;CACGAG&#39;: [&#39;BssSI&#39;], &#39;CTTCAG&#39;: [&#39;AcuI&#39;], &#39;CTGAG&#39;: [&#39;BspCNI&#39;], &#39;GAAGG&#39;: [&#39;HpyAV&#39;], &#39;CGATCG&#39;: [&#39;PvuI&#39;], &#39;GAAGA&#39;: [&#39;MboII&#39;], &#39;ACCGGT&#39;: [&#39;AgeI&#39;], &#39;CCATC&#39;: [&#39;BccI&#39;], &#39;CCCGGG&#39;: [&#39;SmaI&#39;, &#39;XmaI&#39;], &#39;GGGCCC&#39;: [&#39;PspOMI&#39;, &#39;ApaI&#39;], &#39;GCTCTTC&#39;: [&#39;Nt.BspQI&#39;, &#39;SapI&#39;], &#39;CCAGT&#39;: [&#39;BsrI&#39;], &#39;GTATAC&#39;: [&#39;BstZ17I&#39;], &#39;GTTAAC&#39;: [&#39;HpaI&#39;], &#39;GCAATG&#39;: [&#39;BsrDI&#39;, &#39;Nb.BsrDI&#39;], &#39;GACGC&#39;: [&#39;HgaI&#39;], &#39;TGGCCA&#39;: [&#39;MscI&#39;], &#39;GCTGAGG&#39;: [&#39;Nb.BbvCI&#39;, &#39;Nt.BbvCI&#39;, &#39;BbvCI&#39;], &#39;TCCAAC&#39;: [&#39;MmeI&#39;], &#39;CCTGCAGG&#39;: [&#39;SbfI&#39;], &#39;GAGGAG&#39;: [&#39;BseRI&#39;], &#39;GAAGAG&#39;: [&#39;EarI&#39;], &#39;TTATAA&#39;: [&#39;PsiI&#39;], &#39;GGATCC&#39;: [&#39;BamHI&#39;], &#39;GAAGAC&#39;: [&#39;BbsI&#39;], &#39;CGTCTC&#39;: [&#39;BsmBI&#39;], &#39;GTCTC&#39;: [&#39;Nt.BsmAI&#39;, &#39;BsmAI&#39;], &#39;GCGATG&#39;: [&#39;BtgZI&#39;], &#39;GAGACC&#39;: [&#39;BsaI&#39;], &#39;TGATCA&#39;: [&#39;BclI&#39;]})</p>
     </div>
     
 
@@ -1616,65 +1697,88 @@ gene, and which add or remove a restriction site.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pyviko.mutation.Mutant.findMutants', this);">Show source &equiv;</a></p>
   <div id="source-pyviko.mutation.Mutant.findMutants" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">findMutants</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rSiteLength</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">rSites</span> <span class="o">=</span> <span class="n">restriction</span><span class="o">.</span><span class="n">restrictionSites</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">findMutants</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ignoreRxSites</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">rSiteLength</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">rSites</span> <span class="o">=</span> <span class="n">restriction</span><span class="o">.</span><span class="n">defaultEnzymes</span><span class="p">()):</span>
 	<span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">	Returns a list of mutants that add a premature stop codon </span>
 <span class="sd">	(or mutate the start codon) without changing the overprinted </span>
 <span class="sd">	gene, and which add or remove a restriction site.</span>
 <span class="sd">	&#39;&#39;&#39;</span>
-	<span class="n">restrictionSiteLengths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">rSites</span><span class="o">.</span><span class="n">keys</span><span class="p">()]))</span>
-	
-	<span class="k">if</span> <span class="n">rSiteLength</span> <span class="o">==</span> <span class="s">&#39;all&#39;</span><span class="p">:</span>
-		<span class="n">tempRestrictionSites</span> <span class="o">=</span> <span class="n">rSites</span>
-	<span class="k">elif</span> <span class="n">rSiteLength</span> <span class="o">&gt;=</span> <span class="nb">min</span><span class="p">(</span><span class="n">restrictionSiteLengths</span><span class="p">)</span> <span class="ow">and</span> <span class="n">rSiteLength</span> <span class="o">&lt;=</span> <span class="nb">max</span><span class="p">(</span><span class="n">restrictionSiteLengths</span><span class="p">):</span>
-		<span class="n">rKeys</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">rSites</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">==</span> <span class="n">rSiteLength</span><span class="p">]</span>
-		<span class="n">tempRestrictionSites</span> <span class="o">=</span> <span class="p">{}</span> <span class="c"># Reduce size of dict. searched</span>
-		<span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">rKeys</span><span class="p">:</span>
-			<span class="n">tempRestrictionSites</span><span class="p">[</span><span class="n">site</span><span class="p">]</span> <span class="o">=</span> <span class="n">rSites</span><span class="p">[</span><span class="n">site</span><span class="p">]</span>
-		<span class="n">restrictionSiteLengths</span> <span class="o">=</span> <span class="p">[</span><span class="n">rSiteLength</span><span class="p">]</span>
-	<span class="k">else</span><span class="p">:</span>
-		<span class="k">raise</span> <span class="n">core</span><span class="o">.</span><span class="n">SequenceError</span><span class="p">(</span><span class="s">&quot;Invalid restriction site length.&quot;</span><span class="p">)</span>
-		
 	<span class="n">stops</span> <span class="o">=</span> <span class="n">findPossibleStopCodons</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">codons</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nMut</span><span class="p">)</span>
-		
-	<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="p">:</span>
+	<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overGene</span> <span class="o">!=</span> <span class="bp">False</span><span class="p">:</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">geneSequence</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="n">stops</span> <span class="o">=</span> <span class="n">mutateStartCodon</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">codons</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nMut</span><span class="p">)</span> <span class="o">+</span> <span class="n">stops</span>
 		<span class="n">safeMutations</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="n">newPreSequence</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">;</span>
 		<span class="k">for</span> <span class="n">poss</span> <span class="ow">in</span> <span class="n">stops</span><span class="p">:</span>
 			<span class="n">nCodons</span> <span class="o">=</span> <span class="p">[</span><span class="n">codon</span> <span class="k">for</span> <span class="n">codon</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">codons</span><span class="p">]</span>
 			<span class="n">newCodons</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">insertMutation</span><span class="p">(</span><span class="n">nCodons</span><span class="p">,</span> <span class="n">poss</span><span class="p">)</span>
-			<span class="n">newOverAAs</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">findOverprintedGene</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">seqify</span><span class="p">(</span><span class="n">newCodons</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">startNucleotide</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">frame</span><span class="p">))</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">geneSequence</span> <span class="o">&lt;&gt;</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+				<span class="n">newPreSequence</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">preSequence</span><span class="p">[:</span><span class="mi">4</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">frame</span><span class="p">]</span> <span class="o">+</span> <span class="n">newCodons</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">frame</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+			<span class="n">newOverAAs</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">newPreSequence</span> <span class="o">+</span> <span class="n">core</span><span class="o">.</span><span class="n">seqify</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">findOverprintedGene</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">seqify</span><span class="p">(</span><span class="n">newCodons</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">startNucleotideIndex</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">frame</span><span class="p">)))</span>
 			<span class="k">if</span> <span class="n">newOverAAs</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">overGene</span><span class="o">.</span><span class="n">overAAs</span><span class="p">:</span>
 				<span class="n">safeMutations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">poss</span><span class="p">)</span>
 	<span class="k">else</span><span class="p">:</span>
 		<span class="n">safeMutations</span> <span class="o">=</span> <span class="n">stops</span>
+	<span class="n">finalWinners</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">safeMutations</span><span class="p">]</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">ignoreRxSites</span><span class="p">:</span>
+		<span class="c">###### Two approaches: regex and non-regex.</span>
+		<span class="n">restrictionSiteLengths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">rSites</span><span class="o">.</span><span class="n">keys</span><span class="p">()]))</span>
 		
-	<span class="c">###### Two approaches: regex and non-regex.</span>
-	<span class="c">### Non-regex:</span>
-	
-	<span class="c">#TODO still: account for regex queries (in the non-regex search)		</span>
-	
-	<span class="n">baseSites</span> <span class="o">=</span> <span class="p">[]</span>
-	<span class="k">for</span> <span class="n">length</span> <span class="ow">in</span> <span class="n">restrictionSiteLengths</span><span class="p">:</span>
-		<span class="n">baseSites</span> <span class="o">+=</span> <span class="n">restriction</span><span class="o">.</span><span class="n">findNcutters</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">rSiteLength</span> <span class="o">==</span> <span class="s">&#39;all&#39;</span><span class="p">:</span>
+			<span class="n">tempRestrictionSites</span> <span class="o">=</span> <span class="n">rSites</span>
+		<span class="k">elif</span> <span class="n">rSiteLength</span> <span class="o">&gt;=</span> <span class="nb">min</span><span class="p">(</span><span class="n">restrictionSiteLengths</span><span class="p">)</span> <span class="ow">and</span> <span class="n">rSiteLength</span> <span class="o">&lt;=</span> <span class="nb">max</span><span class="p">(</span><span class="n">restrictionSiteLengths</span><span class="p">):</span>
+			<span class="n">rKeys</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">rSites</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">==</span> <span class="n">rSiteLength</span><span class="p">]</span>
+			<span class="n">tempRestrictionSites</span> <span class="o">=</span> <span class="p">{}</span> <span class="c"># Reduce size of dict. searched</span>
+			<span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">rKeys</span><span class="p">:</span>
+				<span class="n">tempRestrictionSites</span><span class="p">[</span><span class="n">site</span><span class="p">]</span> <span class="o">=</span> <span class="n">rSites</span><span class="p">[</span><span class="n">site</span><span class="p">]</span>
+			<span class="n">restrictionSiteLengths</span> <span class="o">=</span> <span class="p">[</span><span class="n">rSiteLength</span><span class="p">]</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">core</span><span class="o">.</span><span class="n">SequenceError</span><span class="p">(</span><span class="s">&quot;Invalid restriction site length.&quot;</span><span class="p">)</span>		
 		
-	<span class="c"># baseSites = set(baseSites) #for some reason this will not work... Collection? Should use sets though</span>
-	<span class="n">newSites</span> <span class="o">=</span> <span class="p">[]</span> <span class="c"># list of lists</span>
-	<span class="k">for</span> <span class="n">mut</span> <span class="ow">in</span> <span class="n">safeMutations</span><span class="p">:</span>
-		<span class="n">newSites</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
-		<span class="k">for</span> <span class="n">length</span> <span class="ow">in</span> <span class="n">restrictionSiteLengths</span><span class="p">:</span>
-			<span class="n">newSites</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">restriction</span><span class="o">.</span><span class="n">findNcutters</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">seqify</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">insertMutation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">codons</span><span class="p">,</span> <span class="n">mut</span><span class="p">)),</span> <span class="n">length</span><span class="p">)</span>
+		<span class="n">newSites</span> <span class="o">=</span> <span class="p">[]</span> <span class="c"># list of lists</span>
+		
+		<span class="c">### Regex:</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">regex</span><span class="p">:</span>
+			<span class="n">baseSites</span> <span class="o">=</span> <span class="n">restriction</span><span class="o">.</span><span class="n">reFindEnzymes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">)</span>
 			
-	<span class="n">winners</span> <span class="o">=</span> <span class="p">[]</span>
-	<span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">newSites</span><span class="p">:</span>
-		<span class="k">if</span> <span class="n">l</span> <span class="o">&lt;&gt;</span> <span class="n">baseSites</span><span class="p">:</span> <span class="c">#this is why I should use sets</span>
-			<span class="n">tempSites</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">baseSites</span><span class="p">]</span>
-			<span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">l</span><span class="p">:</span> <span class="c">#basically, removing everything in the new list from the old list to get the differences</span>
-				<span class="k">try</span><span class="p">:</span>
-					<span class="n">tempSites</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">site</span><span class="p">)</span>
-				<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-					<span class="n">tempSites</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">site</span><span class="p">,</span> <span class="s">&#39;+&#39;</span><span class="p">))</span>
+			<span class="k">for</span> <span class="n">mut</span> <span class="ow">in</span> <span class="n">safeMutations</span><span class="p">:</span>
+				<span class="n">newSites</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+				<span class="n">newSites</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">restriction</span><span class="o">.</span><span class="n">reFindEnzymes</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">seqify</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">insertMutation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">codons</span><span class="p">,</span> <span class="n">mut</span><span class="p">)))</span>
+				
+		<span class="c">### Non-regex:</span>
+		<span class="k">else</span><span class="p">:</span>
+			
+			<span class="n">baseSites</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="k">for</span> <span class="n">length</span> <span class="ow">in</span> <span class="n">restrictionSiteLengths</span><span class="p">:</span>
+				<span class="n">baseSites</span> <span class="o">+=</span> <span class="n">restriction</span><span class="o">.</span><span class="n">findNcutters</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+				
+			<span class="k">for</span> <span class="n">mut</span> <span class="ow">in</span> <span class="n">safeMutations</span><span class="p">:</span>
+				<span class="n">newSites</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+				<span class="k">for</span> <span class="n">length</span> <span class="ow">in</span> <span class="n">restrictionSiteLengths</span><span class="p">:</span>
+					<span class="n">newSites</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">restriction</span><span class="o">.</span><span class="n">findNcutters</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">seqify</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">insertMutation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">codons</span><span class="p">,</span> <span class="n">mut</span><span class="p">)),</span> <span class="n">length</span><span class="p">)</span>
+		
+		<span class="n">winners</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">newSites</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">l</span> <span class="o">&lt;&gt;</span> <span class="n">baseSites</span><span class="p">:</span> <span class="c">#this is why I should use sets</span>
+				<span class="n">tempSites</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">baseSites</span><span class="p">]</span>
+				<span class="n">tempAddedSites</span> <span class="o">=</span> <span class="p">[]</span>
+				<span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">l</span><span class="p">:</span> <span class="c">#basically, removing everything in the new list from the old list to get the differences</span>
+					<span class="k">try</span><span class="p">:</span>
+						<span class="n">tempSites</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">site</span><span class="p">)</span>
+					<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+						<span class="n">tempAddedSites</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">site</span><span class="p">)</span>
+				
+				<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">tempSites</span><span class="p">)):</span>
+					<span class="n">tempSites</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">tempSites</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">tempSites</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="s">&#39;-&#39;</span><span class="p">)</span>
 					
-			<span class="n">winners</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">safeMutations</span><span class="p">[</span><span class="n">newSites</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">l</span><span class="p">)],</span> <span class="n">tempSites</span><span class="p">))</span>
+				<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tempAddedSites</span><span class="p">)):</span>
+					<span class="n">tempAddedSites</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">tempAddedSites</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">tempAddedSites</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="s">&#39;+&#39;</span><span class="p">)</span>
+				
+				<span class="n">winners</span><span class="p">[</span><span class="n">safeMutations</span><span class="p">[</span><span class="n">newSites</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">l</span><span class="p">)]]</span> <span class="o">=</span> <span class="n">tempSites</span> <span class="o">+</span> <span class="n">tempAddedSites</span>
+		
+		<span class="n">finalWinners</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x</span><span class="p">,</span><span class="n">winners</span><span class="p">[</span><span class="n">x</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">winners</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>		
+		
+	<span class="k">return</span> <span class="n">finalWinners</span>
 </pre></div>
 
   </div>
@@ -1685,7 +1789,7 @@ gene, and which add or remove a restriction site.</p></div>
             
   <div class="item">
     <div class="name def" id="pyviko.mutation.Mutant.setOverGene">
-    <p>def <span class="ident">setOverGene</span>(</p><p>self, startNt, overFrame=1)</p>
+    <p>def <span class="ident">setOverGene</span>(</p><p>self, overSeq=&#39;&#39;, startNtIndex=-1, overFrame=1)</p>
     </div>
     
 
@@ -1695,11 +1799,14 @@ gene, and which add or remove a restriction site.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pyviko.mutation.Mutant.setOverGene', this);">Show source &equiv;</a></p>
   <div id="source-pyviko.mutation.Mutant.setOverGene" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">setOverGene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">startNt</span><span class="p">,</span> <span class="n">overFrame</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">setOverGene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overSeq</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">startNtIndex</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">overFrame</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
 	<span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">	Adds the overprinted gene to the current `Mutant` object.</span>
 <span class="sd">	&#39;&#39;&#39;</span>
-	<span class="bp">self</span><span class="o">.</span><span class="n">overGene</span> <span class="o">=</span> <span class="n">OverGene</span><span class="p">(</span><span class="n">startNt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">,</span> <span class="n">overFrame</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">overSeq</span> <span class="o">==</span> <span class="s">&#39;&#39;</span> <span class="ow">and</span> <span class="n">startNtIndex</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">overFrame</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">core</span><span class="o">.</span><span class="n">SequenceError</span><span class="p">(</span><span class="s">&quot;You must provide either the sequence of an overprinted gene, or its start position/frame in the knockout sequence.&quot;</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">overGene</span> <span class="o">=</span> <span class="n">OverGene</span><span class="p">(</span><span class="n">overSeq</span><span class="p">,</span> <span class="n">startNtIndex</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">,</span> <span class="n">overFrame</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1744,22 +1851,35 @@ gene, and which add or remove a restriction site.</p></div>
       <p id="pyviko.mutation.OverGene" class="name">class <span class="ident">OverGene</span></p>
       
   
+    <div class="desc"><p>Class for the overprinted gene.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pyviko.mutation.OverGene', this);">Show source &equiv;</a></p>
   <div id="source-pyviko.mutation.OverGene" class="source">
     <div class="codehilite"><pre><span class="k">class</span> <span class="nc">OverGene</span><span class="p">:</span>
-	
-	<span class="c"># dummy variables</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	Class for the overprinted gene.</span>
+<span class="sd">	&#39;&#39;&#39;</span>
 	<span class="n">frame</span> <span class="o">=</span> <span class="mi">1</span>
-	<span class="n">startNucleotide</span> <span class="o">=</span> <span class="mi">0</span>
-	<span class="n">sequence</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+	<span class="n">startNucleotideIndex</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+	<span class="n">preSequence</span> <span class="o">=</span> <span class="s">&#39;&#39;</span> <span class="c"># includes 1-2nt removed by core.findOverGene</span>
+	<span class="n">geneSequence</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+	<span class="n">postSequence</span> <span class="o">=</span> <span class="s">&#39;&#39;</span> <span class="c"># includes 1-2nt removed by core.findOverGene</span>
 	<span class="n">overAAs</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
 	
-	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">startNt</span><span class="p">,</span> <span class="n">seq</span><span class="p">,</span> <span class="n">frameOver</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">startNucleotide</span> <span class="o">=</span> <span class="n">startNt</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">sequence</span> <span class="o">=</span> <span class="n">seq</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overSeq</span><span class="p">,</span> <span class="n">startNtIndex</span><span class="p">,</span> <span class="n">seq</span><span class="p">,</span> <span class="n">frameOver</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">overSeq</span> <span class="o">&lt;&gt;</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+			<span class="n">ol</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">findOverlap</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">overSeq</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">ol</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c">#overprinted gene starts before</span>
+				<span class="n">startNtIndex</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+				<span class="n">frameOver</span> <span class="o">=</span> <span class="mi">4</span><span class="o">-</span><span class="p">(</span><span class="n">ol</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">%</span><span class="mi">3</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">preSequence</span> <span class="o">=</span> <span class="n">overSeq</span><span class="p">[</span><span class="n">ol</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="n">frameOver</span><span class="o">+</span><span class="mi">4</span><span class="p">):</span><span class="n">ol</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">+</span> <span class="n">seq</span><span class="p">[:</span><span class="mi">3</span><span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="n">frameOver</span><span class="o">+</span><span class="mi">4</span><span class="p">)]</span>
+			<span class="k">else</span><span class="p">:</span> <span class="c">#overprinted gene starts after</span>
+				<span class="n">startNtIndex</span> <span class="o">=</span> <span class="n">ol</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">geneSequence</span> <span class="o">=</span> <span class="n">overSeq</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">startNucleotideIndex</span> <span class="o">=</span> <span class="n">startNtIndex</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">combSequence</span> <span class="o">=</span> <span class="n">seq</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">frameOver</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">overAAs</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">findOverprintedGene</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">startNt</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">frameOver</span><span class="p">))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">overAAs</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">preSequence</span> <span class="o">+</span> <span class="n">core</span><span class="o">.</span><span class="n">seqify</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">findOverprintedGene</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">startNtIndex</span><span class="p">,</span> <span class="n">frameOver</span><span class="p">))</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">postSequence</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1783,6 +1903,16 @@ gene, and which add or remove a restriction site.</p></div>
 
             </div>
             <div class="item">
+            <p id="pyviko.mutation.OverGene.geneSequence" class="name">var <span class="ident">geneSequence</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
             <p id="pyviko.mutation.OverGene.overAAs" class="name">var <span class="ident">overAAs</span></p>
             
 
@@ -1793,7 +1923,7 @@ gene, and which add or remove a restriction site.</p></div>
 
             </div>
             <div class="item">
-            <p id="pyviko.mutation.OverGene.sequence" class="name">var <span class="ident">sequence</span></p>
+            <p id="pyviko.mutation.OverGene.postSequence" class="name">var <span class="ident">postSequence</span></p>
             
 
             
@@ -1803,7 +1933,17 @@ gene, and which add or remove a restriction site.</p></div>
 
             </div>
             <div class="item">
-            <p id="pyviko.mutation.OverGene.startNucleotide" class="name">var <span class="ident">startNucleotide</span></p>
+            <p id="pyviko.mutation.OverGene.preSequence" class="name">var <span class="ident">preSequence</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="pyviko.mutation.OverGene.startNucleotideIndex" class="name">var <span class="ident">startNucleotideIndex</span></p>
             
 
             
@@ -1813,6 +1953,16 @@ gene, and which add or remove a restriction site.</p></div>
 
             </div>
           <h3>Instance variables</h3>
+            <div class="item">
+            <p id="pyviko.mutation.OverGene.combSequence" class="name">var <span class="ident">combSequence</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
             <div class="item">
             <p id="pyviko.mutation.OverGene.frame" class="name">var <span class="ident">frame</span></p>
             
@@ -1824,6 +1974,16 @@ gene, and which add or remove a restriction site.</p></div>
 
             </div>
             <div class="item">
+            <p id="pyviko.mutation.OverGene.geneSequence" class="name">var <span class="ident">geneSequence</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
             <p id="pyviko.mutation.OverGene.overAAs" class="name">var <span class="ident">overAAs</span></p>
             
 
@@ -1834,17 +1994,7 @@ gene, and which add or remove a restriction site.</p></div>
 
             </div>
             <div class="item">
-            <p id="pyviko.mutation.OverGene.sequence" class="name">var <span class="ident">sequence</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="pyviko.mutation.OverGene.startNucleotide" class="name">var <span class="ident">startNucleotide</span></p>
+            <p id="pyviko.mutation.OverGene.startNucleotideIndex" class="name">var <span class="ident">startNucleotideIndex</span></p>
             
 
             
@@ -1857,7 +2007,7 @@ gene, and which add or remove a restriction site.</p></div>
             
   <div class="item">
     <div class="name def" id="pyviko.mutation.OverGene.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, startNt, seq, frameOver=1)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, overSeq, startNtIndex, seq, frameOver=1)</p>
     </div>
     
 
@@ -1866,11 +2016,20 @@ gene, and which add or remove a restriction site.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pyviko.mutation.OverGene.__init__', this);">Show source &equiv;</a></p>
   <div id="source-pyviko.mutation.OverGene.__init__" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">startNt</span><span class="p">,</span> <span class="n">seq</span><span class="p">,</span> <span class="n">frameOver</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
-	<span class="bp">self</span><span class="o">.</span><span class="n">startNucleotide</span> <span class="o">=</span> <span class="n">startNt</span>
-	<span class="bp">self</span><span class="o">.</span><span class="n">sequence</span> <span class="o">=</span> <span class="n">seq</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overSeq</span><span class="p">,</span> <span class="n">startNtIndex</span><span class="p">,</span> <span class="n">seq</span><span class="p">,</span> <span class="n">frameOver</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+	<span class="k">if</span> <span class="n">overSeq</span> <span class="o">&lt;&gt;</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+		<span class="n">ol</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">findOverlap</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">overSeq</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">ol</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c">#overprinted gene starts before</span>
+			<span class="n">startNtIndex</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+			<span class="n">frameOver</span> <span class="o">=</span> <span class="mi">4</span><span class="o">-</span><span class="p">(</span><span class="n">ol</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">%</span><span class="mi">3</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">preSequence</span> <span class="o">=</span> <span class="n">overSeq</span><span class="p">[</span><span class="n">ol</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="n">frameOver</span><span class="o">+</span><span class="mi">4</span><span class="p">):</span><span class="n">ol</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">+</span> <span class="n">seq</span><span class="p">[:</span><span class="mi">3</span><span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="n">frameOver</span><span class="o">+</span><span class="mi">4</span><span class="p">)]</span>
+		<span class="k">else</span><span class="p">:</span> <span class="c">#overprinted gene starts after</span>
+			<span class="n">startNtIndex</span> <span class="o">=</span> <span class="n">ol</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="bp">self</span><span class="o">.</span><span class="n">geneSequence</span> <span class="o">=</span> <span class="n">overSeq</span>
+	<span class="bp">self</span><span class="o">.</span><span class="n">startNucleotideIndex</span> <span class="o">=</span> <span class="n">startNtIndex</span>
+	<span class="bp">self</span><span class="o">.</span><span class="n">combSequence</span> <span class="o">=</span> <span class="n">seq</span>
 	<span class="bp">self</span><span class="o">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">frameOver</span>
-	<span class="bp">self</span><span class="o">.</span><span class="n">overAAs</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">findOverprintedGene</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">startNt</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">frameOver</span><span class="p">))</span>
+	<span class="bp">self</span><span class="o">.</span><span class="n">overAAs</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">preSequence</span> <span class="o">+</span> <span class="n">core</span><span class="o">.</span><span class="n">seqify</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">findOverprintedGene</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">startNtIndex</span><span class="p">,</span> <span class="n">frameOver</span><span class="p">))</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">postSequence</span><span class="p">)</span>
 </pre></div>
 
   </div>
