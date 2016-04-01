@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(name='pyviko',
-	version='1.0.0.3',
+	version='1.0.1.0',
 	description='Design knockout viruses in Python',
 	author='LJ Taylor',
 	author_email='l'+'taylor'+str(3+4)+'@'+'tu'+'lane.edu',
