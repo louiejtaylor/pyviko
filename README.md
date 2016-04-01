@@ -31,4 +31,4 @@ Here's a simple example in an interpreter:
     >>> m.findMutants()
     [(0, 'ACG'), (3, 'TAA'), (3, 'TGA')]
     
-There are more sample scripts in the `examples` folder. Also check out the [Pyviko documentation](louiejtaylor.github.io/pyViKO/doc).
+There are more sample scripts in the `examples` folder. Also check out the [Pyviko documentation](http://louiejtaylor.github.io/pyViKO/doc).
