@@ -2,6 +2,7 @@
 # Tests
 *.fasta
 *.kate-swp
+*.Rhistory
 test/
 *~
 ##
