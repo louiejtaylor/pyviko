@@ -160,7 +160,6 @@ def readFasta(loc):
 				iden = line.strip()
 			except IndexError: #blank line
 				next
-				print 'boop'
 		else:
 			try:
 				if line.lstrip()[0] == '>':
