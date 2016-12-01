@@ -35,6 +35,8 @@ def translate(codons):
 	for i in range(0,len(codons)):
 		if codons[i] in stopCodons or len(codons[i]) <> 3:
 			codons = codons[:i]
+			if codons[i] in stopCodons:
+				aa = aa + '*'
 			break
 		try:
 			aa = aa + translation[codons[i]]
