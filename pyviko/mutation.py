@@ -86,7 +86,7 @@ class Mutant:
 			safeMutations = stops
 		finalWinners = [s for s in safeMutations]
 		if not ignoreRxSites:
-			###### Two approaches: regex and non-regex.
+			### Two approaches: regex and non-regex.
 			restrictionSiteLengths = list(set([len(k) for k in rSites.keys()]))
 			
 			if rSiteLength == 'all':
