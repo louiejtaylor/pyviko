@@ -5,13 +5,13 @@ from distutils.core import setup
 #    long_description = fh.read()
 
 setup(name='pyviko',
-	version='1.1.0.3',
+	version='1.1.0.4',
 	description='Design knockout viruses in Python',
 	author='LJ Taylor',
 	author_email='l'+'taylor'+str(3+4)+'@'+'tu'+'lane.edu',
 	url='https://github.com/louiejtaylor/pyViKO',
 	packages=['pyviko'],
-	install_requires=['future'],
+	#install_requires=['future'],
 	license='MIT License',
 	classifiers = ['Intended Audience :: Science/Research',
 				'Environment :: Console',
