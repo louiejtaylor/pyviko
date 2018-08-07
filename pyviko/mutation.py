@@ -12,7 +12,7 @@ class OverGene:
 	overAAs = ''
 	
 	def __init__(self, overSeq, startNtIndex, seq, frameOver = 1):
-		if overSeq <> '':
+		if overSeq != '':
 			ol = core.findOverlap(seq, overSeq)
 			if ol[0] == 0: #overprinted gene starts before
 				startNtIndex = -1
@@ -77,7 +77,7 @@ class Mutant:
 			for poss in stops:
 				nCodons = [codon for codon in self.codons]
 				newCodons = core.insertMutation(nCodons, poss)
-				if self.overGene.geneSequence <> '':
+				if self.overGene.geneSequence != '':
 					newPreSequence = self.overGene.preSequence[:4-self.overGene.frame] + newCodons[0][:self.overGene.frame - 1]
 				newOverAAs = core.translate(newPreSequence + core.seqify(core.findOverprintedGene(core.seqify(newCodons), self.overGene.startNucleotideIndex, self.overGene.frame)))
 				if newOverAAs == self.overGene.overAAs:
@@ -124,7 +124,7 @@ class Mutant:
 			
 			winners = {}
 			for l in newSites:
-				if l <> baseSites: #this is why I should use sets
+				if l != baseSites: #this is why I should use sets
 					tempSites = [c for c in baseSites]
 					tempAddedSites = []
 					for site in l: #basically, removing everything in the new list from the old list to get the differences
@@ -203,7 +203,7 @@ def mutateStartCodon(codons, n):
 	for i in xrange(0,3):
 		for nt in 'ACTG':
 			mutCodon = start[:i]+nt+start[i+1:]
-			if mutCodon <> start and mutCodon <> 'ATG':
+			if mutCodon != start and mutCodon != 'ATG':
 				muts.append(mutCodon)
 	newMuts = [z for z in muts]
 	if n == 2:
@@ -211,7 +211,7 @@ def mutateStartCodon(codons, n):
 			for i in xrange(0,3):
 				for nt in 'ACTG':
 					mutCodon = e[:i]+nt+e[i+1:]
-					if mutCodon <> start and mutCodon <> 'ATG' and mutCodon not in newMuts:
+					if mutCodon != start and mutCodon != 'ATG' and mutCodon not in newMuts:
 						newMuts.append(mutCodon)
 					
 	return [(0,m) for m in newMuts]

@@ -33,7 +33,7 @@ def translate(codons):
 	codons = codonify(codons)
 	aa = ''
 	for i in range(0,len(codons)):
-		if codons[i] in stopCodons or len(codons[i]) <> 3:
+		if codons[i] in stopCodons or len(codons[i]) != 3:
 			codons = codons[:i]
 			if codons[i] in stopCodons:
 				aa = aa + '*'
@@ -78,7 +78,7 @@ def findOverprintedGene(seq, startIndex, frame=1):
 	of `seq`, the `startIndex` will be 58.
 	'''
 	
-	if startIndex <> -1:
+	if startIndex != -1:
 		frame = 1   # In case `frame` argument provided erroneously
 		codons = codonify(seq[startIndex:])[:-1] # Remove last (incomplete) codon
 	else:
@@ -90,7 +90,7 @@ def findOverprintedGene(seq, startIndex, frame=1):
 			codons = codons[:i]
 			break
 		
-	if codons[0] <> 'ATG' and startIndex <> -1:
+	if codons[0] != 'ATG' and startIndex != -1:
 		#NOTE: Not all viral genes are initiated with ATG.
 		warnings.warn("The first codon of your sequence is not a start codon.")
 		
@@ -157,7 +157,7 @@ def readFasta(loc):
 	for line in f.readlines():
 		if iden == '':
 			try:
-				if line.lstrip()[0] <> '>':
+				if line.lstrip()[0] != '>':
 					raise SequenceError("Invalid file format: id line doesn't begin with '>'")
 				iden = line.strip()
 			except IndexError: #blank line
@@ -188,7 +188,7 @@ def writeFasta(fname, mutlist, seq, hasRxSites = False, rloc = "", floc = ""):
 	for character in fname:
 		if character not in '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,\'"()-_':
 			fname = fname.replace(character, ' ')
-	fname = ' '.join([i for i in fname.split(' ') if i <> '']) + '.fasta'
+	fname = ' '.join([i for i in fname.split(' ') if i != '']) + '.fasta'
 	if floc == "":
 		dirs = os.listdir(os.getcwd())
 	else:
