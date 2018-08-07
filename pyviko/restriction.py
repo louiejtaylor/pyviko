@@ -1,6 +1,8 @@
 import warnings
 from pyviko import core
 
+from future import print_function
+
 try:
 	import regex as re
 except ImportError:
@@ -40,7 +42,7 @@ def findEnzymeSiteRegex(site):
 				for m in nucleotideMatrix[nt]:
 					r_site += m
 			except KeyError:
-				print "Unknown nucleotide '" + nt  + "' encountered."
+				print("Unknown nucleotide '" + nt  + "' encountered.")
 			r_site += ']'
 	return r_site
 
