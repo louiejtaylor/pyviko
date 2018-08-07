@@ -1,7 +1,7 @@
 import warnings
 from pyviko import core
 
-from future import print_function
+#from future import print_function
 
 try:
 	import regex as re
