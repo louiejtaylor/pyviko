@@ -5,7 +5,7 @@ from distutils.core import setup
 #    long_description = fh.read()
 
 setup(name='pyviko',
-	version='1.1.0.5',
+	version='1.1.0.6',
 	description='Design knockout viruses in Python',
 	author='LJ Taylor',
 	author_email='l'+'taylor'+str(3+4)+'@'+'tu'+'lane.edu',
