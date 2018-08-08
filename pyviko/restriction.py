@@ -91,7 +91,7 @@ def findNcutters(seq, n, rSites = None):
 
 	recKeys = tempSites.keys()
 	actualSites = []
-	for i in range(0, len(seq) - (n-1)):
+	for i in list(range(0, len(seq) - (n-1))):
 		if seq[i:i+n] in recKeys: 
 			actualSites.append((i,seq[i:i+n]))		
 			

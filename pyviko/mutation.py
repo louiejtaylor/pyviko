@@ -160,7 +160,7 @@ def findPossibleStopCodons(codons, n):
 	#build dict of codons that can be mutated to a stop codon 
 	
 	for c in core.stopCodons:
-		for i in range(0,3):
+		for i in list(range(0,3)):
 			for nt in 'ACTG':
 				if c[:i]+nt+c[i+1:] not in core.stopCodons:
 					try:
@@ -170,7 +170,7 @@ def findPossibleStopCodons(codons, n):
 	
 	if n == 2:
 		for c in almostStopCodons.keys():
-			for i in range(0,3):
+			for i in list(range(0,3)):
 				for nt in 'ACTG':
 					if c[:i]+nt+c[i+1:] not in core.stopCodons:
 						try:
@@ -200,7 +200,7 @@ def mutateStartCodon(codons, n):
 	'''
 	start = codons[0]
 	muts = []
-	for i in xrange(0,3):
+	for i in list(range(0,3)):
 		for nt in 'ACTG':
 			mutCodon = start[:i]+nt+start[i+1:]
 			if mutCodon != start and mutCodon != 'ATG':
@@ -208,7 +208,7 @@ def mutateStartCodon(codons, n):
 	newMuts = [z for z in muts]
 	if n == 2:
 		for e in muts:
-			for i in xrange(0,3):
+			for i in list(range(0,3)):
 				for nt in 'ACTG':
 					mutCodon = e[:i]+nt+e[i+1:]
 					if mutCodon != start and mutCodon != 'ATG' and mutCodon not in newMuts:

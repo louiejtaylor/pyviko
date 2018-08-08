@@ -13,7 +13,7 @@ def codonify(sequence):
 	'''
 	if type(sequence) == type([]):
 		return sequence
-	return [sequence[i:i+3] for i in range(0,len(sequence),3)]
+	return [sequence[i:i+3] for i in list(range(0,len(sequence),3))]
 
 def seqify(cod):
 	'''
@@ -33,9 +33,9 @@ def translate(codons):
 	'''
 	codons = codonify(codons)
 	aa = ''
-	for i in range(0,len(codons)):
+	for i in list(range(0,len(codons))):
 		if codons[i] in stopCodons or len(codons[i]) != 3:
-			codons = codons[:i]
+			#codons = codons[:i]
 			if codons[i] in stopCodons:
 				aa = aa + '*'
 			break
@@ -86,7 +86,7 @@ def findOverprintedGene(seq, startIndex, frame=1):
 		if frame == 1:
 			raise SequenceError("The overprinted sequence is in the same frame as the main coding sequence. Please provide a frame argument.")
 		codons = codonify(seq[frame - 1:])[:-1] # Remove last (incomplete) codon
-	for i in range(1,len(codons)):
+	for i in list(range(1,len(codons))):
 		if codons[i] in stopCodons:
 			codons = codons[:i]
 			break
@@ -132,7 +132,7 @@ def findOverlap(seq1, seq2):
 		l1 = len(seq1)
 		l2 = len(seq2)
 		overall = min(l1,l2) + 1
-		for i in xrange(1, overall):
+		for i in list(range(1, overall)):
 			if seq1[:i] == seq2[l2-i:]:
 				max21 = i
 			if seq2[:i] == seq1[l1-i:]:
