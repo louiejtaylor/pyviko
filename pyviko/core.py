@@ -114,11 +114,12 @@ def reverseComplement(seq):
 	
 	return rev
 	
-def findOverlap(seq1, seq2):
+def findOverlap(seq1, seq2, minimum=10):
 	'''
 	Given two sequences, returns a tuple `(i1, i2)` where `i1`
 	is the index in `seq1` where the overlap with `seq2` begins and
-	`i2` is the corresponding index in `seq2`.
+	`i2` is the corresponding index in `seq2`. `minimum` is the minimum
+	overlap length considered (default 10).
 	'''
 	i1 = 0
 	i2 = 0
@@ -138,11 +139,15 @@ def findOverlap(seq1, seq2):
 			if seq2[:i] == seq1[l1-i:]:
 				max12 = i				
 		if max12 > max21:
-			i1 = l1 - max12
-		elif max12 <= max21: #without this small overlaps equal on both sides are mishandled
-			i2 = l2 - max21
-		else: 
-			raise SequenceError("No overlap detected between input sequences")
+			if max12 > minimum:
+				i1 = l1 - max12
+			else:
+				raise SequenceError("No overlap detected between input sequences")
+		else: #without this small overlaps equal on both sides are mishandled
+			if max21 > minimum:
+				i2 = l2 - max21
+			else: 
+				raise SequenceError("No overlap detected between input sequences")
 			
 	return (i1, i2)
 	
