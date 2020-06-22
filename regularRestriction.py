@@ -23,7 +23,7 @@ try:
 	import regex as re
 except ImportError:
 	import re
-	print "reeee"
+	print("Module 'regex' not found")
 from pyviko.restriction import restrictionSites, findNonRegexEnzymeSite, findEnzymeSiteRegex, findNcutters
 
 
