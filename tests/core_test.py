@@ -7,7 +7,7 @@ from pyviko.core import *
 class coreTestCase(unittest.TestCase):
 	"""Tests core function."""
 
-	def setUp(self):
+	def setup(self):
 		self.seq = 'ATGGCTAAATGACT'
 		self.cod = ['ATG', 'GCT', 'AAA', 'TGA', 'CT']
 		self.trans = 'MAK'
@@ -21,12 +21,12 @@ class coreTestCase(unittest.TestCase):
 		self.cod_invalid = ['ATG', 'GCT', 'XXX', 'TGA', 'CT']
 		self.invalid_input = 42
 
-	def tearDown(self):
+	def teardown(self):
 		pass
 
-	## TESTS
+	# TESTS
 
-	## Codonify ##
+	# codonify
 	def test_codonify_1(self):
 		"""Tests codonify takes seq -> cod"""
 		self.assertEqual(codonify(self.seq), self.cod)
@@ -36,9 +36,8 @@ class coreTestCase(unittest.TestCase):
 	def test_codonify_3(self):
 		"""Tests codonify's handling of invalid input types"""
 		self.assertRaises(TypeError, lambda: codonify(self.invalid_input))
-	##############
 
-	## Seqify ##
+	# seqify 
 	def test_seqify_1(self):
 		"""Tests sequify takes cod -> seq"""
 		self.assertEqual(seqify(self.cod), self.seq)
@@ -48,9 +47,8 @@ class coreTestCase(unittest.TestCase):
 	def test_seqify_3(self):
 		"""Tests sequify's handling of invalid input types"""
 		self.assertRaises(TypeError, lambda: seqify(self.invalid_input))
-	############
 	
-	## Translate ##
+	# translate
 	def test_translate_1(self):
 		"""Tests translate takes cod -> aa"""
 		self.assertEqual(translate(self.cod), self.trans)
@@ -62,9 +60,8 @@ class coreTestCase(unittest.TestCase):
 	#
 	#def test_translate_4(self):
 	#	"""Tests translate warns user if no stop codon is found"""
-	###############
 
-	## insertMutation ##
+	# insertMutation
 	def test_insertMutation_1(self):
 		"""Tests mutation (str) sucessfully inserted to codon list"""
 		self.assertEqual(insertMutation(self.cod, (2, 'GCC')), ['ATG', 'GCT', 'GCC', 'TGA', 'CT'])
@@ -77,8 +74,6 @@ class coreTestCase(unittest.TestCase):
 	def test_insertMutation_4(self): 
 		"""Tests mutation's handling of invalid input types"""
 		self.assertRaises(TypeError, lambda: seqify(self.invalid_input))
-	####################
-
 
 #	def test_findOverprintedGene(self):
 #		"""
