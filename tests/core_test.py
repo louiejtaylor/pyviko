@@ -55,11 +55,14 @@ class coreTestCase(unittest.TestCase):
 	def test_translate_2(self):
 		"""Tests translate rasies SequenceError for invalid codon"""
 		self.assertRaises(SequenceError, lambda: translate(self.cod_invalid))
-	#def test_translate_3(self):
-	#	"""Tests translate warns user if no start codon is found"""
-	#
-	#def test_translate_4(self):
-	#	"""Tests translate warns user if no stop codon is found"""
+	def test_translate_3(self):
+		"""Tests translate warns user if no start codon is found"""
+	        self.assertWarns(Warning, translate(self.cod_no_start))
+                self.assertEqual(translate(self.cod_no_start), self.trans_no_start)
+	def test_translate_4(self):
+		"""Tests translate warns user if no stop codon is found"""
+                self.assertWarns(Warning, translate(self.cod_no_stop))
+                self.assertEqual(translate(self.cod_no_stop), self.trans_no_stop)
 
 	# insertMutation
 	def test_insertMutation_1(self):
