@@ -35,7 +35,7 @@ class coreTestCase(unittest.TestCase):
 		self.assertEqual(codonify(self.cod), self.cod)
 	def test_codonify_3(self):
 		"""Tests codonify's handling of invalid input types"""
-		self.assertRaises(TypeError, lambda: codonify(self.invalid_input))
+		self.assertRaises(TypeError, codonify(self.invalid_input))
 
 	# seqify 
 	def test_seqify_1(self):
@@ -46,7 +46,7 @@ class coreTestCase(unittest.TestCase):
 		self.assertEqual(seqify(self.seq), self.seq)
 	def test_seqify_3(self):
 		"""Tests sequify's handling of invalid input types"""
-		self.assertRaises(TypeError, lambda: seqify(self.invalid_input))
+		self.assertRaises(TypeError, seqify(self.invalid_input))
 	
 	# translate
 	def test_translate_1(self):
@@ -54,7 +54,7 @@ class coreTestCase(unittest.TestCase):
 		self.assertEqual(translate(self.cod), self.trans)
 	def test_translate_2(self):
 		"""Tests translate rasies SequenceError for invalid codon"""
-		self.assertRaises(SequenceError, lambda: translate(self.cod_invalid))
+		self.assertRaises(SequenceError, translate(self.cod_invalid))
 	def test_translate_3(self):
 		"""Tests translate warns user if no start codon is found"""
 	        self.assertWarns(Warning, translate(self.cod_no_start))
@@ -76,16 +76,14 @@ class coreTestCase(unittest.TestCase):
 	#
 	def test_insertMutation_4(self): 
 		"""Tests mutation's handling of invalid input types"""
-		self.assertRaises(TypeError, lambda: seqify(self.invalid_input))
+		self.assertRaises(TypeError, seqify(self.invalid_input))
 
-#	def test_findOverprintedGene(self):
-#		"""
-#		Various test for the findOverprintedGene function:
-#		1. Overprinted gene completely contain in sequence
-#		2. 
-#		""" 
-#		#self.assertEqual(findOverprintedGene('AAGTTTCGCTTAAC', startIndex=1, frame=1), ['AGT', 'TTC', 'GCT'])
-#		self.assertEqual(findOverprintedGene('AATGTTCGCTTAA', startIndex=1, frame=1), ['ATG', 'TTC', 'GCT'])
+	def test_findOverprintedGene(self):
+		"""
+		Overprinted gene completely contained within sequence 
+		""" 
+		self.assertEqual(findOverprintedGene('AAGTTTCGCTTAAC', startIndex=1, frame=1), ['AGT', 'TTC', 'GCT'])
+		self.assertEqual(findOverprintedGene('AATGTTCGCTTAA', startIndex=1, frame=1), ['ATG', 'TTC', 'GCT'])
 		
 
 if __name__ == '__main__':
