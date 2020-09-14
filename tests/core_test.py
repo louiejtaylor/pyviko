@@ -68,12 +68,10 @@ class coreTestCase(unittest.TestCase):
 	def test_insertMutation_1(self):
 		"""Tests mutation (str) sucessfully inserted to codon list"""
 		self.assertEqual(insertMutation(self.cod, (2, 'GCC')), ['ATG', 'GCT', 'GCC', 'TGA', 'CT'])
-	#def test_insertMutation_2(self):
-	#	"""Tests mutation warns user when insertion index exceeds codon list length"""
-	#
-	#def test_insertMutation_3(self):
-	#	"""Tests mutation warns user when the codon inserted may give translation error"""
-	#
+	def test_insertMutation_2(self):
+		"""Error when user insertion index exceeds codon list length"""
+	        self.assertRaises(IndexError, insertMutation(self.cod), 21)
+
 	def test_insertMutation_4(self): 
 		"""Tests mutation's handling of invalid input types"""
 		self.assertRaises(TypeError, seqify(self.invalid_input))
