@@ -27,13 +27,13 @@ class coreTestCase(unittest.TestCase):
 	# TESTS
 
 	# codonify
-	def test_codonify_1(self):
+	def test_seq_to_codon(self):
 		"""Tests codonify takes seq -> cod"""
 		self.assertEqual(codonify(self.seq), self.cod)
-	def test_codonify_2(self):
+	def test_codon_to_codon(self):
 		"""Tests codonify takes cod -> cod"""
 		self.assertEqual(codonify(self.cod), self.cod)
-	def test_codonify_3(self):
+	def test_codonify_invalid(self):
 		"""Tests codonify's handling of invalid input types"""
 		self.assertRaises(TypeError, codonify(self.invalid_input))
 
