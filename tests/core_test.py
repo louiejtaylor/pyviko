@@ -65,18 +65,18 @@ class coreTestCase(unittest.TestCase):
                 self.assertEqual(translate(self.cod_no_stop), self.trans_no_stop)
 
 	# insertMutation
-	def test_insertMutation_1(self):
+	def test_successful_insertion(self):
 		"""Tests mutation (str) sucessfully inserted to codon list"""
 		self.assertEqual(insertMutation(self.cod, (2, 'GCC')), ['ATG', 'GCT', 'GCC', 'TGA', 'CT'])
-	def test_insertMutation_2(self):
+	def test_incorrect_index(self):
 		"""Error when user insertion index exceeds codon list length"""
 	        self.assertRaises(IndexError, insertMutation(self.cod), 21)
 
-	def test_insertMutation_4(self): 
+	def test_invalid_mutation(self): 
 		"""Tests mutation's handling of invalid input types"""
 		self.assertRaises(TypeError, seqify(self.invalid_input))
 
-	def test_findOverprintedGene(self):
+	def test_overprinted_gene_id(self):
 		"""
 		Overprinted gene completely contained within sequence 
 		""" 
