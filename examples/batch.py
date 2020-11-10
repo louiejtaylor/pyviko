@@ -4,7 +4,7 @@ if __name__ == '__main__':
 	
 	# testing RC search
 	ovr=['ATGATTACCCGGGTTTCCCAAAGGGTTTCATCCTAA']
-	z='''     TTACCCGGGTTTCCCAAAGGGTTTCAT'''
+	#         TTACCCGGGTTTCCCAAAGGGTTTCAT bounds of gene in the minus dir`
 	toKO  = ['ATGAAACCCTTTGGGAAACCCGGGTAA']
         # benchmarking overlapping in the reverse frame
 	for i in range(len(toKO))[:1]:
