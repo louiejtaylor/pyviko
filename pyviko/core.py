@@ -1,8 +1,9 @@
 stopCodons = ['TAG', 'TAA', 'TGA']
 translation = {'CTT': 'L', 'ATG': 'M', 'AAG': 'K', 'AAA': 'K', 'ATC': 'I', 'AAC': 'N', 'ATA': 'I', 'AGG': 'R', 'CCT': 'P', 'ACT': 'T', 'AGC': 'S', 'ACA': 'T', 'AGA': 'R', 'CAT': 'H', 'AAT': 'N', 'ATT': 'I', 'CTG': 'L', 'CTA': 'L', 'CTC': 'L', 'CAC': 'H', 'ACG': 'T', 'CAA': 'Q', 'AGT': 'S', 'CAG': 'Q', 'CCG': 'P', 'CCC': 'P', 'TAT': 'Y', 'GGT': 'G', 'TGT': 'C', 'CGA': 'R', 'CCA': 'P', 'TCT': 'S', 'GAT': 'D', 'CGG': 'R', 'TTT': 'F', 'TGC': 'C', 'GGG': 'G', 'GGA': 'G', 'TGG': 'W', 'GGC': 'G', 'TAC': 'Y', 'GAG': 'E', 'TCG': 'S', 'TTA': 'L', 'GAC': 'D', 'TCC': 'S', 'GAA': 'E', 'TCA': 'S', 'GCA': 'A', 'GTA': 'V', 'GCC': 'A', 'GTC': 'V', 'GCG': 'A', 'GTG': 'V', 'TTC': 'F', 'GTT': 'V', 'GCT': 'A', 'ACC': 'T', 'TTG': 'L', 'CGT': 'R', 'CGC': 'R'}
 
+# TODO: abstract duplicate functionality to Bio
+
 import warnings, os
-#from future import print_function
 
 class SequenceError(Exception):
 	pass
@@ -15,14 +16,14 @@ def codonify(sequence):
 		return sequence
 	return [sequence[i:i+3] for i in list(range(0,len(sequence),3))]
 
-def seqify(cod):
+def seqify(codons):
 	'''
 	Converts an input list of codons into a DNA sequence (str).
 	'''
-	if type(cod) == type("str"):
-		return cod
+	if type(codons) == type("str"):
+		return codons
 	sequence = ""
-	for codon in cod:
+	for codon in codons:
 		sequence += codon
 	return sequence
 	
@@ -45,7 +46,7 @@ def translate(codons):
 			raise SequenceError("Invalid codon: " + e.message)
 	return aa
 
-def insertMutation(codons, mut):
+def insert_mutation(codons, mut):
 	'''
 	Takes as input a list of
 	`codons` to mutate and a tuple `mut` in the form 
@@ -58,7 +59,7 @@ def insertMutation(codons, mut):
 	iCodons[mut[0]] = mut[1]	
 	return iCodons
 	
-def pointMutant(seq, mut):
+def point_mutant(seq, mut):
 	'''
 	Takes as input a sequence `seq` to mutate
 	and a tuple `mut` in the form (index, 'mutated nt') ex. `(3, 'A')`.
@@ -66,7 +67,7 @@ def pointMutant(seq, mut):
 	'''
 	return seq[:mut[0]] + mut[1] + seq[mut[0]+1:]
 	
-def findOverprintedGene(seq, startIndex, frame=1):
+def find_overprinted_gene(seq, startIndex, frame=1):
 	'''
 	Given a sequence `seq` and the `startIndex` of 
 	an overprinted gene, returns a list of codons that
@@ -97,7 +98,7 @@ def findOverprintedGene(seq, startIndex, frame=1):
 		
 	return codons
 
-def reverseComplement(seq):
+def reverse_complement(seq):
 	'''
 	Given a sequence `seq`, returns the reverse complement.
 	'''
@@ -114,7 +115,7 @@ def reverseComplement(seq):
 	
 	return rev
 	
-def findOverlap(seq1, seq2, minimum=10):
+def find_overlap(seq1, seq2, minimum=10):
 	'''
 	Given two sequences, returns a tuple `(i1, i2)` where `i1`
 	is the index in `seq1` where the overlap with `seq2` begins and
@@ -151,7 +152,7 @@ def findOverlap(seq1, seq2, minimum=10):
 			
 	return (i1, i2)
 	
-def readFasta(loc):
+def read_fasta(loc): # Bio.SeqIO
 	'''
 	Reads in a FASTA file, returns tuples in the form
 	`('> identifying information', 'sequence')`.
@@ -182,7 +183,7 @@ def readFasta(loc):
 	f.close()
 	return seqs
 	
-def writeFasta(fname, mutlist, seq, hasRxSites = False, rloc = "", floc = ""):
+def write_fasta(fname, mutlist, seq, hasRxSites = False, rloc = "", floc = ""): # wrapper around Bio.SeqIO?
 	'''
 	Given a filename `fname`, list of mutations `mutlist` input sequence `seq`
 	and an optional file location  `rloc` (relative location) or `floc` (absolute location), 
