@@ -42,7 +42,7 @@ class Mutant:
 		self.codons = core.codonify(sequence)
 		self.regex = regEx
 		
-	def setOverGene(self, overSeq = '', startNtIndex = -1, overFrame = 1):
+	def set_over_gene(self, overSeq = '', startNtIndex = -1, overFrame = 1):
 		'''
 		Adds the overprinted gene to the current `Mutant` object.
 		'''
@@ -61,7 +61,7 @@ class Mutant:
 		else:
 			raise core.SequenceError("Could not find target sequence in vector sequence.")
 			
-	def findMutants(self, ignoreRxSites = True, rSiteLength = 6, rSites = restriction.defaultEnzymes()):
+	def find_mutants(self, ignoreRxSites = True, rSiteLength = 6, rSites = restriction.defaultEnzymes()):
 		'''
 		Returns a list of mutants that add a premature stop codon 
 		(or mutate the start codon) without changing the overprinted 
@@ -145,7 +145,7 @@ class Mutant:
 			
 		return finalWinners
 	
-def findPossibleStopCodons(codons, n):
+def find_stop_codon_mutants(codons, n):
 	'''
 	Given a list `codons`, finds individual codons that
 	can be mutated to a stop codon given `n` mutations. Returns 
@@ -192,7 +192,7 @@ def findPossibleStopCodons(codons, n):
 			
 	return matches
 
-def mutateStartCodon(codons, n):
+def find_start_codon_mutants(codons, n):
 	'''
 	Given a list `codons`, makes up to `n` mutations (n<2)
 	to destroy the start codon. Returns a formatted list
