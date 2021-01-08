@@ -2,7 +2,7 @@ from pyviko import core, restriction
 
 class OverGene:
 	'''
-	Class for the overprinted gene.
+	Class representing the overprinted gene.
 	'''
 	frame = 1
 	startNucleotideIndex = -1
