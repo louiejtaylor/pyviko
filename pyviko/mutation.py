@@ -6,9 +6,9 @@ class OverGene:
 	'''
 	frame = 1
 	startNucleotideIndex = -1
-	preSequence = '' # includes 1-2nt removed by core.findOverGene
+	preSequence = '' # includes 1-2nt removed by core.find_over_gene
 	geneSequence = ''
-	postSequence = '' # includes 1-2nt removed by core.findOverGene
+	postSequence = '' # includes 1-2nt removed by core.find_over_gene
 	overAAs = ''
 	
 	def __init__(self, overSeq, startNtIndex, seq, frameOver = 1):
@@ -28,7 +28,7 @@ class OverGene:
 
 class Mutant:
 	'''
-	Class for target gene mutagenesis.
+	Class to mutate target gene.
 	'''
 	seq = ''
 	codons = []
@@ -181,12 +181,12 @@ def find_stop_codon_mutants(codons, n):
 			almostStopCodons[i] = list(set(almostStopCodons[i]))
 	
 	# creates a list of tuples of the form (index, ['list', 'of', 'stop', 'codons']) to be further pre-processed	
-	preMatches = [(i, almostStopCodons[codons[i]]) for i in range(0,len(codons)) if codons[i] in almostStopCodons.keys()]
+	pre_matches = [(i, almostStopCodons[codons[i]]) for i in range(0,len(codons)) if codons[i] in almostStopCodons.keys()]
 	
 	matches = []  
 	
 	# further processing to create actual tuples (index, 'codon')	
-	for m in preMatches:
+	for m in pre_matches:
 		for codon in m[1]:
 			matches.append((m[0],codon))
 			
@@ -202,16 +202,16 @@ def find_start_codon_mutants(codons, n):
 	muts = []
 	for i in list(range(0,3)):
 		for nt in 'ACTG':
-			mutCodon = start[:i]+nt+start[i+1:]
-			if mutCodon != start and mutCodon != 'ATG':
-				muts.append(mutCodon)
-	newMuts = [z for z in muts]
+			mut_codon = start[:i]+nt+start[i+1:]
+			if mut_codon != start and mut_codon != 'ATG':
+				muts.append(mut_codon)
+	new_muts = [z for z in muts]
 	if n == 2:
 		for e in muts:
 			for i in list(range(0,3)):
 				for nt in 'ACTG':
-					mutCodon = e[:i]+nt+e[i+1:]
-					if mutCodon != start and mutCodon != 'ATG' and mutCodon not in newMuts:
-						newMuts.append(mutCodon)
+					mut_codon = e[:i]+nt+e[i+1:]
+					if mut_codon != start and mut_codon != 'ATG' and mut_codon not in new_muts:
+						new_muts.append(mut_codon)
 					
-	return [(0,m) for m in newMuts]
+	return [(0,m) for m in new_muts]
