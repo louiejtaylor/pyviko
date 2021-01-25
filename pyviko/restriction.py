@@ -9,7 +9,7 @@ except ImportError:
 	warnings.warn("To support overlapping restriction sites, please update to the new regex module.")
 	import re
 
-def findNonRegexEnzymeSite(site):
+def find_non_regex_enzyme_site(site):
 	'''
 	Builds a list of sequences that correspond to a given 
 	restriction enzyme recognition site (tree walking).
@@ -27,7 +27,7 @@ def findNonRegexEnzymeSite(site):
 			possible_seqs = [ss for ss in placeholder]
 	return possible_seqs
 	
-def findEnzymeSiteRegex(site):
+def find_enzyme_site_regex(site):
 	'''
 	Returns a naive regular expression for a given
 	restriction site.
@@ -46,7 +46,7 @@ def findEnzymeSiteRegex(site):
 			r_site += ']'
 	return r_site
 
-def generateEnzymeDict(enzDict):
+def generate_enzyme_dict(enzyme_dict):
 	'''
 	Function to help pyviko recognize both a restriction
 	enzyme site and its reverse complement. Takes as input 
@@ -56,23 +56,23 @@ def generateEnzymeDict(enzDict):
 	of all input sites.
 	'''	
 	
-	newDict = {}
+	new_dict = {}
 	added = []
-	for k in enzDict.keys():
-		current = enzDict[k]
-		for j in [k,core.reverseComplement(k)]:
+	for k in enzyme_dict.keys():
+		current = enzyme_dict[k]
+		for j in [k,core.reverse_complement(k)]:
 			if j not in added:
-				newDict[j]=current
+				new_dict[j]=current
 				added.append(j)
 			else:
-				processed = newDict[j]
+				processed = new_dict[j]
 				for enzyme in current:
 					if enzyme not in processed:
-						newDict[j].append(enzyme)
+						new_dict[j].append(enzyme)
 	
-	return newDict
+	return new_dict
 
-def findNcutters(seq, n, rSites = None):
+def find_n_cutters(seq, n, r_sites = None):
 	'''
 	Find restriction sites of length `n` in a sequence `seq`
 	in `O(n*m)` where `n` is the sequence length and `m` is the
@@ -80,22 +80,22 @@ def findNcutters(seq, n, rSites = None):
 	of the form `(site index, 'enzyme name')`.
 	'''	
 	
-	if rSites == None:
-		rSites = defaultEnzymes()
+	if r_sites == None:
+		r_sites = default_enzymes()
 		
-	tempSites = {}
+	temp_sites = {}
 
-	for si in rSites.keys():
-		for se in findNonRegexEnzymeSite(si):
-			tempSites[se] = rSites[si]
+	for si in r_sites.keys():
+		for se in find_non_regex_enzyme_site(si):
+			temp_sites[se] = r_sites[si]
 
-	recKeys = tempSites.keys()
-	actualSites = []
+	rec_keys = temp_sites.keys()
+	actual_sites = []
 	for i in list(range(0, len(seq) - (n-1))):
-		if seq[i:i+n] in recKeys: 
-			actualSites.append((i,seq[i:i+n]))		
+		if seq[i:i+n] in rec_keys: 
+			actual_sites.append((i,seq[i:i+n]))		
 			
-	return actualSites
+	return actual_sites
 	
 nucleotideMatrix = {	'R':['A','G'],
 					'Y':['C','T'],
@@ -109,14 +109,14 @@ nucleotideMatrix = {	'R':['A','G'],
 					'V':['A','C','G'],
 					'N':['A','C','G','T']}
 
-def reFindEnzymes(seq, rSites=None):
+def re_find_enzymes(seq, rSites=None):
 	'''
 	Find restriction sites in a sequence `seq`
 	using regular expressions. Returns a list of tuples
 	of the form `(site index, 'enzyme name')`.
 	'''
-	if rSites == None:
-		rSites = defaultEnzymes()
+	if r_sites == None:
+		r_sites = default_enzymes()
 	actualSites = []
 	for site in rSites.keys():
 		regexSite = findEnzymeSiteRegex(site)
