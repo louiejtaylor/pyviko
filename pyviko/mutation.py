@@ -191,54 +191,6 @@ def find_stop_codon_mutants(codons, n):
 
         return matches
 
-
-def find_stop_codon_mutants(codons, n):
-	'''
-	Given a list `codons`, finds individual codons that
-	can be mutated to a stop codon given `n` mutations. Returns 
-	a list of tuples of the form `(index, 'codon')` where `'codon'`
-	is the mutated codon. 
-	'''
-	#TODO: can optimize this as in js
-	if codons[-1] in core.stopCodons: 
-		codons = codons[:-1] #remove c-terminal stop codon
-	
-	almostStopCodons = {}
-	#build dict of codons that can be mutated to a stop codon 
-	
-	for c in core.stopCodons:
-		for i in list(range(0,3)):
-			for nt in 'ACTG':
-				if c[:i]+nt+c[i+1:] not in core.stopCodons:
-					try:
-						almostStopCodons[c[:i]+nt+c[i+1:]].append(c)
-					except KeyError:
-						almostStopCodons[c[:i]+nt+c[i+1:]] = [c]
-	
-	if n == 2:
-		for c in almostStopCodons.keys():
-			for i in list(range(0,3)):
-				for nt in 'ACTG':
-					if c[:i]+nt+c[i+1:] not in core.stopCodons:
-						try:
-							almostStopCodons[c[:i]+nt+c[i+1:]] += almostStopCodons[c]
-						except KeyError:
-							 almostStopCodons[c[:i]+nt+c[i+1:]] = almostStopCodons[c]
-		for i in almostStopCodons.keys():
-			almostStopCodons[i] = list(set(almostStopCodons[i]))
-	
-	# creates a list of tuples of the form (index, ['list', 'of', 'stop', 'codons']) to be further pre-processed	
-	pre_matches = [(i, almostStopCodons[codons[i]]) for i in range(0,len(codons)) if codons[i] in almostStopCodons.keys()]
-	
-	matches = []  
-	
-	# further processing to create actual tuples (index, 'codon')	
-	for m in pre_matches:
-		for codon in m[1]:
-			matches.append((m[0],codon))
-			
-	return matches
-
 def find_start_codon_mutants(codons, n):
 	'''
 	Given a list `codons`, makes up to `n` mutations (n<2)
