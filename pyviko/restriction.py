@@ -97,17 +97,17 @@ def find_n_cutters(seq, n, r_sites = None):
 			
 	return actual_sites
 	
-nucleotideMatrix = {	'R':['A','G'],
-					'Y':['C','T'],
-					'W':['A','T'],
-					'S':['C','G'],
-					'M':['A','C'],
-					'K':['G','T'],
-					'B':['C','G','T'],
-					'D':['A','G','T'],			  
-					'H':['A','C','T'],
-					'V':['A','C','G'],
-					'N':['A','C','G','T']}
+nucleotide_matrix = {	'R':['A','G'],
+	    		'Y':['C','T'],
+    	    		'W':['A','T'],
+    	    		'S':['C','G'],
+    	    		'M':['A','C'],
+    		    	'K':['G','T'],
+                        'B':['C','G','T'],
+    			'D':['A','G','T'],			  
+			'H':['A','C','T'],
+		    	'V':['A','C','G'],
+    			'N':['A','C','G','T']}
 
 def re_find_enzymes(seq, rSites=None):
 	'''
@@ -117,19 +117,19 @@ def re_find_enzymes(seq, rSites=None):
 	'''
 	if r_sites == None:
 		r_sites = default_enzymes()
-	actualSites = []
-	for site in rSites.keys():
-		regexSite = findEnzymeSiteRegex(site)
+	actual_sites = []
+	for site in r_sites.keys():
+		regex_site = find_enzyme_site_regex(site)
 		try:
-			matches = re.finditer(regexSite, seq, overlapped=True)
+			matches = re.finditer(regex_site, seq, overlapped=True)
 		except TypeError: #if no new regex module
-			matches = re.finditer(regexSite, seq)	
+			matches = re.finditer(regex_site, seq)	
 		for result in matches:
-			actualSites.append((result.start(),rSites[site]))
+			actual_sites.append((result.start(),r_sites[site]))
 			
-	return actualSites
+	return actual_sites
 	
-def defaultEnzymes():
+def default_enzymes():
 	'''
 	Returns the default enzyme set (New England BioLabs)
 	as a dictionary.
