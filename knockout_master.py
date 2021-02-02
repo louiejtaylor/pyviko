@@ -14,7 +14,7 @@ def find_possible_stop_codons(codons, n):
 		codons = codons[:-1] # remove c-terminal stop codon
 	
 	almost_stop_codons = {}
-	# build dict of codons that can be mutated to a stop codon 
+	# build dict of codons that can be mutated to a stop codon (1off)
 	
 	for c in stop_codons:
 		for i in range(0,3):
