@@ -69,7 +69,7 @@ def find_overprinted_gene(seq, frame, starts_before):
 def find_non_harmful_mutations(seq, frame, starts_before, num_mutations):
 	codons = codonify(seq)
 	stops = find_possible_stop_codons(codons, num_mutations)
-	overAAs = translate(find_overprinted_gene(seq, frame, starts_before))
+	over_AAs = translate(find_overprinted_gene(seq, frame, starts_before))
 	winners = []
 	for poss in stops:
 		n_codons = [codon for codon in codons]
@@ -83,19 +83,19 @@ def find_restriction_site_changes(seq, frame, starts_before, num_mutations):
 	safe_mutations = find_non_harmful_mutations(seq, frame, starts_before, num_mutations)
 	r_sites = find_n_cutters(seq,6)
 	new_sites = []
-	for i in safe_mutations:
-		new_sites.append((i, find_n_cutters(seqify(insert_mutation(codonify(seq),i)), 6)))
+	for m in safe_mutations:
+		new_sites.append((m, find_n_cutters(seqify(insert_mutation(codonify(seq),m)), 6)))
 	winners = []
 	print(len(new_sites))
-	for j in new_sites:
-		if j[1] <> r_sites:
+	for s in new_sites:
+		if s[1] <> r_sites:
 			res = [r for r in r_sites]
-			for site in j[1]:		  
+			for site in s[1]:		  
 				try:
 					res.remove(site)
 				except ValueError:
 					res.append((site,'+++'))
-			k = (j[0], res)
+			k = (s[0], res)
 			winners.append(k)
 	for w in winners:
 		print(w)
