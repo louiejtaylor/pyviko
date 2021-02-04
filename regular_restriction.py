@@ -54,19 +54,19 @@ def testNcutters(seq, n, rlist):
 	n_mers = []
 	for i in range(0, len(seq) - (n-1)):
 		n_mers.append((i, seq[i:i+n]))
-	actualSites = []
+	actual_sites = []
 	for s in n_mers:
 		if s[1] in rlist:
-			actualSites.append((s[0],s[1]))
-	return actualSites
+			actual_sites.append((s[0],s[1]))
+	return actual_sites
 
 # Testing non-regex search. 
 # Ideally, should have the same results for regex and non-regex searches
 
 s = []
 for sis in sites:
-	s.append(findNonRegexEnzymeSite(sis))
+	s.append(find_non_regex_enzyme_site(sis))
 	
 for ww in s:
-	print testNcutters(sequence, len(ww[0]), ww)
+	print test_n_cutters(sequence, len(ww[0]), ww)
 
