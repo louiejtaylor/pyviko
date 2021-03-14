@@ -37,7 +37,7 @@ def find_genes(gene_list, positive):
 						to_ko.append(gene)
 	return over, to_ko
 
-def extractJoin(location):
+def extract_join(location):
 	'''
 	Extracts the locations of genes and their 
 	overprinted counterparts from Entrez record.
@@ -70,44 +70,44 @@ for jjj in range(1,int(len(idlist)/100)+2):
 				#find coding sequences
 				if i.type == "CDS":
 					if "join" in str(i.location):
-						fancyJoin = extractJoin(str(i.location))
+						fancy_join = extract_join(str(i.location))
 						if i.location.strand == 1:
-							plus_genes += [(fancyJoin[0][0], fancyJoin[1][1], str(seq_record.seq[fancyJoin[0][0]:]+seq_record.seq[:fancyJoin[1][1]]))]
+							plus_genes += [(fancy_join[0][0], fancy_join[1][1], str(seq_record.seq[fancy_join[0][0]:]+seq_record.seq[:fancy_join[1][1]]))]
 						elif i.location.strand == -1:
-							minus_genes += [(fancyJoin[1][1], fancyJoin[0][0], core.reverseComplement(seq_record.seq[fancyJoin[0][0]]+seq_record.seq[fancyJoin[1][1]]))]
+							minus_genes += [(fancy_join[1][1], fancy_join[0][0], core.reverse_complement(seq_record.seq[fancy_join[0][0]]+seq_record.seq[fancy_join[1][1]]))]
 					else:
 						if i.location.strand == 1:
 							plus_genes += [(int(i.location.start), int(i.location.end), str(seq_record.seq[i.location.start:i.location.end]))]
 						elif i.location.strand == -1:
-							minus_genes += [(int(i.location.end), int(i.location.start), str(core.reverseComplement(seq_record.seq[i.location.start:i.location.end])))]
+							minus_genes += [(int(i.location.end), int(i.location.start), str(core.reverse_complement(seq_record.seq[i.location.start:i.location.end])))]
 			except:
 				#rare errors, but just in case
 				print("Error with:", i)
-		overPlus, toKoPlus = findGenes(plus_genes, True)
-		overMinus, toKoMinus = findGenes(minus_genes,False)
+		over_plus, to_ko_plus = find_genes(plus_genes, True)
+		over_minus, to_ko_minus = find_genes(minus_genes,False)
 		#store total genes
-		over = overPlus + overMinus
-		toKO = toKoPlus + toKoMinus
+		over = over_plus + over_minus
+		to_ko = to_ko_plus + to_ko_minus
 		
-		if len(over) <> len(toKO):
+		if len(over) <> len(to_ko):
 			# if gene pair lists are not of even size (for whatever reason), we don't want to store this round
 			print("Error: file lengths uneven")
-			print(len(over), len(toKO), addedCounter)
+			print(len(over), len(to_ko), added_counter)
 		else:
 			#add genes to files
 			for i in range(len(over)):
-				addedCounter += 1
-				if addedCounter % 100 == 0:
+				added_counter += 1
+				if added_counter % 100 == 0:
 					#generate multiple files so that we don't have a single giant FASTA
-					fiKO.close()
-					fiOver.close()
+					fi_ko.close()
+					fi_over.close()
 					finum += 1
-					fiKO = open('test/dem/ko/'+str(finum)+'.fasta', 'w')
-					fiOver = open('test/dem/over/'+str(finum)+'.fasta', 'w')
-				fiKO.write('>'+str(seq_record.id)+' '+str(toKO[i][0])+':'+str(toKO[i][1]) +'\n'+toKO[i][2]+'\n')
-				fiOver.write('>'+str(seq_record.id)+' '+str(over[i][0])+':'+str(over[i][1])+'\n'+over[i][2]+'\n')
-	print("Added: " + str(addedCounter))
+					fi_ko = open('test/dem/ko/'+str(finum)+'.fasta', 'w') #better system for this
+					fi_over = open('test/dem/over/'+str(finum)+'.fasta', 'w')
+				fi_ko.write('>'+str(seq_record.id)+' '+str(to_ko[i][0])+':'+str(to_ko[i][1]) +'\n'+to_ko[i][2]+'\n')
+				fi_over.write('>'+str(seq_record.id)+' '+str(over[i][0])+':'+str(over[i][1])+'\n'+over[i][2]+'\n')
+	print("Added: " + str(added_counter))
 	handle.close()
 	
-fiKO.close()
-fiOver.close()
+fi_ko.close()
+fi_over.close()
