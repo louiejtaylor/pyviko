@@ -5,26 +5,26 @@ class OverGene:
 	Class representing the overprinted gene.
 	'''
 	frame = 1
-	startNucleotideIndex = -1
-	preSequence = '' # includes 1-2nt removed by core.find_over_gene
-	geneSequence = ''
-	postSequence = '' # includes 1-2nt removed by core.find_over_gene
-	overAAs = ''
+	start_nucleotide_index = -1
+	pre_sequence = '' # includes 1-2nt removed by core.find_over_gene
+	gene_sequence = ''
+	post_sequence = '' # includes 1-2nt removed by core.find_over_gene
+	over_aas = ''
 	
-	def __init__(self, overSeq, startNtIndex, seq, frameOver = 1):
-		if overSeq != '':
-			ol = core.findOverlap(seq, overSeq)
+	def __init__(self, over_seq, start_nt_index, seq, frame_over = 1):
+		if over_seq != '':
+			ol = core.find_overlap(seq, over_seq)
 			if ol[0] == 0: #overprinted gene starts before
-				startNtIndex = -1
-				frameOver = 4-(ol[1]%3)
-				self.preSequence = overSeq[ol[1]-(-frameOver+4):ol[1]] + seq[:3-(-frameOver+4)]
+				start_nt_index = -1
+				frame_over = 4-(ol[1]%3)
+				self.pre_sequence = over_seq[ol[1]-(-frame_over+4):ol[1]] + seq[:3-(-frame_over+4)]
 			else: #overprinted gene starts after
-				startNtIndex = ol[0]
-		self.geneSequence = overSeq
-		self.startNucleotideIndex = startNtIndex
-		self.combSequence = seq
-		self.frame = frameOver
-		self.overAAs = core.translate(self.preSequence + core.seqify(core.findOverprintedGene(seq, startNtIndex, frameOver)) + self.postSequence)
+				start_nt_index = ol[0]
+		self.gene_sequence = over_seq
+		self.start_nucleotide_index = start_nt_index
+		self.comb_sequence = seq
+		self.frame = frame_over
+		self.over_aas = core.translate(self.pre_sequence + core.seqify(core.find_overprinted_gene(seq, start_nt_index, frame_over)) + self.post_sequence)
 
 class Mutant:
 	'''
