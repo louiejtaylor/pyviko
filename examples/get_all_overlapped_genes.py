@@ -54,8 +54,8 @@ handle.close()
 # setting up files to store collected genes
 addedCounter = 0
 finum = 0
-fiKO = open('test/dem/ko/'+str(finum)+'.fasta', 'w')
-fiOver = open('test/dem/over/'+str(finum)+'.fasta', 'w')
+fi_ko = open('test/dem/ko/'+str(finum)+'.fasta', 'w')
+fi_over = open('test/dem/over/'+str(finum)+'.fasta', 'w')
 for jjj in range(1,int(len(idlist)/100)+2):
 	print("Page: " + str(jjj) + " of " +str(int(len(idlist)/100)+1))
 	time.sleep(1)
