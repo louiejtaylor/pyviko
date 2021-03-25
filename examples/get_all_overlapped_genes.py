@@ -51,14 +51,16 @@ handle = Entrez.esearch(db="nuccore", term='"complete genome"[All Fields] AND vi
 record = Entrez.read(handle)
 idlist = record["IdList"]
 handle.close()
+
 # setting up files to store collected genes
-addedCounter = 0
+added_counter = 0
 finum = 0
 fi_ko = open('test/dem/ko/'+str(finum)+'.fasta', 'w')
 fi_over = open('test/dem/over/'+str(finum)+'.fasta', 'w')
 for jjj in range(1,int(len(idlist)/100)+2):
 	print("Page: " + str(jjj) + " of " +str(int(len(idlist)/100)+1))
-	time.sleep(1)
+	time.sleep(1) #avoid angering NCBI
+
 	#grab genes
 	handle = Entrez.efetch(db="nuccore", id=idlist[jjj*100-100:jjj*100], rettype="gb", retmode="text")
 	results = SeqIO.parse(handle, "gb")
