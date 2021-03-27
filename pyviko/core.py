@@ -183,7 +183,7 @@ def read_fasta(loc): # Bio.SeqIO
 	f.close()
 	return seqs
 	
-def write_fasta(fname, mutlist, seq, hasRxSites = False, rloc = "", floc = ""): # wrapper around Bio.SeqIO?
+def write_fasta(fname, mutlist, seq, has_rx_sites = False, rloc = "", floc = ""): # wrapper around Bio.SeqIO?
 	'''
 	Given a filename `fname`, list of mutations `mutlist` input sequence `seq`
 	and an optional file location  `rloc` (relative location) or `floc` (absolute location), 
@@ -194,7 +194,7 @@ def write_fasta(fname, mutlist, seq, hasRxSites = False, rloc = "", floc = ""): 
 	fname = fname.replace('|', '.')[:30]
 	for character in fname:
 		if character not in '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,\'"()-_':
-			fname = fname.replace(character, ' ')
+			fname = fname.replace(character, '_')
 	fname = ' '.join([i for i in fname.split(' ') if i != '']) + '.fasta'
 	if floc == "":
 		dirs = os.listdir(os.getcwd())
@@ -210,8 +210,8 @@ def write_fasta(fname, mutlist, seq, hasRxSites = False, rloc = "", floc = ""): 
 	for m in mutlist:
 		fasta.write(">mutant at codon " + str(m[0][0]+1) +': \n' )
 		codons = codonify(seq)
-		mutSeq = seqify(codons[:m[0][0]]+[m[0][1]]+codons[m[0][0]+1:])
-		fasta.write('\n'.join([mutSeq[i:i+100] for i in range(0,len(mutSeq),100)]) +'\n')
+		mut_seq = seqify(codons[:m[0][0]]+[m[0][1]]+codons[m[0][0]+1:])
+		fasta.write('\n'.join([mut_seq[i:i+100] for i in range(0,len(mut_seq),100)]) +'\n')
 		
 	fasta.close()
 	return True
