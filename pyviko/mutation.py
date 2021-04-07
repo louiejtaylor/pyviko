@@ -32,24 +32,24 @@ class Mutant:
 	'''
 	seq = ''
 	codons = []
-	nMut = 1
-	overGene = False
+	n_mut = 1
+	over_gene = False
 	mutants = []
 	
-	def __init__(self, sequence, numMutations = 1, regEx = False):
+	def __init__(self, sequence, num_mutations = 1, regex = False):
 		self.seq = sequence
-		self.nMut = numMutations
+		self.n_mut = num_mutations
 		self.codons = core.codonify(sequence)
-		self.regex = regEx
+		self.regex = regex
 		
-	def set_over_gene(self, overSeq = '', startNtIndex = -1, overFrame = 1):
+	def set_over_gene(self, over_seq = '', start_nt_index = -1, over_frame = 1):
 		'''
 		Adds the overprinted gene to the current `Mutant` object.
 		'''
-		if overSeq == '' and startNtIndex == -1 and overFrame == 1:
+		if over_seq == '' and start_nt_index == -1 and over_frame == 1:
 			raise core.SequenceError("You must provide either the sequence of an overprinted gene, or its start position/frame in the knockout sequence.")
 		else:
-			self.overGene = OverGene(overSeq, startNtIndex, self.seq, overFrame)
+			self.over_gene = OverGene(over_seq, start_nt_index, self.seq, over_frame)
 		
 	def vector(self, sequence):
 		'''
@@ -57,11 +57,11 @@ class Mutant:
 		(primarily for making primers of early knockouts).
 		'''
 		if self.seq in sequence:
-			self.vectorSeq = sequence
+			self.vector_seq = sequence
 		else:
 			raise core.SequenceError("Could not find target sequence in vector sequence.")
 			
-	def find_mutants(self, ignoreRxSites = True, rSiteLength = 6, rSites = restriction.defaultEnzymes()):
+	def find_mutants(self, ignore_rx_sites = True, r_site_length = 6, r_sites = restriction.default_enzymes()):
 		'''
 		Returns a list of mutants that add a premature stop codon 
 		(or mutate the start codon) without changing the overprinted 
