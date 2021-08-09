@@ -67,12 +67,12 @@ class Mutant:
 		(or mutate the start codon) without changing the overprinted 
 		gene, and which add or remove a restriction site.
 		'''
-		stops = findPossibleStopCodons(self.codons, self.nMut)
+		stops = find_possible_stop_codons(self.codons, self.nMut)
 
-		if self.overGene != False:
-			if len(self.overGene.geneSequence) > 0:
-				stops = mutateStartCodon(self.codons, self.nMut) + stops
-			safeMutations = []
+		if self.over_gene:
+			if len(self.over_gene.gene_sequence) > 0:
+				stops = mutate_start_codon(self.codons, self.n_mut) + stops
+			safe_mutations = []
 			newPreSequence = '';
 			for poss in stops:
 				nCodons = [codon for codon in self.codons]
