@@ -24,8 +24,6 @@ class coreTestCase(unittest.TestCase):
 	def teardown(self):
 		pass
 
-	# TESTS
-
 	# codonify
 	def test_seq_to_codon(self):
 		"""Tests codonify takes seq -> cod"""
@@ -64,13 +62,13 @@ class coreTestCase(unittest.TestCase):
                 self.assertWarns(Warning, translate(self.cod_no_stop))
                 self.assertEqual(translate(self.cod_no_stop), self.trans_no_stop)
 
-	# insertMutation
+	# insert_mutation
 	def test_successful_insertion(self):
 		"""Tests mutation (str) sucessfully inserted to codon list"""
-		self.assertEqual(insertMutation(self.cod, (2, 'GCC')), ['ATG', 'GCT', 'GCC', 'TGA', 'CT'])
+		self.assertEqual(insert_mutation(self.cod, (2, 'GCC')), ['ATG', 'GCT', 'GCC', 'TGA', 'CT'])
 	def test_incorrect_index(self):
 		"""Error when user insertion index exceeds codon list length"""
-	        self.assertRaises(IndexError, insertMutation(self.cod), 21)
+	        self.assertRaises(IndexError, insert_mutation(self.cod), 21)
 
 	def test_invalid_mutation(self): 
 		"""Tests mutation's handling of invalid input types"""
