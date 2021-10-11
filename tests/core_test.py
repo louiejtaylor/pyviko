@@ -78,9 +78,8 @@ class coreTestCase(unittest.TestCase):
 		"""
 		Overprinted gene completely contained within sequence 
 		""" 
-		self.assertEqual(findOverprintedGene('AAGTTTCGCTTAAC', startIndex=1, frame=1), ['AGT', 'TTC', 'GCT'])
-		self.assertEqual(findOverprintedGene('AATGTTCGCTTAA', startIndex=1, frame=1), ['ATG', 'TTC', 'GCT'])
-		
+		self.assertEqual(find_overprinted_gene('AAGTTTCGCTTAAC', startIndex=1, frame=1), ['AGT', 'TTC', 'GCT'])
+		self.assertEqual(find_overprinted_gene('AATGTTCGCTTAA', startIndex=1, frame=1), ['ATG', 'TTC', 'GCT'])
 
 if __name__ == '__main__':
 	unittest.main()
