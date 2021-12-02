@@ -1,4 +1,4 @@
-stopCodons = ['TAG', 'TAA', 'TGA']
+stop_codons = ['TAG', 'TAA', 'TGA']
 translation = {'CTT': 'L', 'ATG': 'M', 'AAG': 'K', 'AAA': 'K', 'ATC': 'I', 'AAC': 'N', 'ATA': 'I', 'AGG': 'R', 'CCT': 'P', 'ACT': 'T', 'AGC': 'S', 'ACA': 'T', 'AGA': 'R', 'CAT': 'H', 'AAT': 'N', 'ATT': 'I', 'CTG': 'L', 'CTA': 'L', 'CTC': 'L', 'CAC': 'H', 'ACG': 'T', 'CAA': 'Q', 'AGT': 'S', 'CAG': 'Q', 'CCG': 'P', 'CCC': 'P', 'TAT': 'Y', 'GGT': 'G', 'TGT': 'C', 'CGA': 'R', 'CCA': 'P', 'TCT': 'S', 'GAT': 'D', 'CGG': 'R', 'TTT': 'F', 'TGC': 'C', 'GGG': 'G', 'GGA': 'G', 'TGG': 'W', 'GGC': 'G', 'TAC': 'Y', 'GAG': 'E', 'TCG': 'S', 'TTA': 'L', 'GAC': 'D', 'TCC': 'S', 'GAA': 'E', 'TCA': 'S', 'GCA': 'A', 'GTA': 'V', 'GCC': 'A', 'GTC': 'V', 'GCG': 'A', 'GTG': 'V', 'TTC': 'F', 'GTT': 'V', 'GCT': 'A', 'ACC': 'T', 'TTG': 'L', 'CGT': 'R', 'CGC': 'R'}
 
 # TODO: abstract duplicate functionality to Bio
@@ -12,7 +12,8 @@ def codonify(sequence):
 	'''
 	Converts an input DNA sequence (str) to a list of codons.
 	'''
-	if type(sequence) == type([]):
+	if type(sequence) == list:
+		warnings.warn("passed list to codonify, returning unchanged")
 		return sequence
 	return [sequence[i:i+3] for i in list(range(0,len(sequence),3))]
 
@@ -20,24 +21,21 @@ def seqify(codons):
 	'''
 	Converts an input list of codons into a DNA sequence (str).
 	'''
-	if type(codons) == type("str"):
+	if type(codons) == str:
+		warnings.warn("passed string to seqify, returning unchanged")
 		return codons
-	sequence = ""
-	for codon in codons:
-		sequence += codon
-	return sequence
-	
+	return ''.join(codons)
+
 def translate(codons):
 	'''
-	Translates a list of DNA codons into the corresponding amino 
+	Translates a list of DNA codons into the corresponding amino
 	acids, stopping translation if a stop codon is encountered.
 	'''
 	codons = codonify(codons)
 	aa = ''
 	for i in list(range(0,len(codons))):
-		if codons[i] in stopCodons or len(codons[i]) != 3:
-			#codons = codons[:i]
-			if codons[i] in stopCodons:
+		if codons[i] in stop_codons or len(codons[i]) != 3:
+			if codons[i] in stop_codons:
 				aa = aa + '*'
 			break
 		try:
