@@ -67,17 +67,18 @@ class Mutant:
 		(or mutate the start codon) without changing the overprinted 
 		gene, and which add or remove a restriction site.
 		'''
+
 		stops = find_possible_stop_codons(self.codons, self.nMut)
 
 		if self.over_gene:
 			if len(self.over_gene.gene_sequence) > 0:
 				stops = mutate_start_codon(self.codons, self.n_mut) + stops
 			safe_mutations = []
-			newPreSequence = '';
+			new_pre_sequence = '';
 			for poss in stops:
-				nCodons = [codon for codon in self.codons]
-				newCodons = core.insertMutation(nCodons, poss)
-				if self.overGene.geneSequence != '':
+				n_codons = [codon for codon in self.codons]
+				new_codons = core.insertMutation(nCodons, poss)
+				if self.over_gene.gene_sequence != '':
 					newPreSequence = self.overGene.preSequence[:4-self.overGene.frame] + newCodons[0][:self.overGene.frame - 1]
 				newOverAAs = core.translate(newPreSequence + core.seqify(core.findOverprintedGene(core.seqify(newCodons), self.overGene.startNucleotideIndex, self.overGene.frame)))
 				if newOverAAs == self.overGene.overAAs:
