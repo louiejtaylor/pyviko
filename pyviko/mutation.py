@@ -77,16 +77,17 @@ class Mutant:
 			new_pre_sequence = '';
 			for poss in stops:
 				n_codons = [codon for codon in self.codons]
-				new_codons = core.insertMutation(nCodons, poss)
+				new_codons = core.insert_mutation(nCodons, poss)
 				if self.over_gene.gene_sequence != '':
-					newPreSequence = self.overGene.preSequence[:4-self.overGene.frame] + newCodons[0][:self.overGene.frame - 1]
-				newOverAAs = core.translate(newPreSequence + core.seqify(core.findOverprintedGene(core.seqify(newCodons), self.overGene.startNucleotideIndex, self.overGene.frame)))
-				if newOverAAs == self.overGene.overAAs:
-					safeMutations.append(poss)
+					new_pre_sequence = self.over_gene.pre_sequence[:4-self.over_gene.frame] + new_codons[0][:self.overGene.frame - 1]
+				new_over_aas = core.translate(new_pre_sequence + core.seqify(core.find_overprinted_gene(
+                                    core.seqify(new_codons), self.over_gene.start_nucleotide_index, self.over_gene.frame)))
+				if new_over_aas == self.overGene.over_aas:
+					safe_mutations.append(poss)
 		else:
-			safeMutations = stops
-		finalWinners = [s for s in safeMutations]
-		if not ignoreRxSites:
+			safe_mutations = stops
+		final_winners = [s for s in safe_mutations]
+		if not ignore_rx_sites:
 			### Two approaches: regex and non-regex.
 			restrictionSiteLengths = list(set([len(k) for k in rSites.keys()]))
 			
