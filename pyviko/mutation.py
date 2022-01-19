@@ -89,24 +89,25 @@ class Mutant:
 		final_winners = [s for s in safe_mutations]
 		if not ignore_rx_sites:
 			### Two approaches: regex and non-regex.
-			restrictionSiteLengths = list(set([len(k) for k in rSites.keys()]))
+			restriction_site_lengths = list(set([len(k) for k in r_sites.keys()]))
 			
-			if rSiteLength == 'all':
-				tempRestrictionSites = rSites
-			elif rSiteLength >= min(restrictionSiteLengths) and rSiteLength <= max(restrictionSiteLengths):
-				rKeys = [k for k in rSites.keys() if len(k) == rSiteLength]
-				tempRestrictionSites = {} # Reduce size of dict. searched
-				for site in rKeys:
-					tempRestrictionSites[site] = rSites[site]
-				restrictionSiteLengths = [rSiteLength]
+			if r_site_length == 'all':
+				temp_restriction_sites = r_sites
+			elif r_site_length >= min(restriction_site_lengths) and r_site_length <= max(restriction_site_lengths):
+				r_keys = [k for k in r_sites.keys() if len(k) == r_site_length]
+				temp_restriction_sites = {} # Reduce size of dict. searched
+				for site in r_keys:
+					temp_restriction_sites[site] = r_sites[site]
+				restriction_site_lengths = [r_site_length]
 			else:
 				raise core.SequenceError("Invalid restriction site length.")		
 			
-			newSites = [] # list of lists
-			
+			new_sites = [] # list of lists
+
+			# should do all one way--why is this inconsistent?
 			### Regex:
 			if self.regex:
-				baseSites = restriction.reFindEnzymes(self.seq)
+				base_sites = restriction.reFindEnzymes(self.seq)
 				
 				for mut in safeMutations:
 					newSites.append([])
