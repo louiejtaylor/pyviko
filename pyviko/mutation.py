@@ -107,42 +107,42 @@ class Mutant:
 			# should do all one way--why is this inconsistent?
 			### Regex:
 			if self.regex:
-				base_sites = restriction.reFindEnzymes(self.seq)
+				base_sites = restriction.re_find_enzymes(self.seq)
 				
-				for mut in safeMutations:
-					newSites.append([])
-					newSites[-1] += restriction.reFindEnzymes(core.seqify(core.insertMutation(self.codons, mut)))
+				for mut in safe_mutations:
+					new_sites.append([])
+					new_sites[-1] += restriction.re_find_enzymes(core.seqify(core.insert_mutation(self.codons, mut)))
 					
 			### Non-regex:
 			else:
 				
-				baseSites = []
-				for length in restrictionSiteLengths:
-					baseSites += restriction.findNcutters(self.seq, length)
+				base_sites = []
+				for length in restriction_site_lengths:
+					base_sites += restriction.find_n_cutters(self.seq, length)
 					
-				for mut in safeMutations:
-					newSites.append([])
-					for length in restrictionSiteLengths:
-						newSites[-1] += restriction.findNcutters(core.seqify(core.insertMutation(self.codons, mut)), length)
-			
+				for mut in safe_mutations:
+					new_sites.append([])
+					for length in restriction_site_lengths:
+						new_sites[-1] += restriction.find_n_cutters(core.seqify(core.insert_mutation(self.codons, mut)), length)
+
 			winners = {}
-			for l in newSites:
-				if l != baseSites: #this is why I should use sets
-					tempSites = [c for c in baseSites]
-					tempAddedSites = []
+			for l in new_sites:
+				if l != base_sites: #this is why I should use sets
+					temp_sites = [c for c in base_sites]
+					temp_added_sites = []
 					for site in l: #basically, removing everything in the new list from the old list to get the differences
-						try:
-							tempSites.remove(site)
+						try: #set logic would improve this
+							temp_sites.remove(site)
 						except ValueError:
-							tempAddedSites.append(site)
-					
-					for i in range(0,len(tempSites)):
-						tempSites[i] = (tempSites[i][0], tempSites[i][1], '-')
+							temp_added_sites.append(site)
+
+					for i in range(0,len(temp_sites)):
+						temp_sites[i] = (temp_sites[i][0], temp_sites[i][1], '-')
 						
-					for i in range (0, len(tempAddedSites)):
-						tempAddedSites[i] = (tempAddedSites[i][0], tempAddedSites[i][1], '+')
+					for i in range (0, len(temp_added_sites)):
+						temp_added_sites[i] = (temp_added_sites[i][0], temp_added_sites[i][1], '+')
 					
-					winners[safeMutations[newSites.index(l)]] = tempSites + tempAddedSites
+					winners[safe_mutations[new_sites.index(l)]] = temp_sites + temp_added_sites
 			
 			finalWinners = [(x,winners[x]) for x in sorted(winners.keys(), key=lambda x: x[0])]		
 			
