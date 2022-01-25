@@ -144,9 +144,9 @@ class Mutant:
 					
 					winners[safe_mutations[new_sites.index(l)]] = temp_sites + temp_added_sites
 			
-			finalWinners = [(x,winners[x]) for x in sorted(winners.keys(), key=lambda x: x[0])]		
-			
-		return finalWinners
+			final_winners = [(x,winners[x]) for x in sorted(winners.keys(), key=lambda x: x[0])]		
+		# Rx can be either ignored or not
+		return final_winners
 
 def find_stop_codon_mutants(codons, n):
         '''
