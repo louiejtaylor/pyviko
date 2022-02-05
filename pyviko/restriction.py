@@ -72,12 +72,11 @@ def generate_enzyme_dict(enzyme_dict):
 	
 	return new_dict
 
-def find_n_cutters(seq, n, r_sites = None):
+def find_n_cutters(seq, site_length, r_sites = None):
 	'''
-	Find restriction sites of length `n` in a sequence `seq`
-	in `O(n*m)` where `n` is the sequence length and `m` is the
-	number of restriction enzymes. Returns a list of tuples
-	of the form `(site index, 'enzyme name')`.
+	Find restriction sites of a given `site_length` in a sequence 
+        `seq`. Returns a list of tuples of the form `(site index, 
+        'enzyme name')`.
 	'''	
 	
 	if r_sites == None:
@@ -91,9 +90,9 @@ def find_n_cutters(seq, n, r_sites = None):
 
 	rec_keys = temp_sites.keys()
 	actual_sites = []
-	for i in list(range(0, len(seq) - (n-1))):
+	for i in list(range(0, len(seq) - (length-1))):
 		if seq[i:i+n] in rec_keys: 
-			actual_sites.append((i,seq[i:i+n]))		
+			actual_sites.append((i,seq[i:i+length]))
 			
 	return actual_sites
 	
