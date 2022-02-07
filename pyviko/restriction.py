@@ -12,7 +12,7 @@ except ImportError:
 def find_non_regex_enzyme_site(site):
 	'''
 	Builds a list of sequences that correspond to a given 
-	restriction enzyme recognition site (tree walking).
+	restriction enzyme recognition site.
 	'''
 	possible_seqs = ['']
 	for nt in site:
@@ -72,6 +72,13 @@ def generate_enzyme_dict(enzyme_dict):
 	
 	return new_dict
 
+# find_non_regex_enzyme_sites() does a very general job--rename and replace
+def expand_ambiguous_sequence(seq):
+        '''
+        For a `seq`, returns all iterations of ambiguous
+        '''
+        return find_non_regex_enzyme_site(seq)
+
 def find_n_cutters(seq, site_length, r_sites = None):
 	'''
 	Find restriction sites of a given `site_length` in a sequence 
@@ -79,7 +86,7 @@ def find_n_cutters(seq, site_length, r_sites = None):
         'enzyme name')`.
 	'''	
 	
-	if r_sites == None:
+	if not r_sites:
 		r_sites = default_enzymes()
 		
 	temp_sites = {}
@@ -92,8 +99,7 @@ def find_n_cutters(seq, site_length, r_sites = None):
 	actual_sites = []
 	for i in list(range(0, len(seq) - (length-1))):
 		if seq[i:i+n] in rec_keys: 
-			actual_sites.append((i,seq[i:i+length]))
-			
+			actual_sites.append((i,seq[i:i+site_length]))	
 	return actual_sites
 	
 nucleotide_matrix = {	'R':['A','G'],
