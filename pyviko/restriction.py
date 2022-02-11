@@ -9,7 +9,7 @@ except ImportError:
 
 def find_non_regex_enzyme_site(site):
 	'''
-	Builds a list of sequences that correspond to a given 
+	Builds a list of sequences that correspond to a given
 	restriction enzyme recognition site.
 	'''
 	warnings.warn("find_non_regex_enzyme_site is deprecated and will be removed in a future release")
@@ -26,11 +26,8 @@ def find_enzyme_site_regex(site):
 			r_site += nt
 		else:
 			r_site += '['
-			try:
-				for m in nucleotide_matrix[nt]:
-					r_site += m
-			except KeyError:
-				print("Unknown nucleotide '" + nt  + "' encountered.")
+			for m in nucleotide_matrix[nt]: # KeyError should break this
+				r_site += m
 			r_site += ']'
 	return r_site
 
