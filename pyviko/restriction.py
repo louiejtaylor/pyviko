@@ -1,8 +1,6 @@
 import warnings
 from pyviko import core
 
-#from future import print_function
-
 try:
 	import regex as re
 except ImportError:
@@ -39,13 +37,12 @@ def find_enzyme_site_regex(site):
 def generate_enzyme_dict(enzyme_dict):
 	'''
 	Function to help pyviko recognize both a restriction
-	enzyme site and its reverse complement. Takes as input 
+	enzyme site and its reverse complement. Takes as input
 	a dictionary of restriction enzyme sites in the pyviko format
-	`{'ntseq':['list','of','cutting,'enzymes'],...}` and returns
-	a dictionary in the same format including the reverse compelement 
+	`{'ntseq':['list','of','cutting,'enzymes']}` and returns
+	a dictionary in the same format including the reverse complement
 	of all input sites.
-	'''	
-	
+	'''
 	new_dict = {}
 	added = []
 	for k in enzyme_dict.keys():
@@ -59,10 +56,8 @@ def generate_enzyme_dict(enzyme_dict):
 				for enzyme in current:
 					if enzyme not in processed:
 						new_dict[j].append(enzyme)
-	
 	return new_dict
 
-# find_non_regex_enzyme_sites() does a very general job--rename and replace
 def expand_ambiguous_sequence(seq):
         '''
         For a `seq`, returns all iterations of ambiguous
