@@ -14,19 +14,9 @@ def find_non_regex_enzyme_site(site):
 	Builds a list of sequences that correspond to a given 
 	restriction enzyme recognition site.
 	'''
-	possible_seqs = ['']
-	for nt in site:
-		if nt in 'ACGT':
-			for i in range(len(possible_seqs)):
-				possible_seqs[i] = possible_seqs[i] + nt
-		else:
-			placeholder = []
-			for seq in possible_seqs:
-				for possibility in nucleotide_matrix[nt]:
-					placeholder.append(seq+possibility)
-			possible_seqs = [ss for ss in placeholder]
-	return possible_seqs
-	
+	warnings.warn("find_non_regex_enzyme_site is deprecated and will be removed in a future release")
+        return expand_ambiguous_sequence(seq)
+
 def find_enzyme_site_regex(site):
 	'''
 	Returns a naive regular expression for a given
@@ -77,7 +67,18 @@ def expand_ambiguous_sequence(seq):
         '''
         For a `seq`, returns all iterations of ambiguous
         '''
-        return find_non_regex_enzyme_site(seq)
+	possible_seqs = ['']
+	for nt in site:
+		if nt in 'ACGT':
+			for i in range(len(possible_seqs)):
+				possible_seqs[i] = possible_seqs[i] + nt
+		else:
+			placeholder = []
+			for seq in possible_seqs:
+				for possibility in nucleotide_matrix[nt]:
+					placeholder.append(seq+possibility)
+			possible_seqs = [ss for ss in placeholder]
+	return possible_seqs
 
 def find_n_cutters(seq, site_length, r_sites = None):
 	'''
