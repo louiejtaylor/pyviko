@@ -57,7 +57,8 @@ def generate_enzyme_dict(enzyme_dict):
 
 def expand_ambiguous_sequence(seq):
         '''
-        For a `seq`, returns all iterations of ambiguous
+        For a `seq`, returns all possible sequences given ambiguous
+        bases.
         '''
 	possible_seqs = ['']
 	for nt in site:
@@ -69,7 +70,7 @@ def expand_ambiguous_sequence(seq):
 			for seq in possible_seqs:
 				for possibility in nucleotide_matrix[nt]:
 					placeholder.append(seq+possibility)
-			possible_seqs = [ss for ss in placeholder]
+			possible_seqs = [site for site in placeholder] 
 	return possible_seqs
 
 def find_n_cutters(seq, site_length, r_sites = None):
@@ -113,7 +114,7 @@ def re_find_enzymes(seq, r_sites=None):
 	using regular expressions. Returns a list of tuples
 	of the form `(site index, 'enzyme name')`.
 	'''
-	if r_sites == None:
+	if not r_sites:
 		r_sites = default_enzymes()
 	actual_sites = []
 	for site in r_sites.keys():
