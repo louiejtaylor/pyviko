@@ -55,10 +55,10 @@ def insert_mutation(codons, mut):
 	removing the codon to be mutated from the list, then adding
 	the newly mutated codon in its position. 
 	'''
-	iCodons = [c for c in codons]
-	iCodons[mut[0]] = mut[1]	
-	return iCodons
-	
+	new_codons = [c for c in codons]
+	new_codons[mut[0]] = mut[1]
+	return new_codons
+
 def point_mutant(seq, mut):
 	'''
 	Takes as input a sequence `seq` to mutate
@@ -66,7 +66,7 @@ def point_mutant(seq, mut):
 	Returns a nucleotide sequence with a point mutation.
 	'''
 	return seq[:mut[0]] + mut[1] + seq[mut[0]+1:]
-	
+
 def find_overprinted_gene(seq, startIndex, frame=1):
 	'''
 	Given a sequence `seq` and the `startIndex` of 
@@ -79,7 +79,7 @@ def find_overprinted_gene(seq, startIndex, frame=1):
 	so if the overprinted gene starts from the 59th nucleotide
 	of `seq`, the `startIndex` will be 58.
 	'''
-	
+
 	if startIndex != -1:
 		frame = 1   # In case `frame` argument provided erroneously
 		codons = codonify(seq[startIndex:])[:-1] # Remove last (incomplete) codon
@@ -91,12 +91,15 @@ def find_overprinted_gene(seq, startIndex, frame=1):
 		if codons[i] in stopCodons:
 			codons = codons[:i]
 			break
-		
+
 	if codons[0] != 'ATG' and startIndex != -1:
 		#NOTE: Not all viral genes are initiated with ATG.
 		warnings.warn("The first codon of your sequence is not a start codon.")
-		
+
 	return codons
+
+def reverse_complement_bio(input_seq):
+	return Seq(input_seq).reverse_complement().seq
 
 def reverse_complement(seq):
 	'''
@@ -105,16 +108,16 @@ def reverse_complement(seq):
 	seq = seqify(seq)
 	pairs = {'A':'T', 'T':'A', 'C':'G', 'G':'C'}
 	rev = ""
-	#Here should add reverse complements for regex sites? i.e. Y -> R 
-	try:	
+	#Here should add reverse complements for regex sites? i.e. Y -> R
+	try:
 		for nt in seq[::-1]:
 			rev += pairs[nt]
 	except KeyError:
 		print("Unknown nucleotide '" + nt  + "' encountered.")
 		return "False"
-	
+
 	return rev
-	
+
 def find_overlap(seq1, seq2, minimum=10):
 	'''
 	Given two sequences, returns a tuple `(i1, i2)` where `i1`
