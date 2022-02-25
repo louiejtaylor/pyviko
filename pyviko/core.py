@@ -28,6 +28,10 @@ def seqify(codons):
 		return codons
 	return ''.join(codons)
 
+def translate_bio(seq):
+	# returns codons for now, to remove later
+	return codonify(str(Seq(seqify(seq)).translate().seq))
+
 def translate(codons):
 	'''
 	Translates a list of DNA codons into the corresponding amino
@@ -97,7 +101,7 @@ def find_overprinted_gene(seq, startIndex, frame=1):
 	return codons
 
 def reverse_complement_bio(input_seq):
-	return Seq(input_seq).reverse_complement().seq
+	return str(Seq(input_seq).reverse_complement().seq)
 
 def reverse_complement(seq):
 	'''
