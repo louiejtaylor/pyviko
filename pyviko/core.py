@@ -4,6 +4,7 @@ translation = {'CTT': 'L', 'ATG': 'M', 'AAG': 'K', 'AAA': 'K', 'ATC': 'I', 'AAC'
 # TODO: abstract duplicate functionality to Bio
 
 from Bio.Seq import Seq
+from Bio import SeqIO
 import warnings, os
 
 class SequenceError(Exception):
