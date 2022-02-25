@@ -55,9 +55,7 @@ def insert_mutation(codons, mut):
 	removing the codon to be mutated from the list, then adding
 	the newly mutated codon in its position. 
 	'''
-	new_codons = [c for c in codons]
-	new_codons[mut[0]] = mut[1]
-	return new_codons
+	return codons[:mut[0]] + [mut[1]] + codons[mut[0]+1]
 
 def point_mutant(seq, mut):
 	'''
