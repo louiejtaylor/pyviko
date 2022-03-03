@@ -59,7 +59,7 @@ def insert_mutation(codons, mut):
 	removing the codon to be mutated from the list, then adding
 	the newly mutated codon in its position. 
 	'''
-	return codons[:mut[0]] + [mut[1]] + codons[mut[0]+1]
+	return codons[:mut[0]] + [mut[1]] + codons[mut[0]+1:]
 
 def point_mutant(seq, mut):
 	'''
@@ -67,6 +67,10 @@ def point_mutant(seq, mut):
 	and a tuple `mut` in the form (index, 'mutated nt') ex. `(3, 'A')`.
 	Returns a nucleotide sequence with a point mutation.
 	'''
+	return seq[:mut[0]] + mut[1] + seq[mut[0]+1:]
+
+def mutate(seq, mut):
+	# will replace `insert_mutation` and `point_mutant` for now--code is the same whether codon list or seq
 	return seq[:mut[0]] + mut[1] + seq[mut[0]+1:]
 
 def find_overprinted_gene(seq, startIndex, frame=1):
@@ -143,7 +147,7 @@ def find_overlap(seq1, seq2, minimum=10):
 			if seq1[:i] == seq2[l2-i:]:
 				max21 = i
 			if seq2[:i] == seq1[l1-i:]:
-				max12 = i				
+				max12 = i
 		if max12 > max21:
 			if max12 > minimum:
 				i1 = l1 - max12
@@ -152,11 +156,11 @@ def find_overlap(seq1, seq2, minimum=10):
 		else: #without this small overlaps equal on both sides are mishandled
 			if max21 > minimum:
 				i2 = l2 - max21
-			else: 
+			else:
 				raise SequenceError("No overlap detected between input sequences")
-			
+
 	return (i1, i2)
-	
+
 def read_fasta(loc): # Bio.SeqIO
 	'''
 	Reads in a FASTA file, returns tuples in the form
