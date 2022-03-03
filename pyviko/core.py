@@ -104,6 +104,15 @@ def find_overprinted_gene(seq, startIndex, frame=1):
 
 	return codons
 
+def find_ovgene_de_novo(seq1, seq2, min_overlap = 10):
+	"""
+	Find overlaps between two sequences. Returns index
+	of the nucleotide in `seq1` where the overlap starts.
+	Index is negative if the overlap is in the reverse frame.
+	"""
+	#WIP
+	return True
+
 def reverse_complement_bio(input_seq):
 	return str(Seq(input_seq).reverse_complement().seq)
 
