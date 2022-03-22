@@ -104,14 +104,34 @@ def find_overprinted_gene(seq, startIndex, frame=1):
 
 	return codons
 
-def find_ovgene_de_novo(seq1, seq2, min_overlap = 10):
+def find_overlap_new(seq1, seq2, min_overlap = 10):
 	"""
 	Find overlaps between two sequences. Returns index
 	of the nucleotide in `seq1` where the overlap starts.
 	Index is negative if the overlap is in the reverse frame.
 	"""
-	#WIP
-	return True
+	# same direction: excluding 5' parts
+	for i in range(len(seq2)-min_overlap):
+		if seq2[i:] in seq1:
+			return seq1.index(seq2[i:])
+
+	# same direction: excluding 3' parts
+	for i in range(len(seq2)-min_overlap):
+		if seq2[:-i] in seq1:
+			return seq1.index(seq2[:-i])
+
+	rc_seq2 = reverse_complement(seq2)
+	# opposite direction: 5' exclusion
+	for i in range(len(rc_seq2)-min_overlap):
+		if rc_seq2[i:] in seq1:
+			return seq1.index(rc_seq2[i:])
+
+	# opposite direction: 3' exclusion
+	for i in range(len(rc_seq2)-min_overlap):
+		if rc_seq2[:-i] in seq1:
+			return seq1.index(rc_seq2[:-i])
+
+	# returning None here rather than error makes sense
 
 def reverse_complement_bio(input_seq):
 	return str(Seq(input_seq).reverse_complement().seq)
@@ -128,7 +148,7 @@ def reverse_complement(seq):
 		for nt in seq[::-1]:
 			rev += pairs[nt]
 	except KeyError:
-		print("Unknown nucleotide '" + nt  + "' encountered.")
+		print("Unknown nucleotide '" + nt + "' encountered.")
 		return "False"
 
 	return rev
@@ -200,7 +220,7 @@ def read_fasta(loc): # Bio.SeqIO
 	seqs.append((iden, seq))
 	f.close()
 	return seqs
-	
+
 def write_fasta(fname, mutlist, seq, has_rx_sites = False, rloc = "", floc = ""): # wrapper around Bio.SeqIO?
 	'''
 	Given a filename `fname`, list of mutations `mutlist` input sequence `seq`
