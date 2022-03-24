@@ -190,11 +190,15 @@ def find_overlap(seq1, seq2, minimum=10):
 
 	return (i1, i2)
 
+def read_fasta_bio(loc):
+	return [r.accession, str(r.seq) for r in SeqIO.parse(loc)]
+
 def read_fasta(loc): # Bio.SeqIO
 	'''
 	Reads in a FASTA file, returns tuples in the form
 	`('> identifying information', 'sequence')`.
 	'''
+	#uses a lot of memory. use Bio's generators
 	f = open(loc, 'r')
 	seqs = []
 	iden = ''
