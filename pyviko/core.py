@@ -225,6 +225,10 @@ def read_fasta(loc): # Bio.SeqIO
 	f.close()
 	return seqs
 
+# should implement this as a wrapper around Bio.Seq--has a list of mutations and a helper func to generate a list of SeqRecords with appropriate names
+
+#class MutantSeq()
+
 def write_fasta(fname, mutlist, seq, has_rx_sites = False, rloc = "", floc = ""): # wrapper around Bio.SeqIO?
 	'''
 	Given a filename `fname`, list of mutations `mutlist` input sequence `seq`
@@ -254,6 +258,6 @@ def write_fasta(fname, mutlist, seq, has_rx_sites = False, rloc = "", floc = "")
 		codons = codonify(seq)
 		mut_seq = seqify(codons[:m[0][0]]+[m[0][1]]+codons[m[0][0]+1:])
 		fasta.write('\n'.join([mut_seq[i:i+100] for i in range(0,len(mut_seq),100)]) +'\n')
-		
+
 	fasta.close()
 	return True
