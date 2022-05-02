@@ -1,3 +1,4 @@
+from Bio import Seq
 from pyviko import core, restriction
 
 class OverGene:
@@ -10,7 +11,7 @@ class OverGene:
 	gene_sequence = ''
 	post_sequence = '' # includes 1-2nt removed by core.find_over_gene
 	over_aas = ''
-	
+
 	def __init__(self, over_seq, start_nt_index, seq, frame_over = 1):
 		if over_seq != '':
 			ol = core.find_overlap(seq, over_seq)
@@ -35,13 +36,13 @@ class Mutant:
 	n_mut = 1
 	over_gene = False
 	mutants = []
-	
+
 	def __init__(self, sequence, num_mutations = 1, regex = False):
 		self.seq = sequence
 		self.n_mut = num_mutations
 		self.codons = core.codonify(sequence)
 		self.regex = regex
-		
+
 	def set_over_gene(self, over_seq = '', start_nt_index = -1, over_frame = 1):
 		'''
 		Adds the overprinted gene to the current `Mutant` object.
@@ -50,7 +51,7 @@ class Mutant:
 			raise core.SequenceError("You must provide either the sequence of an overprinted gene, or its start position/frame in the knockout sequence.")
 		else:
 			self.over_gene = OverGene(over_seq, start_nt_index, self.seq, over_frame)
-		
+
 	def vector(self, sequence):
 		'''
 		Adds the vector sequence to the current `Mutant` object 
@@ -60,7 +61,7 @@ class Mutant:
 			self.vector_seq = sequence
 		else:
 			raise core.SequenceError("Could not find target sequence in vector sequence.")
-			
+
 	def find_mutants(self, ignore_rx_sites = True, r_site_length = 6, r_sites = restriction.default_enzymes()):
 		'''
 		Returns a list of mutants that add a premature stop codon 
@@ -90,7 +91,7 @@ class Mutant:
 		if not ignore_rx_sites:
 			### Two approaches: regex and non-regex.
 			restriction_site_lengths = list(set([len(k) for k in r_sites.keys()]))
-			
+
 			if r_site_length == 'all':
 				temp_restriction_sites = r_sites
 			elif r_site_length >= min(restriction_site_lengths) and r_site_length <= max(restriction_site_lengths):
@@ -101,25 +102,21 @@ class Mutant:
 				restriction_site_lengths = [r_site_length]
 			else:
 				raise core.SequenceError("Invalid restriction site length.")		
-			
+
 			new_sites = [] # list of lists
 
 			# should do all one way--why is this inconsistent?
 			### Regex:
 			if self.regex:
 				base_sites = restriction.re_find_enzymes(self.seq)
-				
 				for mut in safe_mutations:
 					new_sites.append([])
 					new_sites[-1] += restriction.re_find_enzymes(core.seqify(core.insert_mutation(self.codons, mut)))
-					
 			### Non-regex:
 			else:
-				
 				base_sites = []
 				for length in restriction_site_lengths:
 					base_sites += restriction.find_n_cutters(self.seq, length)
-					
 				for mut in safe_mutations:
 					new_sites.append([])
 					for length in restriction_site_lengths:
@@ -138,13 +135,10 @@ class Mutant:
 
 					for i in range(0,len(temp_sites)):
 						temp_sites[i] = (temp_sites[i][0], temp_sites[i][1], '-')
-						
 					for i in range (0, len(temp_added_sites)):
 						temp_added_sites[i] = (temp_added_sites[i][0], temp_added_sites[i][1], '+')
-					
 					winners[safe_mutations[new_sites.index(l)]] = temp_sites + temp_added_sites
-			
-			final_winners = [(x,winners[x]) for x in sorted(winners.keys(), key=lambda x: x[0])]		
+			final_winners = [(x,winners[x]) for x in sorted(winners.keys(), key=lambda x: x[0])]
 		# Rx can be either ignored or not
 		return final_winners
 
