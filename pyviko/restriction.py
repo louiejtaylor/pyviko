@@ -78,15 +78,14 @@ def find_n_cutters(seq, site_length, r_sites = None):
 	Find restriction sites of a given `site_length` in a sequence 
         `seq`. Returns a list of tuples of the form `(site index, 
         'enzyme name')`.
-	'''	
-	
+	'''
+
 	if not r_sites:
 		r_sites = default_enzymes()
-		
 	temp_sites = {}
 
 	for si in r_sites.keys():
-		for se in find_non_regex_enzyme_site(si):
+		for se in expand_ambiguous_sequence(si):
 			temp_sites[se] = r_sites[si]
 
 	rec_keys = temp_sites.keys()
@@ -95,7 +94,7 @@ def find_n_cutters(seq, site_length, r_sites = None):
 		if seq[i:i+n] in rec_keys: 
 			actual_sites.append((i,seq[i:i+site_length]))	
 	return actual_sites
-	
+
 nucleotide_matrix = {	'R':['A','G'],
 	    		'Y':['C','T'],
     	    		'W':['A','T'],
@@ -103,7 +102,7 @@ nucleotide_matrix = {	'R':['A','G'],
     	    		'M':['A','C'],
     		    	'K':['G','T'],
                         'B':['C','G','T'],
-    			'D':['A','G','T'],			  
+    			'D':['A','G','T'],
 			'H':['A','C','T'],
 		    	'V':['A','C','G'],
     			'N':['A','C','G','T']}
@@ -125,9 +124,8 @@ def re_find_enzymes(seq, r_sites=None):
 			matches = re.finditer(regex_site, seq)	
 		for result in matches:
 			actual_sites.append((result.start(),r_sites[site]))
-			
 	return actual_sites
-	
+
 def default_enzymes():
 	'''
 	Returns the default enzyme set (New England BioLabs)
