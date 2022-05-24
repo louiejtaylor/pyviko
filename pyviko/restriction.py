@@ -25,10 +25,7 @@ def find_enzyme_site_regex(site):
 		if nt in 'ACGT':
 			r_site += nt
 		else:
-			r_site += '['
-			for m in nucleotide_matrix[nt]: # KeyError should break this
-				r_site += m
-			r_site += ']'
+			r_site += '[' + ''.join(nucleotide_matrix[nt]) + "]"
 	return r_site
 
 def generate_enzyme_dict(enzyme_dict):
