@@ -28,6 +28,7 @@ def find_enzyme_site_regex(site):
 			r_site += '[' + ''.join(nucleotide_matrix[nt]) + "]"
 	return r_site
 
+# the recognition/reverse complementing should be done at the point of recognition, not at the point of generating the dict
 def generate_enzyme_dict(enzyme_dict):
 	'''
 	Function to help pyviko recognize both a restriction
@@ -88,8 +89,8 @@ def find_n_cutters(seq, site_length, r_sites = None):
 	rec_keys = temp_sites.keys()
 	actual_sites = []
 	for i in list(range(0, len(seq) - (length-1))):
-		if seq[i:i+n] in rec_keys: 
-			actual_sites.append((i,seq[i:i+site_length]))	
+		if seq[i:i+n] in rec_keys:
+			actual_sites.append((i,seq[i:i+site_length]))
 	return actual_sites
 
 nucleotide_matrix = {	'R':['A','G'],

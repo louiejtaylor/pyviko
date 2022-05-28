@@ -54,7 +54,7 @@ class Mutant:
 
 	def vector(self, sequence):
 		'''
-		Adds the vector sequence to the current `Mutant` object 
+		Adds the vector sequence to the current `Mutant` object
 		(primarily for making primers of early knockouts).
 		'''
 		if self.seq in sequence:
@@ -142,6 +142,7 @@ class Mutant:
 		# Rx can be either ignored or not
 		return final_winners
 
+# should optimize to use arbitrary set of stop codons (e.g. amber only)
 def find_stop_codon_mutants(codons, n):
         '''
         Given a list `codons`, finds individual codons that
@@ -209,5 +210,4 @@ def find_start_codon_mutants(codons, n):
 					mut_codon = e[:i]+nt+e[i+1:]
 					if mut_codon != start and mut_codon != 'ATG' and mut_codon not in new_muts:
 						new_muts.append(mut_codon)
-					
 	return [(0,m) for m in new_muts]
