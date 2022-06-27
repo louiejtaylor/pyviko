@@ -1,8 +1,6 @@
 stop_codons = ['TAG', 'TAA', 'TGA']
 translation = {'CTT': 'L', 'ATG': 'M', 'AAG': 'K', 'AAA': 'K', 'ATC': 'I', 'AAC': 'N', 'ATA': 'I', 'AGG': 'R', 'CCT': 'P', 'ACT': 'T', 'AGC': 'S', 'ACA': 'T', 'AGA': 'R', 'CAT': 'H', 'AAT': 'N', 'ATT': 'I', 'CTG': 'L', 'CTA': 'L', 'CTC': 'L', 'CAC': 'H', 'ACG': 'T', 'CAA': 'Q', 'AGT': 'S', 'CAG': 'Q', 'CCG': 'P', 'CCC': 'P', 'TAT': 'Y', 'GGT': 'G', 'TGT': 'C', 'CGA': 'R', 'CCA': 'P', 'TCT': 'S', 'GAT': 'D', 'CGG': 'R', 'TTT': 'F', 'TGC': 'C', 'GGG': 'G', 'GGA': 'G', 'TGG': 'W', 'GGC': 'G', 'TAC': 'Y', 'GAG': 'E', 'TCG': 'S', 'TTA': 'L', 'GAC': 'D', 'TCC': 'S', 'GAA': 'E', 'TCA': 'S', 'GCA': 'A', 'GTA': 'V', 'GCC': 'A', 'GTC': 'V', 'GCG': 'A', 'GTG': 'V', 'TTC': 'F', 'GTT': 'V', 'GCT': 'A', 'ACC': 'T', 'TTG': 'L', 'CGT': 'R', 'CGC': 'R'}
 
-# TODO: abstract duplicate functionality to Bio
-
 from Bio.Seq import Seq
 from Bio import SeqIO
 import warnings, os
@@ -59,7 +57,8 @@ def insert_mutation(codons, mut):
 	removing the codon to be mutated from the list, then adding
 	the newly mutated codon in its position. 
 	'''
-	return codons[:mut[0]] + [mut[1]] + codons[mut[0]+1:]
+	warnings.warn("insert_mutation is deprecated and will be removed in a future release, use mutate")
+	return mutate(codons,mut)
 
 def point_mutant(seq, mut):
 	'''
@@ -67,7 +66,8 @@ def point_mutant(seq, mut):
 	and a tuple `mut` in the form (index, 'mutated nt') ex. `(3, 'A')`.
 	Returns a nucleotide sequence with a point mutation.
 	'''
-	return seq[:mut[0]] + mut[1] + seq[mut[0]+1:]
+	warnings.warn("point_mutant is deprecated and will be removed in a future release, use mutate")
+	return mutate(seq,mut)
 
 def mutate(seq, mut):
 	# will replace `insert_mutation` and `point_mutant` for now--code is the same whether codon list or seq
