@@ -75,15 +75,12 @@ def mutate(seq, mut):
 
 def find_overprinted_gene(seq, startIndex, frame=1):
 	'''
-	Given a sequence `seq` and the `startIndex` of 
+	Given a sequence `seq` and the `startIndex` of
 	an overprinted gene, returns a list of codons that
-	correspond to the overprinted gene. The `frame` 
+	correspond to the overprinted gene. The `frame`
 	argument is only necessary if the overprinted
-	gene's start codon is before the input sequence, in 
-	which case `startIndex` must be -1. <br> <br>
-	**NOTE:** the index of the first nucleotide in `seq` is 0,
-	so if the overprinted gene starts from the 59th nucleotide
-	of `seq`, the `startIndex` will be 58.
+	gene's start codon is before the input sequence, in
+	which case `startIndex` must be -1. (0-indexed)
 	'''
 
 	if startIndex != -1:
@@ -124,14 +121,14 @@ def find_overlap_new(seq1, seq2, min_overlap = 10):
 	# opposite direction: 5' exclusion
 	for i in range(len(rc_seq2)-min_overlap):
 		if rc_seq2[i:] in seq1:
-			return seq1.index(rc_seq2[i:])
+			return -seq1.index(rc_seq2[i:])
 
 	# opposite direction: 3' exclusion
 	for i in range(len(rc_seq2)-min_overlap):
 		if rc_seq2[:-i] in seq1:
-			return seq1.index(rc_seq2[:-i])
+			return -seq1.index(rc_seq2[:-i])
 
-	# returning None here rather than error makes sense
+	# no return value here rather than error makes sense
 
 def reverse_complement_bio(input_seq):
 	return str(Seq(input_seq).reverse_complement().seq)
