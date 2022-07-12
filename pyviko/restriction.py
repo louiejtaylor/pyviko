@@ -13,7 +13,7 @@ def find_non_regex_enzyme_site(site):
 	restriction enzyme recognition site.
 	'''
 	warnings.warn("find_non_regex_enzyme_site is deprecated and will be removed in a future release")
-        return expand_ambiguous_sequence(seq)
+	return expand_ambiguous_sequence(seq)
 
 def find_enzyme_site_regex(site):
 	'''
@@ -54,10 +54,10 @@ def generate_enzyme_dict(enzyme_dict):
 	return new_dict
 
 def expand_ambiguous_sequence(seq):
-        '''
-        For a `seq`, returns all possible sequences given ambiguous
-        bases.
-        '''
+	'''
+	For a `seq`, returns all possible sequences given ambiguous
+	bases.
+	'''
 	possible_seqs = ['']
 	for nt in site:
 		if nt in 'ACGT':
