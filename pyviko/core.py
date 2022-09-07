@@ -27,8 +27,7 @@ def seqify(codons):
 	return ''.join(codons)
 
 def translate_bio(seq):
-	# returns codons for now, to remove later
-	return codonify(str(Seq(seqify(seq)).translate().seq))
+	return str(Seq(seqify(seq)).translate().seq)
 
 def translate(codons):
 	'''
