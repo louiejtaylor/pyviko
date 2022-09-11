@@ -28,7 +28,6 @@ def find_enzyme_site_regex(site):
 			r_site += '[' + ''.join(nucleotide_matrix[nt]) + "]"
 	return r_site
 
-# the recognition/reverse complementing should be done at the point of recognition, not at the point of generating the dict
 def generate_enzyme_dict(enzyme_dict):
 	'''
 	Function to help pyviko recognize both a restriction
@@ -68,16 +67,15 @@ def expand_ambiguous_sequence(seq):
 			for seq in possible_seqs:
 				for possibility in nucleotide_matrix[nt]:
 					placeholder.append(seq+possibility)
-			possible_seqs = [site for site in placeholder] 
+			possible_seqs = [site for site in placeholder]
 	return possible_seqs
 
 def find_n_cutters(seq, site_length, r_sites = None):
 	'''
-	Find restriction sites of a given `site_length` in a sequence 
-        `seq`. Returns a list of tuples of the form `(site index, 
+	Find restriction sites of a given `site_length` in a sequence
+        `seq`. Returns a list of tuples of the form `(site index,
         'enzyme name')`.
 	'''
-
 	if not r_sites:
 		r_sites = default_enzymes()
 	temp_sites = {}
@@ -119,7 +117,7 @@ def re_find_enzymes(seq, r_sites=None):
 		try:
 			matches = re.finditer(regex_site, seq, overlapped=True)
 		except TypeError: #if no new regex module
-			matches = re.finditer(regex_site, seq)	
+			matches = re.finditer(regex_site, seq)
 		for result in matches:
 			actual_sites.append((result.start(),r_sites[site]))
 	return actual_sites

@@ -11,10 +11,10 @@ class coreTestCase(unittest.TestCase):
 		self.seq = 'ATGGCTAAATGACT'
 		self.cod = ['ATG', 'GCT', 'AAA', 'TGA', 'CT']
 		self.trans = 'MAK'
-	
+
 		self.cod_no_start = ['GGG', 'GCT', 'AAA', 'TGA', 'CT']
 		self.trans_no_start = 'GAK'
-		
+
 		self.cod_no_stop = ['ATG', 'GCT', 'AAA']
 		self.trans_no_stop = 'MAK'
 
@@ -35,7 +35,7 @@ class coreTestCase(unittest.TestCase):
 		"""Tests codonify's handling of invalid input types"""
 		self.assertRaises(TypeError, codonify(self.invalid_input))
 
-	# seqify 
+	# seqify
 	def test_codon_to_seq(self):
 		"""Tests sequify takes cod -> seq"""
 		self.assertEqual(seqify(self.cod), self.seq)
@@ -45,7 +45,7 @@ class coreTestCase(unittest.TestCase):
 	def test_seqify_invalid(self):
 		"""Tests sequify's handling of invalid input types"""
 		self.assertRaises(TypeError, seqify(self.invalid_input))
-	
+
 	# translate
 	def test_translate_codon(self):
 		"""Tests translate takes cod -> aa"""
@@ -70,7 +70,7 @@ class coreTestCase(unittest.TestCase):
 		"""Error when user insertion index exceeds codon list length"""
 	        self.assertRaises(IndexError, insert_mutation(self.cod), 21)
 
-	def test_invalid_mutation(self): 
+	def test_invalid_mutation(self):
 		"""Tests mutation's handling of invalid input types"""
 		self.assertRaises(TypeError, seqify(self.invalid_input))
 

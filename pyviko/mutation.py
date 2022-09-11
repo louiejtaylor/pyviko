@@ -64,8 +64,8 @@ class Mutant:
 
 	def find_mutants(self, ignore_rx_sites = True, r_site_length = 6, r_sites = restriction.default_enzymes()):
 		'''
-		Returns a list of mutants that add a premature stop codon 
-		(or mutate the start codon) without changing the overprinted 
+		Returns a list of mutants that add a premature stop codon
+		(or mutate the start codon) without changing the overprinted
 		gene, and which add or remove a restriction site.
 		'''
 
@@ -101,9 +101,9 @@ class Mutant:
 					temp_restriction_sites[site] = r_sites[site]
 				restriction_site_lengths = [r_site_length]
 			else:
-				raise core.SequenceError("Invalid restriction site length.")		
+				raise core.SequenceError("Invalid restriction site length.")
 
-			new_sites = [] # list of lists
+			new_sites = []
 
 			# should do all one way--why is this inconsistent?
 			### Regex:
