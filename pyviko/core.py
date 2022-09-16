@@ -54,7 +54,6 @@ def mutate(seq, mut):
 	eg. `(3, 'A')` or `(3, 'AUG')`.
 	Returns a modified nucleotide sequence or codon list.
 	'''
-	# will replace `insert_mutation` and `point_mutant` for now--code is the same whether codon list or seq
 	return seq[:mut[0]] + mut[1] + seq[mut[0]+1:]
 
 def find_overprinted_gene(seq, startIndex, frame=1):
@@ -207,8 +206,7 @@ def read_fasta(loc): # Bio.SeqIO
 	return seqs
 
 # should implement this as a wrapper around Bio.Seq--has a list of mutations and a helper func to generate a list of SeqRecords with appropriate names
-
-#class MutantSeq()
+#class MutantSeq() here or in mutation.py?
 
 def write_fasta(fname, mutlist, seq, has_rx_sites = False, rloc = "", floc = ""): # wrapper around Bio.SeqIO?
 	'''
@@ -239,6 +237,5 @@ def write_fasta(fname, mutlist, seq, has_rx_sites = False, rloc = "", floc = "")
 		codons = codonify(seq)
 		mut_seq = seqify(codons[:m[0][0]]+[m[0][1]]+codons[m[0][0]+1:])
 		fasta.write('\n'.join([mut_seq[i:i+100] for i in range(0,len(mut_seq),100)]) +'\n')
-
 	fasta.close()
 	return True
