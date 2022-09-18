@@ -27,7 +27,10 @@ def seqify(codons):
 	return ''.join(codons)
 
 def translate_bio(seq):
-	return str(Seq(seqify(seq)).translate().seq)
+	translation = str(Seq(seqify(seq)).translate())
+	if "*" in translation: # match existing functionality--truncates at stop codon
+		translation = translation[translation.index('*')]
+	return translation
 
 def translate(codons):
 	'''
