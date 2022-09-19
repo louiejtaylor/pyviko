@@ -26,29 +26,16 @@ def seqify(codons):
 		return codons
 	return ''.join(codons)
 
-def translate_bio(seq):
-	translation = str(Seq(seqify(seq)).translate())
-	if "*" in translation: # match existing functionality--truncates at stop codon
-		translation = translation[translation.index('*')]
-	return translation
-
-def translate(codons):
+def translate(seq):
 	'''
 	Translates a list of DNA codons into the corresponding amino
 	acids, stopping translation if a stop codon is encountered.
 	'''
-	codons = codonify(codons)
-	aa = ''
-	for i in list(range(0,len(codons))):
-		if codons[i] in stop_codons or len(codons[i]) != 3:
-			if codons[i] in stop_codons:
-				aa = aa + '*'
-			break
-		try:
-			aa = aa + translation[codons[i]]
-		except KeyError as e:
-			raise SequenceError("Invalid codon: " + e.message)
-	return aa
+	# this should become obsolete and just use the biopython/Seq builtin
+	translation = str(Seq(seqify(seq)).translate())
+	if "*" in translation: # match existing functionality--truncates at stop codon
+		translation = translation[translation.index('*')]
+	return translation
 
 def mutate(seq, mut):
 	'''
