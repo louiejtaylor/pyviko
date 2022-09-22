@@ -161,7 +161,7 @@ def find_overlap(seq1, seq2, minimum=10):
 	return (i1, i2)
 
 def read_fasta_bio(loc):
-	return [(r.accession, str(r.seq)) for r in SeqIO.parse(loc)]
+	return [(r.id, str(r.seq)) for r in SeqIO.parse(loc, "fasta")]
 
 def read_fasta(loc): # Bio.SeqIO
 	'''
