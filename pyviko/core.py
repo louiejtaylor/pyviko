@@ -160,40 +160,13 @@ def find_overlap(seq1, seq2, minimum=10):
 
 	return (i1, i2)
 
-def read_fasta_bio(loc):
-	return [(r.id, str(r.seq)) for r in SeqIO.parse(loc, "fasta")]
-
-def read_fasta(loc): # Bio.SeqIO
+def read_fasta(loc):
 	'''
 	Reads in a FASTA file, returns tuples in the form
 	`('> identifying information', 'sequence')`.
 	'''
-	#uses a lot of memory. use Bio's generators
-	f = open(loc, 'r')
-	seqs = []
-	iden = ''
-	seq = ''
-	for line in f.readlines():
-		if iden == '':
-			try:
-				if line.lstrip()[0] != '>':
-					raise SequenceError("Invalid file format: id line doesn't begin with '>'")
-				iden = line.strip()
-			except IndexError: #blank line
-				next
-		else:
-			try:
-				if line.lstrip()[0] == '>':
-					seqs.append((iden, seq))
-					iden = line.strip()
-					seq = ''
-				else:
-					seq += line.strip().upper().replace(' ', '')
-			except IndexError: #blank line
-				next
-	seqs.append((iden, seq))
-	f.close()
-	return seqs
+	# TODO: other code handling output of SeqIO.parse to not store in memory
+	return [(">"+r.id, str(r.seq)) for r in SeqIO.parse(loc, "fasta")]
 
 # should implement this as a wrapper around Bio.Seq--has a list of mutations and a helper func to generate a list of SeqRecords with appropriate names
 #class MutantSeq() here or in mutation.py?
