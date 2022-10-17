@@ -24,6 +24,9 @@ class coreTestCase(unittest.TestCase):
 	def teardown(self):
 		pass
 
+	def test_find_overlap(self):
+		self.assertEqual(find_overlap("ATGCCATGCCCCCCCCCCACCA","ATGCCCCCCCCCCACCA")[0], find_overlap_new("ATGCCATGCCCCCCCCCCACCA","ATGCCCCCCCCCCACCA"))
+
 	# codonify
 	def test_seq_to_codon(self):
 		"""Tests codonify takes seq -> cod"""
