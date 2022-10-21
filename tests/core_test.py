@@ -25,7 +25,7 @@ class coreTestCase(unittest.TestCase):
 		pass
 
 	def test_find_overlap(self):
-		self.assertEqual(find_overlap("ATGCCATGCCCCCCCCCCACCA","ATGCCCCCCCCCCACCA")[0], find_overlap_new("ATGCCATGCCCCCCCCCCACCA","ATGCCCCCCCCCCACCA"))
+		self.assertEqual(find_overlap("ATGCCATGCCCCCCCCCCACCA","ATGCCCCCCCCCCACCA"),5)
 
 	# codonify
 	def test_seq_to_codon(self):

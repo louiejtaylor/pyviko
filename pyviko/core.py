@@ -74,7 +74,7 @@ def find_overprinted_gene(seq, startIndex, frame=1):
 
 	return codons
 
-def find_overlap_new(seq1, seq2, min_overlap = 10):
+def find_overlap(seq1, seq2, min_overlap = 10):
 	"""
 	Find overlaps between two sequences. Returns index
 	of the nucleotide in `seq1` where the overlap starts.
@@ -122,43 +122,6 @@ def reverse_complement(seq):
 		return "False"
 
 	return rev
-
-def find_overlap(seq1, seq2, minimum=10):
-	'''
-	Given two sequences, returns a tuple `(i1, i2)` where `i1`
-	is the index in `seq1` where the overlap with `seq2` begins and
-	`i2` is the corresponding index in `seq2`. `minimum` is the minimum
-	overlap length considered (default 10).
-	'''
-	i1 = 0
-	i2 = 0
-	if seq1 in seq2:
-		i2 = seq2.index(seq1)
-	elif seq2 in seq1:
-		i1 = seq1.index(seq2)
-	else:
-		max12 = 0
-		max21 = 0
-		l1 = len(seq1)
-		l2 = len(seq2)
-		overall = min(l1,l2) + 1
-		for i in list(range(1, overall)):
-			if seq1[:i] == seq2[l2-i:]:
-				max21 = i
-			if seq2[:i] == seq1[l1-i:]:
-				max12 = i
-		if max12 > max21:
-			if max12 > minimum:
-				i1 = l1 - max12
-			else:
-				raise SequenceError("No overlap detected between input sequences")
-		else: #without this small overlaps equal on both sides are mishandled
-			if max21 > minimum:
-				i2 = l2 - max21
-			else:
-				raise SequenceError("No overlap detected between input sequences")
-
-	return (i1, i2)
 
 def read_fasta(loc):
 	'''
