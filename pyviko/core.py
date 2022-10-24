@@ -104,24 +104,7 @@ def find_overlap(seq1, seq2, min_overlap = 10):
 	# no return value here rather than error makes sense
 
 def reverse_complement_bio(input_seq):
-	return str(Seq(input_seq).reverse_complement().seq)
-
-def reverse_complement(seq):
-	'''
-	Given a sequence `seq`, returns the reverse complement.
-	'''
-	seq = seqify(seq)
-	pairs = {'A':'T', 'T':'A', 'C':'G', 'G':'C'}
-	rev = ""
-	#Here should add reverse complements for regex sites? i.e. Y -> R
-	try:
-		for nt in seq[::-1]:
-			rev += pairs[nt]
-	except KeyError:
-		print("Unknown nucleotide '" + nt + "' encountered.")
-		return "False"
-
-	return rev
+	return str(Seq(input_seq).reverse_complement())
 
 def read_fasta(loc):
 	'''
