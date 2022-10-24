@@ -103,7 +103,7 @@ def find_overlap(seq1, seq2, min_overlap = 10):
 
 	# no return value here rather than error makes sense
 
-def reverse_complement_bio(input_seq):
+def reverse_complement(input_seq):
 	return str(Seq(input_seq).reverse_complement())
 
 def read_fasta(loc):
