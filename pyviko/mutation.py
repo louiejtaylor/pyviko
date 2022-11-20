@@ -12,9 +12,12 @@ class OverGene:
 	post_sequence = '' # includes 1-2nt removed by core.find_over_gene
 	over_aas = ''
 
-	def __init__(self, over_seq, start_nt_index, seq, frame_over = 1):
-		if over_seq != '':
+	def __init__(self, over_seq = None, start_nt_index= None, seq, frame_over = 1):
+		#TODO: properly handle either over_seq or start_index
+		if over_seq:
 			ol = core.find_overlap(seq, over_seq)
+			if ol < 0: # overprinted gene in the reverse frame
+				
 			if ol[0] == 0: #overprinted gene starts before
 				start_nt_index = -1
 				frame_over = 4-(ol[1]%3)

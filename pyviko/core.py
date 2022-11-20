@@ -69,8 +69,8 @@ def find_overprinted_gene(seq, startIndex, frame=1):
 			break
 
 	if codons[0] != 'ATG' and startIndex != -1:
-		#NOTE: Not all viral genes are initiated with ATG.
 		warnings.warn("The first codon of your sequence is not a start codon.")
+		# no need to error, fine if not, some viral transcripts don't start with ATG
 
 	return codons
 
@@ -111,7 +111,7 @@ def read_fasta(loc):
 	Reads in a FASTA file, returns tuples in the form
 	`('> identifying information', 'sequence')`.
 	'''
-	# TODO: other code handling output of SeqIO.parse to not store in memory
+	# TODO: other code handle output of SeqIO.parse to not store in memory
 	return [(">"+r.id, str(r.seq)) for r in SeqIO.parse(loc, "fasta")]
 
 # should implement this as a wrapper around Bio.Seq--has a list of mutations and a helper func to generate a list of SeqRecords with appropriate names
