@@ -2,6 +2,7 @@ stop_codons = ['TAG', 'TAA', 'TGA']
 translation = {'CTT': 'L', 'ATG': 'M', 'AAG': 'K', 'AAA': 'K', 'ATC': 'I', 'AAC': 'N', 'ATA': 'I', 'AGG': 'R', 'CCT': 'P', 'ACT': 'T', 'AGC': 'S', 'ACA': 'T', 'AGA': 'R', 'CAT': 'H', 'AAT': 'N', 'ATT': 'I', 'CTG': 'L', 'CTA': 'L', 'CTC': 'L', 'CAC': 'H', 'ACG': 'T', 'CAA': 'Q', 'AGT': 'S', 'CAG': 'Q', 'CCG': 'P', 'CCC': 'P', 'TAT': 'Y', 'GGT': 'G', 'TGT': 'C', 'CGA': 'R', 'CCA': 'P', 'TCT': 'S', 'GAT': 'D', 'CGG': 'R', 'TTT': 'F', 'TGC': 'C', 'GGG': 'G', 'GGA': 'G', 'TGG': 'W', 'GGC': 'G', 'TAC': 'Y', 'GAG': 'E', 'TCG': 'S', 'TTA': 'L', 'GAC': 'D', 'TCC': 'S', 'GAA': 'E', 'TCA': 'S', 'GCA': 'A', 'GTA': 'V', 'GCC': 'A', 'GTC': 'V', 'GCG': 'A', 'GTG': 'V', 'TTC': 'F', 'GTT': 'V', 'GCT': 'A', 'ACC': 'T', 'TTG': 'L', 'CGT': 'R', 'CGC': 'R'}
 
 from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
 from Bio import SeqIO
 import warnings, os
 
@@ -139,7 +140,6 @@ def write_fasta(fname, mutlist, seq, has_rx_sites = False, rloc = "", floc = "")
 		while fname[:-6] + '(' + str(i) + ').fasta' in dirs:
 			i += 1
 		fname = fname[:-6] + '(' + str(i) + ').fasta'
-	del i
 	fasta = open(fname, 'w')
 	for m in mutlist:
 		fasta.write(">mutant at codon " + str(m[0][0]+1) +': \n' )
@@ -148,3 +148,9 @@ def write_fasta(fname, mutlist, seq, has_rx_sites = False, rloc = "", floc = "")
 		fasta.write('\n'.join([mut_seq[i:i+100] for i in range(0,len(mut_seq),100)]) +'\n')
 	fasta.close()
 	return True
+
+
+def write_mutant_fasta_bio(fname, mut_list, parent_seq_record):
+	# let it error if invalid filename, user should correct
+	seqs = [SeqRecord(parent_seq_record.accession + "_".join([""] + list(mut)), mutate(parent_seq_record.seq, mut)) for mut in mut_list]
+	SeqIO.write(seqs, fname, "fasta")
