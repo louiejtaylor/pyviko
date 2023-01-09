@@ -115,9 +115,6 @@ def read_fasta(loc):
 	# TODO: other code handle output of SeqIO.parse to not store in memory
 	return [(">"+r.id, str(r.seq)) for r in SeqIO.parse(loc, "fasta")]
 
-# should implement this as a wrapper around Bio.Seq--has a list of mutations and a helper func to generate a list of SeqRecords with appropriate names
-#class MutantSeq() here or in mutation.py?
-
 def write_fasta(fname, mutlist, seq, has_rx_sites = False, rloc = "", floc = ""): # wrapper around Bio.SeqIO?
 	'''
 	Given a filename `fname`, list of mutations `mutlist` input sequence `seq`
