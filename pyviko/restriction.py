@@ -26,6 +26,7 @@ def find_enzyme_site_regex(site):
 			r_site += nt
 		else:
 			r_site += '[' + ''.join(nucleotide_matrix[nt]) + "]"
+			# will error if unknown degenerate nucleotide entered
 	return r_site
 
 def generate_enzyme_dict(enzyme_dict):

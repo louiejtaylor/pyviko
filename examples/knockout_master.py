@@ -9,13 +9,13 @@ from pyviko.restriction import find_n_cutters
 
 # workhorse: find stop codons that can be generated given codons, mutation
 def find_possible_stop_codons(codons, n):
-	
+
 	if codons[-1] in stop_codons:
 		codons = codons[:-1] # remove c-terminal stop codon
-	
+
 	almost_stop_codons = {}
 	# build dict of codons that can be mutated to a stop codon (1off)
-	
+
 	for c in stop_codons:
 		for i in range(0,3):
 			for nt in 'ACTG':
@@ -35,18 +35,18 @@ def find_possible_stop_codons(codons, n):
 							 almostStopCodons[c[:i]+nt+c[i+1:]] = almost_stop_codons[c]
 		for i in almost_stop_codons.keys():
 			almost_stop_codons[i] = list(set(almost_stop_codons[i]))
-	
-	
+
+
 	# creates a list of tuples of the form (index, ['list', 'of', 'stop', 'codons']) to be further pre-processed	
 	pre_matches = [(i, almost_stop_codons[codons[i]]) for i in range(0,len(codons)) if codons[i] in almost_stop_codons.keys()]
-	
+
 	matches = []  
-	
+
 	# further processing to create actual tuples (index, 'codon')	
 	for m in pre_matches:
 		for codon in m[1]:
 			matches.append((m[0],codon))
-			
+
 	print(len(matches))
 	
 	return matches
@@ -59,11 +59,11 @@ def find_overprinted_gene(seq, frame, starts_before):
 		if codons[i] in stop_codons:
 			codons = codons[:i]
 			break
-	
+
 	if not starts_before:
 		x = 1
 		# TODO: complete whatever this is
-		
+
 	return codons
 
 def find_non_harmful_mutations(seq, frame, starts_before, num_mutations):
@@ -101,7 +101,7 @@ def find_restriction_site_changes(seq, frame, starts_before, num_mutations):
 		print("Found",w)
 
 	return winners
-	
+
 sequence = '''ATGGAACAGGCACCAGAAGATCAAGGACCACAGAGGGAGCCATACAACGAATGGGCTTTAGAATTGTTGGAAGACCTAAAGAATGAGGCTCTGCGCCACTTTCCTCGGCCTTGGCTACATGGACTAGGGCAATACTTCTATAATACATATGGAGATACCTGGGAGGGAGTAGAGGCCATCATTAGGACACTACAACAACTGTTGTTTATACATTATAGGATTGGCTGTCAACATAGCAGGATAGGAATCACTCCTCAAAGGAGAAGGAATGGAGCCAGTAGATCCTGA'''
 
 if __name__ == "__main__":

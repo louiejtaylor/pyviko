@@ -38,14 +38,13 @@ sequence = 'AAAGGGCCCTTTAGCTAGAGAGACAGACAACGTACGTATCGTAA'
 
 s = []
 for si in sites:
-	s.append(findEnzymeSiteRegex(si))
-	
+	s.append(find_enzyme_site_regex(si))
+
 for ww in s:
 	try:
 		q = re.finditer(ww, sequence, overlapped=True)
 	except TypeError: #no new regex module
-		q = re.finditer(ww, sequence)		
-		
+		q = re.finditer(ww, sequence)
 	for i in q:
 		print(i.start(), i.string[i.start():i.end()],"\n")
 
@@ -65,8 +64,8 @@ def testNcutters(seq, n, rlist):
 
 s = []
 for sis in sites:
-	s.append(find_non_regex_enzyme_site(sis))
-	
+	s.append(expand_ambiguous_sequence(sis))
+
 for ww in s:
 	print test_n_cutters(sequence, len(ww[0]), ww)
 
