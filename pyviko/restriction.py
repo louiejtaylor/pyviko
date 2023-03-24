@@ -7,14 +7,6 @@ except ImportError:
 	warnings.warn("To support overlapping restriction sites, please update to the new regex module.")
 	import re
 
-def find_non_regex_enzyme_site(site):
-	'''
-	Builds a list of sequences that correspond to a given
-	restriction enzyme recognition site.
-	'''
-	warnings.warn("find_non_regex_enzyme_site is deprecated and will be removed in a future release")
-	return expand_ambiguous_sequence(seq)
-
 def find_enzyme_site_regex(site):
 	'''
 	Returns a naive regular expression for a given
