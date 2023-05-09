@@ -1,11 +1,10 @@
-'''
-Script to extract overprinted gene pairs from NCBI Nucleotide database.
-'''
+# Script to extract overprinted gene pairs from NCBI Nucleotide
+
 from Bio import Entrez, SeqIO
 import os
 import pyviko.core as core
 import time
-	
+
 def find_genes(gene_list, positive):
 	'''
 	Extracts gene pairs from Entrez records.
@@ -15,10 +14,11 @@ def find_genes(gene_list, positive):
 	good_genes = []
 	for gene in gene_list:
 		trigger = False
+		# only keep genes with no ambiguous nt (cannot guarantee unambiguous translation)
 		for not_nt in ['R', 'Y', 'W', 'S', 'M', 'K', 'B', 'D', 'H', 'V', 'N', 'F']:
 			if not_nt in gene[2]:
 				trigger = True
-		if trigger == False:
+		if not trigger:
 			good_genes.append(gene)
 	gene_list = [g for g in good_genes]
 	if positive:
@@ -90,7 +90,7 @@ for jjj in range(1,int(len(idlist)/100)+2):
 		#store total genes
 		over = over_plus + over_minus
 		to_ko = to_ko_plus + to_ko_minus
-		
+
 		if len(over) <> len(to_ko):
 			# if gene pair lists are not of even size (for whatever reason), we don't want to store this round
 			print("Error: file lengths uneven")
@@ -110,6 +110,6 @@ for jjj in range(1,int(len(idlist)/100)+2):
 				fi_over.write('>'+str(seq_record.id)+' '+str(over[i][0])+':'+str(over[i][1])+'\n'+over[i][2]+'\n')
 	print("Added: " + str(added_counter))
 	handle.close()
-	
+
 fi_ko.close()
 fi_over.close()

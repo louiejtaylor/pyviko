@@ -4,7 +4,7 @@
 Proof-of-concept module for pyViKO. [Examples and source](https://github.com/louiejtaylor/pyViKO)
 '''
 
-from pyviko.core import codonify, seqify, insert_mutation, translate, stop_codons
+from pyviko.core import codonify, seqify, mutate, translate, stop_codons, find_overprinted_gene
 from pyviko.restriction import find_n_cutters
 
 # workhorse: find stop codons that can be generated given codons, mutation
@@ -37,34 +37,21 @@ def find_possible_stop_codons(codons, n):
 			almost_stop_codons[i] = list(set(almost_stop_codons[i]))
 
 
-	# creates a list of tuples of the form (index, ['list', 'of', 'stop', 'codons']) to be further pre-processed	
+	# creates a list of tuples of the form (index, ['list', 'of', 'stop', 'codons']) to be further pre-processed
 	pre_matches = [(i, almost_stop_codons[codons[i]]) for i in range(0,len(codons)) if codons[i] in almost_stop_codons.keys()]
 
-	matches = []  
+	matches = []
 
-	# further processing to create actual tuples (index, 'codon')	
+	# further processing to create actual tuples (index, 'codon')
 	for m in pre_matches:
 		for codon in m[1]:
 			matches.append((m[0],codon))
 
 	print(len(matches))
-	
+
 	return matches
 
-# finds overprinted gene, given input sequence, frameshift, and bool startsBefore 
-# TODO: change startsBefore to an **index** for gene	
-def find_overprinted_gene(seq, frame, starts_before):	
-	codons = codonify(seq[frame - 1:])[:-1] # remove last (incomplete) codon
-	for i in range(0,len(codons)):
-		if codons[i] in stop_codons:
-			codons = codons[:i]
-			break
-
-	if not starts_before:
-		x = 1
-		# TODO: complete whatever this is
-
-	return codons
+# superseded by Mutant() class funcs
 
 def find_non_harmful_mutations(seq, frame, starts_before, num_mutations):
 	codons = codonify(seq)
@@ -108,6 +95,7 @@ if __name__ == "__main__":
 	mut_file = open('test/mutations.fasta',"w")
 	mut_file.write("> Original sequence\n")
 	mut_file.write(sequence+"\n")
+	
 	for f in find_restriction_site_changes(sequence, 2, True, 1):
 		mut_file.write('> Mutant at codon ' + str(f[0][0]+1) +' '+ str(f[1])+'\n')
 		#print f #for debugging, prints output to screen
