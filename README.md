@@ -27,8 +27,8 @@ Here's a simple example:
 
     >>> from pyviko import mutation
     >>> m = mutation.Mutant(        "ATGCATCCCTCAAGTGACTAA")
-    >>> m.setOverGene(overSeq = "ATGTATGCATCCCTCAAGTGA")
-    >>> m.findMutants()
+    >>> m.set_over_gene(over_seq = "ATGTATGCATCCCTCAAGTGA")
+    >>> m.find_mutants()
     [(0, 'ACG'), (3, 'TAA'), (3, 'TGA')]
     
-There are more sample scripts in the `examples` folder. Also check out the [Pyviko documentation](http://louiejtaylor.github.io/pyviko/doc).
+There are more sample scripts in the `scripts` folder. Also check out the [Pyviko documentation](http://louiejtaylor.github.io/pyviko/doc).
