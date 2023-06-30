@@ -20,7 +20,7 @@ Otherwise, you can install it directly using `setup.py`:
 ([What is setup.py?](http://stackoverflow.com/questions/1471994/what-is-setup-py))
 
 ### Web interface
-The basic workflow is [available as a web-based JavaScript user interface](http://louiejtaylor.github.io/pyviko/). Also check out the [Quick-start guide](http://louiejtaylor.github.io/pyviko/doc/Pyviko_quick-start.pdf) for more information on using the web interface.
+The basic workflow is [available as a web-based JavaScript user interface](http://louiejtaylor.github.io/pyviko/). See the [Quick-start guide (pdf)](http://louiejtaylor.github.io/pyviko/web_instructions/Pyviko_quick-start.pdf) for more information on using the web interface.
 
 ### How do I use Pyviko?
 Here's a simple example:
@@ -31,4 +31,4 @@ Here's a simple example:
     >>> m.find_mutants()
     [(0, 'ACG'), (3, 'TAA'), (3, 'TGA')]
     
-There are more sample scripts in the `scripts` folder. Also check out the [Pyviko documentation](http://louiejtaylor.github.io/pyviko/doc).
+Sample scripts and scripts used in the manuscript can be found in `scripts/`. [Documentation for pyviko](http://louiejtaylor.github.io/pyviko/doc) is also available.
