@@ -10,7 +10,7 @@ class OverGene:
 	gene_sequence = ''
 	over_aas = ''
 
-	def __init__(self, over_seq = None, start_nt_index= None, seq, frame_over = 1):
+	def __init__(self, seq, over_seq = None, start_nt_index= None, frame_over = 1):
 		#TODO: properly handle either over_seq or start_index
 		if over_seq:
 			ol = core.find_overlap(seq, over_seq)
