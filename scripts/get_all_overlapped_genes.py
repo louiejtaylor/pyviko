@@ -39,7 +39,7 @@ def find_genes(gene_list, positive):
 
 def extract_join(location):
 	'''
-	Extracts the locations of genes and their 
+	Extracts the locations of genes and their
 	overprinted counterparts from Entrez record.
 	'''
 	return ((int(location[location.index('[')+1:location.index(':')]),int(location[location.index(':')+1:location.index(']')])),(int(location[location.rindex('[')+1:location.rindex(':')]),int(location[location.rindex(':')+1:location.rindex(']')])))
