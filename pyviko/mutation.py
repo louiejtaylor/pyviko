@@ -39,7 +39,7 @@ class Mutant:
 	mutants = []
 
 	def __init__(self, sequence, num_mutations = 1, regex = False):
-		self.seq = sequence
+		self.seq = str(Seq(sequence)) # str until rest of the code handles Bio objs
 		self.n_mut = num_mutations
 		self.codons = core.codonify(sequence)
 		self.regex = regex
