@@ -7,7 +7,8 @@ import time
 
 def find_genes(gene_list, positive):
 	'''
-	Extracts gene pairs from Entrez records.
+	Extracts gene pairs from Entrez records. Takes as input a list of 
+	genes and a bool (genes on the plus or minus strand)
 	'''
 	over = []
 	to_ko = []
@@ -24,14 +25,14 @@ def find_genes(gene_list, positive):
 	if positive:
 		for gene in gene_list:
 			for other_gene in gene_list:
-				if gene <> other_gene:
+				if gene <> other_gene: # don't compare gene against itself
 					if gene[0] > other_gene[0] and gene[0] < other_gene[1]:
 						over.append(other_gene)
-						toKO.append(gene)
+						to_ko.append(gene)
 	else:
 		for gene in gene_list:
 			for other_gene in gene_list:
-				if gene <> other_gene:
+				if gene <> other_gene: # don't compare gene against itself
 					if gene[0] < other_gene[0] and gene[0] > other_gene[1]:
 						over.append(other_gene)
 						to_ko.append(gene)
@@ -45,7 +46,7 @@ def extract_join(location):
 	return ((int(location[location.index('[')+1:location.index(':')]),int(location[location.index(':')+1:location.index(']')])),(int(location[location.rindex('[')+1:location.rindex(':')]),int(location[location.rindex(':')+1:location.rindex(']')])))
 
 # setup
-Entrez.email = "your_email_here@university.edu"
+Entrez.email = "your_email_here@email.com"
 # query
 handle = Entrez.esearch(db="nuccore", term='"complete genome"[All Fields] AND viruses[filter] NOT segment[All Fields] NOT partial[All Fields]', retmax=48770)
 record = Entrez.read(handle)
