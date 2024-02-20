@@ -1,8 +1,4 @@
-try:
-	import regex as re
-except ImportError:
-	import re
-	print("Module 'regex' not found")
+import regex as re
 
 from pyviko.restriction import restrictionSites, findNonRegexEnzymeSite, findEnzymeSiteRegex, findNcutters
 
@@ -19,10 +15,7 @@ for si in sites:
 	s.append(find_enzyme_site_regex(si))
 
 for ww in s:
-	try:
-		q = re.finditer(ww, sequence, overlapped=True)
-	except TypeError: #no new regex module
-		q = re.finditer(ww, sequence)
+	q = re.finditer(ww, sequence, overlapped=True)
 	for i in q:
 		print(i.start(), i.string[i.start():i.end()],"\n")
 
