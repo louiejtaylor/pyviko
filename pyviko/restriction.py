@@ -1,11 +1,7 @@
 import warnings
 from pyviko import core
 
-try:
-	import regex as re
-except ImportError:
-	warnings.warn("To support overlapping restriction sites, please update to the new regex module.")
-	import re
+import regex as re
 
 def find_enzyme_site_regex(site):
 	'''
@@ -108,10 +104,7 @@ def re_find_enzymes(seq, r_sites=None):
 	actual_sites = []
 	for site in r_sites.keys():
 		regex_site = find_enzyme_site_regex(site)
-		try:
-			matches = re.finditer(regex_site, seq, overlapped=True)
-		except TypeError: #if no new regex module
-			matches = re.finditer(regex_site, seq)
+		matches = re.finditer(regex_site, seq, overlapped=True)
 		for result in matches:
 			actual_sites.append((result.start(),r_sites[site]))
 	return actual_sites
