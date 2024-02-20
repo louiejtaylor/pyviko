@@ -1,9 +1,8 @@
 # Script to extract overprinted gene pairs from NCBI Nucleotide
 
 from Bio import Entrez, SeqIO
-import os
+import os, time, re
 import pyviko.core as core
-import time
 
 def find_genes(gene_list, positive):
 	'''
@@ -13,13 +12,10 @@ def find_genes(gene_list, positive):
 	over = []
 	to_ko = []
 	good_genes = []
+	pattern = re.compile("^[ACGTUacgtu]+$")
 	for gene in gene_list:
-		trigger = False
-		# only keep genes with no ambiguous nt (cannot guarantee unambiguous translation)
-		for not_nt in ['R', 'Y', 'W', 'S', 'M', 'K', 'B', 'D', 'H', 'V', 'N', 'F']:
-			if not_nt in gene[2]:
-				trigger = True
-		if not trigger:
+		if pattern.match(gene): 
+			# only keep genes with no ambiguous nt (cannot guarantee unambiguous translation)
 			good_genes.append(gene)
 	gene_list = [g for g in good_genes]
 	if positive:

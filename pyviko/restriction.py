@@ -84,6 +84,7 @@ def find_n_cutters(seq, site_length, r_sites = None):
 			actual_sites.append((i,seq[i:i+site_length]))
 	return actual_sites
 
+# name something like `ambiguous_base_map`
 nucleotide_matrix = {	'R':['A','G'],
 	    		'Y':['C','T'],
     	    		'W':['A','T'],
