@@ -8,6 +8,9 @@ class OverGene:
 	frame = 1
 	start_nucleotide_index = -1
 	gene_sequence = ''
+	# pre and post sequence used when mutating OverGene (to translate the other frame)
+	self.pre_sequence = '' 
+	self.post_sequence = ''
 	over_aas = ''
 
 	def __init__(self, seq, over_seq = None, start_nt_index= None, frame_over = 1):
