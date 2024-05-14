@@ -17,11 +17,15 @@ class OverGene:
 		#TODO: properly handle either over_seq or start_index
 		if over_seq:
 			ol = core.find_overlap(seq, over_seq)
+			end_in_seq = len()
 			if ol < 0: # overprinted gene in the reverse frame
 				self.gene_sequence = over_seq
+				start_nt_index = ol
+				frame_over = 4-(ol%3)
+				# find the frame/pre and post seq--how does negative frame affect?
 			elif ol == 0: #overprinted gene starts before
 				start_nt_index = -1
-				frame_over = 4-(ol[1]%3)
+				frame_over = 4-(ol%3)
 				self.pre_sequence = over_seq[ol[1]-(-frame_over+4):ol[1]] + seq[:3-(-frame_over+4)]
 			else: #overprinted gene starts after
 				start_nt_index = ol
