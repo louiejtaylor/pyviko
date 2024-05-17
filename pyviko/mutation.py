@@ -97,7 +97,6 @@ class Mutant:
 			safe_mutations = stops
 		final_winners = [s for s in safe_mutations]
 		if not ignore_rx_sites:
-			### Two approaches: regex and non-regex.
 			restriction_site_lengths = list(set([len(k) for k in r_sites.keys()]))
 
 			if r_site_length == 'all':
@@ -113,22 +112,10 @@ class Mutant:
 
 			new_sites = []
 
-			# should do all one way--why is this inconsistent?
-			### Regex:
-			if self.regex:
-				base_sites = restriction.re_find_enzymes(self.seq)
-				for mut in safe_mutations:
-					new_sites.append([])
-					new_sites[-1] += restriction.re_find_enzymes(core.seqify(core.insert_mutation(self.codons, mut)))
-			### Non-regex:
-			else:
-				base_sites = []
-				for length in restriction_site_lengths:
-					base_sites += restriction.find_n_cutters(self.seq, length)
-				for mut in safe_mutations:
-					new_sites.append([])
-					for length in restriction_site_lengths:
-						new_sites[-1] += restriction.find_n_cutters(core.seqify(core.insert_mutation(self.codons, mut)), length)
+			base_sites = restriction.re_find_enzymes(self.seq)
+			for mut in safe_mutations:
+				new_sites.append([])
+				new_sites[-1] += restriction.re_find_enzymes(core.seqify(core.insert_mutation(self.codons, mut)))
 
 			winners = {}
 			for l in new_sites:
