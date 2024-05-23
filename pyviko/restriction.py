@@ -13,7 +13,7 @@ def find_enzyme_site_regex(site):
 		if nt in 'ACGT':
 			r_site += nt
 		else:
-			r_site += '[' + ''.join(nucleotide_matrix[nt]) + "]"
+			r_site += '[' + ''.join(core.ambiguous_base_map[nt]) + "]"
 			# will error if unknown degenerate nucleotide entered
 	return r_site
 
@@ -54,7 +54,7 @@ def expand_ambiguous_sequence(seq):
 		else:
 			placeholder = []
 			for seq in possible_seqs:
-				for possibility in nucleotide_matrix[nt]:
+				for possibility in core.ambiguous_base_map[nt]:
 					placeholder.append(seq+possibility)
 			possible_seqs = [site for site in placeholder]
 	return possible_seqs
