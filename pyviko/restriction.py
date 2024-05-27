@@ -80,19 +80,6 @@ def find_n_cutters(seq, site_length, r_sites = None):
 			actual_sites.append((i,seq[i:i+site_length]))
 	return actual_sites
 
-# name something like `ambiguous_base_map`
-nucleotide_matrix = {	'R':['A','G'],
-	    		'Y':['C','T'],
-    	    		'W':['A','T'],
-    	    		'S':['C','G'],
-    	    		'M':['A','C'],
-    		    	'K':['G','T'],
-                        'B':['C','G','T'],
-    			'D':['A','G','T'],
-			'H':['A','C','T'],
-		    	'V':['A','C','G'],
-    			'N':['A','C','G','T']}
-
 def re_find_enzymes(seq, r_sites=None):
 	'''
 	Find restriction sites in a sequence `seq`
